@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="comment_editable_text_hint">บันทึกช่วยจำ</string>
+    <string name="comment_activity_cancel_button_caption">ยกเลิก</string>
+    <string name="comment_activity_save_button_caption">บันทึก</string>
+    <string name="comment_activity_date_announcement_text">บันทึกของวันที่ :</string>
+    <string name="monday">จ.</string>
+    <string name="friday">ศ.</string>
+    <string name="saturday">ส.</string>
+    <string name="sunday">อา.</string>
+    <string name="thursday">พฤ.</string>
+    <string name="tuesday">อ.</string>
+    <string name="wednesday">พ.</string>
+    <string name="help_1">วันที่เป็นสีแดงในปฏิทิน คือ วัน ปัจจุบัน</string>
+    <string name="help_title">วิธีใช้งาน</string>
+    <string name="help_2">ไอค่อนรูปนี้ แปลว่า วันนั้นเป็นวันที่เป็นประจำเดือน</string>
+    <string name="help_3">ไอค่อนนี้ แปลว่า วันนี้เป็นวันที่ ไม่มี การตกไข่</string>
+    <string name="help_4">ไอค่อนนี้ แปลว่า วันนี้เป็นวันที่ มี การตกไข่</string>
+    <string name="help_select_date">เลือกวันแรกที่เป็นประจำเดือน ของรอบเดือนที่ผ่านมา</string>
+    <string name="help_push_menstrual_button">กดปุ่ม วันนี้เป็นประจำเดือน</string>
+    <string name="help_prediction">ระบบจะคาดการณ์ วันตกไข่ถัดไป</string>
+    <string name="help_seek">เลื่อนปฎิทิน เพื่อหาวันที่มีการตกไข่/วันที่ไม่มีการตกไข่</string>
+    <string name="help_help">คลิ๊กที่ ไอค่อนนี้ เพื่อแสดงวิธีใช้</string>
+    <string name="help_de_menstrual">เลือกวันที่เป็นประจำเดือน</string>
+    <string name="help_de_menstrual2">จากนั้นกดปุ่ม "วันนี้ไม่เป็นประจำเดือน", วันนั้นจะกลายเป็นวันที่ไม่เป็นประจำเดือน</string>
+    <string name="help_do_not_show_this_in_the_future">แสดงวิธีใช้อีกครั้งหน้า</string>
+    <string name="help_close_help">บันทึกและปิด</string>
+    <string name="menu_title">เมนู</string>
+</resources>

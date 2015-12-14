@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="comment_editable_text_hint">Please enter the comment of the day</string>
+    <string name="comment_activity_cancel_button_caption">Cancel</string>
+    <string name="comment_activity_save_button_caption">Save</string>
+    <string name="comment_activity_date_announcement_text">Enter comments of : </string>
+</resources>

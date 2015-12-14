@@ -1,0 +1,44 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="fill_parent" android:layout_height="fill_parent" android:orientation="vertical"
+              android:weightSum="1.0">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" android:layout_weight="0.9" android:weightSum="1.0">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" android:layout_weight="0.2">
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:id="@+id/comment_header" android:gravity="center"/>
+        </LinearLayout>
+        <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:id="@+id/comment_content" android:layout_weight="0.8" android:background="@color/main_bg"
+                android:textColor="@color/text_color" android:hint="@string/comment_editable_text_hint"
+                android:gravity="top|left" android:layout_margin="10dp"/>
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" android:layout_weight="0.1" android:weightSum="1.0">
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/comment_activity_cancel_button_caption"
+                android:id="@+id/button2" android:layout_weight="0.5" android:layout_marginLeft="10dp"
+                android:onClick="commentCancel"/>
+        <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/comment_activity_save_button_caption"
+                android:id="@+id/button3" android:layout_weight="0.5" android:layout_marginRight="10dp"
+                android:onClick="commentSave"/>
+    </LinearLayout>
+</LinearLayout>

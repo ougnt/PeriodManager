@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Ovulation Diary</string>
+    <string name="menstrual_day_button_caption">Menstrual Day</string>
+    <string name="not_menstrual_day_button_caption">Not Menstrual Day</string>
+    <string name="edit_comment_button_caption">Edit Comment</string>
+    <string name="comment_edit_text_hint">Push the "Edit Comment" button to edit</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="saturday">Sat</string>
+    <string name="sunday">Sun</string>
+    <string name="menu_title">Menu</string>
+</resources>

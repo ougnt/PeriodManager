@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" android:theme="@style/Theme.Transparent" android:weightSum="1">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" android:layout_weight="0.6" android:id="@+id/close1">
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" android:layout_weight="0.4" android:weightSum="1"
+            android:id="@+id/close2">
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" android:layout_weight="0.1">
+        </LinearLayout>
+        <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/calendar_text_color">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/menu_title"
+                      android:id="@+id/textView17" android:textColor="@color/text_color" android:background="@color/menu_bg"
+                      android:layout_margin="2dp" android:gravity="center"/>
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/help_title"
+                    android:id="@+id/help_menu" android:textColor="@color/text_color" android:background="@color/menu_bg"
+                    android:layout_margin="2dp" android:gravity="center"/>
+        </TableLayout>
+    </LinearLayout>
+</LinearLayout>

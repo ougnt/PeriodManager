@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">นับวันตกไข่</string>
+    <string name="menstrual_day_button_caption">วันนี้เป็นประจำเดือน</string>
+    <string name="not_menstrual_day_button_caption">วันนี้ไม่เป็นประจำเดือน</string>
+    <string name="edit_comment_button_caption">แก้ไข บันทึกช่วยจำ</string>
+    <string name="comment_edit_text_hint">กดปุ่มเพื่อแก้ไขบันทึกช่วยจำ</string>
+</resources>
