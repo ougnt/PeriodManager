@@ -24,6 +24,7 @@ public class InitialActivity extends Activity {
 
     final int EditComment = 1;
     final int DisplayHelp = 2;
+    final int DisplayMenu = 4;
 
     public InitialActivity(){
         dateTouchListener = null;
@@ -147,6 +148,12 @@ public class InitialActivity extends Activity {
         startActivityForResult(intent, DisplayHelp);
     }
 
+    public void hamburgerMenuClick(View view) {
+
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivityForResult(intent, DisplayMenu);
+    }
+
     public void commentSave(View view) {
         // save
         if(selectedDate == null) {return;}
@@ -204,6 +211,16 @@ public class InitialActivity extends Activity {
             case EditComment : { saveComment(data); break; }
             case DisplayHelp : {
                 HelpIndicatorRepository.setIndicator(this, data.getIntExtra("INDICATOR",1));
+                break;
+            }
+            case DisplayMenu : {
+                int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
+                switch (selectedMenu) {
+                    case MenuActivity.SelectDisplayHelp : {
+                        initialHelpActivity(null);
+                        break;
+                    }
+                }
                 break;
             }
         }
