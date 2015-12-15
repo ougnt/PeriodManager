@@ -12,10 +12,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.*;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
-import com.ougnt.period_manager.repository.DatabaseRepositoryHelper;
-import com.ougnt.period_manager.repository.DateRepository;
-import com.ougnt.period_manager.repository.FetchingButton;
-import com.ougnt.period_manager.repository.HelpIndicatorRepository;
+import com.ougnt.period_manager.repository.*;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -25,6 +22,9 @@ public class InitialActivity extends Activity {
     final int EditComment = 1;
     final int DisplayHelp = 2;
     final int DisplayMenu = 4;
+    final int DisplaySetting = 8;
+
+    SettingRepository setting;
 
     public InitialActivity(){
         dateTouchListener = null;
@@ -120,6 +120,8 @@ public class InitialActivity extends Activity {
             }
         });
 
+        setting = SettingRepository.getSettingRepository(this);
+
         Handler h = new Handler();
         h.postDelayed(new Runnable() {
 
@@ -129,6 +131,18 @@ public class InitialActivity extends Activity {
                 scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
                 today.onTouchFormat();
+
+                if(setting.isFirstTime) {
+                    setting.isFirstTime = false;
+                    setting.saveSetting(getBaseContext());
+                    Intent settingIntent = new Intent(getBaseContext(), SettingActivity.class);
+                    settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
+                    settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
+                    settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
+                    settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
+                    settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
+                    startActivityForResult(settingIntent, DisplaySetting);
+                }
 
                 int indicatorValue = HelpIndicatorRepository.getIndicator(getBaseContext());
 
@@ -185,10 +199,10 @@ public class InitialActivity extends Activity {
 
             ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
             DateTime dateToBePainted = ((DateMeter)(v.getChildAt(index))).getDate();
-            paintDateMeter(dateToBePainted, dateToBePainted.plusDays(6), DateMeter.Menstrual);
-            paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays(20), DateMeter.Ovulation);
-            paintDateMeter(dateToBePainted.plusDays(21), dateToBePainted.plusDays(27), DateMeter.Nothing);
-            paintDateMeter(dateToBePainted.plusDays(28), dateToBePainted.plusDays(28), DateMeter.Menstrual);
+            paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int)setting.periodLength - 1), DateMeter.Menstrual);
+            paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int)setting.periodCycle - 7), DateMeter.Ovulation);
+            paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 7), dateToBePainted.plusDays((int)setting.periodCycle - 1), DateMeter.Nothing);
+            paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle), dateToBePainted.plusDays((int)setting.periodCycle), DateMeter.Menstrual);
             newType = DateMeter.Menstrual;
         } else if(srcView.getId() == R.id.makeSafeZoneButton) {
 
@@ -220,7 +234,38 @@ public class InitialActivity extends Activity {
                         initialHelpActivity(null);
                         break;
                     }
+                    case MenuActivity.SelectDisplaySetting : {
+
+                        Intent settingIntent = new Intent(this, SettingActivity.class);
+                        settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
+                        settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
+                        settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
+                        settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
+                        settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
+                        startActivityForResult(settingIntent, DisplaySetting);
+                    }
                 }
+                break;
+            }
+            case DisplaySetting: {
+
+                switch (data.getIntExtra(SettingActivity.ActionExtra, 0)) {
+
+                    case SettingActivity.SaveAction : {
+
+                        setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra,0f);
+                        setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
+                        setting.saveSetting(this);
+                        break;
+                    }
+                    case SettingActivity.CancelAction : {
+
+
+                        break;
+                    }
+                }
+
+
                 break;
             }
         }

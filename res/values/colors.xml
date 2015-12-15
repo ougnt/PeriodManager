@@ -10,4 +10,5 @@
     <color name="today_text_color">#EF7A54</color>
     <color name="transparent">#00000000</color>
     <color name="menu_bg">#EFEFEF</color>
+    <color name="edit_text_bg">#B0B0B0</color>
 </resources>

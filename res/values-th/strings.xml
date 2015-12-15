@@ -26,4 +26,9 @@
     <string name="help_do_not_show_this_in_the_future">แสดงวิธีใช้อีกครั้งหน้า</string>
     <string name="help_close_help">บันทึกและปิด</string>
     <string name="menu_title">เมนู</string>
+    <string name="setting_period_cycle">ระยะห่างระหว่างรอบเดือน​ (วัน)</string>
+    <string name="menu_setting">ตั้งค่า</string>
+    <string name="setting_period_length">ระยะเวลาในการเป็นเมนส์ (วัน)</string>
+    <string name="setting_cancel_button">ยกเลิก</string>
+    <string name="setting_ok_button">ตกลง</string>
 </resources>
