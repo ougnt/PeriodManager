@@ -363,6 +363,8 @@ public class InitialActivity extends Activity {
         Cursor c = new DatabaseRepositoryHelper(this).getReadableDatabase().rawQuery("SELECT * FROM DATE_REPOSITORY WHERE date = '2015-11-15'",  null);
         c.moveToFirst();
 
+        // to setting up the DateMeter's color
+        new DateMeter(this, DateTime.now(), 0, null, null, 0);
 
         if(isRight) {
             for (int i = 0; i < dates.size(); i++) {
