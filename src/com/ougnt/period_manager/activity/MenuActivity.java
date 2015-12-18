@@ -1,4 +1,4 @@
-package com.ougnt.period_manager;
+package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.ougnt.period_manager.*;
 
 /**
  * * # Created by wacharint on 12/13/15.

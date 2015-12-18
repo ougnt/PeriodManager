@@ -1,4 +1,4 @@
-package com.ougnt.period_manager;
+package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import com.ougnt.period_manager.repository.HelpIndicatorRepository;
+import com.ougnt.period_manager.*;
 
 /**
  * * # Created by wacharint on 12/11/15.

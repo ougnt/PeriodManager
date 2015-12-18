@@ -18,15 +18,15 @@ import org.w3c.dom.Text;
  */
 public class DateMeter extends LinearLayout {
 
-    static final int Menstrual = 0x01;
-    static final int Ovulation = 0x02;
-    static final int Nothing = 0x00;
+    public static final int Menstrual = 0x01;
+    public static final int Ovulation = 0x02;
+    public static final int Nothing = 0x00;
 
-    static int MenstrualColor = Color.RED;
-    static int OvulationColor = Color.GREEN;
-    static int SafeZoneColor = Color.CYAN;
-    static int OnSelectColor = Color.BLUE;
-    static int TextColor = Color.BLACK;
+    public static int MenstrualColor = Color.RED;
+    public static int OvulationColor = Color.GREEN;
+    public static int SafeZoneColor = Color.CYAN;
+    public static int OnSelectColor = Color.BLUE;
+    public static int TextColor = Color.BLACK;
 
     static int IconWidth = 0;
 

@@ -1,4 +1,4 @@
-package com.ougnt.period_manager;
+package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import org.joda.time.DateTime;
+import com.ougnt.period_manager.*;
 
 /**
  * * # Created by wacharint on 11/28/15.

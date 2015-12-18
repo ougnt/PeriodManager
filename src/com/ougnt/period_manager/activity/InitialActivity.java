@@ -1,4 +1,4 @@
-package com.ougnt.period_manager;
+package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
 import android.content.Context;
@@ -11,8 +11,10 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.*;
+import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import com.ougnt.period_manager.repository.*;
+import com.ougnt.period_manager.*;
 import org.joda.time.DateTime;
 
 import java.util.List;
