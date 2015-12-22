@@ -17,5 +17,6 @@
     <activity android:name=".activity.HelpActivity"/>
     <activity android:name=".activity.MenuActivity" android:theme="@style/Theme.Transparent"/>
     <activity android:name=".activity.SettingActivity"/>
+    <activity android:name=".activity.CalendarActivity"/>
     </application>
 </manifest>

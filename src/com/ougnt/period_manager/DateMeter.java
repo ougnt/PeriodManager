@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.text.Layout;
 import android.view.*;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -70,6 +71,13 @@ public class DateMeter extends LinearLayout {
             @Override
             public void onClick(View v) {
                 onTouchFormat();
+            }
+        });
+
+        setOnLongClickListener(new OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
             }
         });
     }
@@ -152,7 +160,7 @@ public class DateMeter extends LinearLayout {
 
     private LinearLayout formatIconLayout(LinearLayout layout) {
 
-        LinearLayout.LayoutParams retParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 0.3f);
+        LinearLayout.LayoutParams retParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         layout.setWeightSum(1);
         layout.setLayoutParams(retParams);
         layout.setOrientation(LinearLayout.HORIZONTAL);
@@ -177,12 +185,10 @@ public class DateMeter extends LinearLayout {
             _menstrualIcon.setVisibility(INVISIBLE);
             _menstrualIcon.setLayoutParams(invisibleParams);
         }
-        layout.addView(_menstrualIcon);
 
         _ovulationIcon = new ImageView(getContext());
         _ovulationIcon.setImageResource(R.drawable.ovulation_icon);
         _ovulationIcon.setLayoutParams(visibleParams);
-        layout.addView(_ovulationIcon);
 
         _nonOvulationIcon = new ImageView(getContext());
         _nonOvulationIcon.setImageResource(R.drawable.non_ovulation_icon);
@@ -198,7 +204,29 @@ public class DateMeter extends LinearLayout {
             _ovulationIcon.setVisibility(INVISIBLE);
             _ovulationIcon.setLayoutParams(invisibleParams);
         }
-        layout.addView(_nonOvulationIcon);
+
+        LinearLayout iconPart = new LinearLayout(layout.getContext());
+        LinearLayout checkboxPart = new LinearLayout(layout.getContext());
+
+        LayoutParams iconParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 0.8f);
+        LayoutParams checkboxParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 0.2f);
+        iconPart.setLayoutParams(iconParams);
+        checkboxPart.setLayoutParams(checkboxParams);
+
+        iconPart.addView(_menstrualIcon);
+        iconPart.addView(_ovulationIcon);
+        iconPart.addView(_nonOvulationIcon);
+
+        checkboxPart.setGravity(Gravity.BOTTOM| Gravity.RIGHT);
+        _editCheckBox = new CheckBox(layout.getContext());
+
+        // TODO : Add action to this checkbox
+        _editCheckBox.setVisibility(GONE);
+
+        checkboxPart.addView(_editCheckBox);
+
+        layout.addView(iconPart);
+        layout.addView(checkboxPart);
 
         return layout;
     }
@@ -258,7 +286,7 @@ public class DateMeter extends LinearLayout {
         return retLayout;
     }
 
-    private TextView generateDayText(DateTime date) {
+    private TextView generateDayText(DateTime date)     {
 
         TextView returnText = new TextView(this.getContext());
         String day = date.getDayOfMonth() + "";
@@ -378,6 +406,7 @@ public class DateMeter extends LinearLayout {
     private ImageView _menstrualIcon;
     private ImageView _ovulationIcon;
     private ImageView _nonOvulationIcon;
+    private CheckBox _editCheckBox;
 
     private int dateType = 0;
 

@@ -17,12 +17,12 @@
     <string name="help_3">This icon means it is not a ovulation day</string>
     <string name="help_4">This icon means it is a ovulation day</string>
     <string name="help_select_date">Select your first day of you previous period</string>
-    <string name="help_push_menstrual_button">Push the "Menstrual Day" Button</string>
+    <string name="help_push_menstrual_button">Push the "Period Start" Button</string>
     <string name="help_prediction">The system will estimate the ovulation days</string>
     <string name="help_seek">Scroll the calendar to seek for the ovulation/non-ovulation days</string>
     <string name="help_help">Click this icon to show this usage</string>
     <string name="help_de_menstrual">Select a day with period icon</string>
-    <string name="help_de_menstrual2">Then click "Not Menstrual Day" button, it will become a non ovulation day</string>
+    <string name="help_de_menstrual2">Then click "Period End" button, it will become a non ovulation day</string>
     <string name="help_do_not_show_this_in_the_future">Show this again next time</string>
     <string name="help_close_help">Save and Close</string>
     <string name="menu_title">Menu</string>
@@ -31,4 +31,9 @@
     <string name="setting_period_length">Period length (days)</string>
     <string name="setting_cancel_button">Cancel</string>
     <string name="setting_ok_button">Ok</string>
+    <string name="setting_calendar_type">Calendar Type</string>
+    <string name="setting_calendar_type_day">Day</string>
+    <string name="setting_calendar_type_month">Month</string>
+    <string name="not_menstrual_day_button_caption">Period End</string>
+    <string name="menstrual_day_button_caption">Period Start</string>
 </resources>

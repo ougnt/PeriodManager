@@ -6,10 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.*;
 import android.widget.*;
 import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
@@ -143,6 +140,7 @@ public class InitialActivity extends Activity {
                     settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
                     settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
                     settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
+                    settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
                     startActivityForResult(settingIntent, DisplaySetting);
                 }
 
@@ -244,6 +242,7 @@ public class InitialActivity extends Activity {
                         settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
                         settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
                         settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
+                        settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
                         startActivityForResult(settingIntent, DisplaySetting);
                     }
                 }
@@ -255,9 +254,25 @@ public class InitialActivity extends Activity {
 
                     case SettingActivity.SaveAction : {
 
-                        setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra,0f);
+                        setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra, 0f);
                         setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
+                        setting.flag = data.getIntExtra(SettingActivity.FlagExtra, 0);
                         setting.saveSetting(this);
+
+                        LinearLayout.LayoutParams visibleParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0.9f);
+                        LinearLayout.LayoutParams hideParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0);
+
+                        View dayView = findViewById(R.id.day_view);
+
+                        if((setting.flag & SettingRepository.FlagCalendarMonthView) != 0 ) {
+
+                            // TODO : swap to month view
+                            dayView.setVisibility(View.GONE);
+                        } else {
+
+                            // TODO : swap to day view
+                            dayView.setVisibility(View.VISIBLE);
+                        }
                         break;
                     }
                     case SettingActivity.CancelAction : {

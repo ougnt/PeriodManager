@@ -17,12 +17,12 @@
     <string name="help_3">ไอค่อนนี้ แปลว่า วันนี้เป็นวันที่ ไม่มี การตกไข่</string>
     <string name="help_4">ไอค่อนนี้ แปลว่า วันนี้เป็นวันที่ มี การตกไข่</string>
     <string name="help_select_date">เลือกวันแรกที่เป็นประจำเดือน ของรอบเดือนที่ผ่านมา</string>
-    <string name="help_push_menstrual_button">กดปุ่ม วันนี้เป็นประจำเดือน</string>
+    <string name="help_push_menstrual_button">กดปุ่ม เริ่มเป็นประจำเดือน</string>
     <string name="help_prediction">ระบบจะคาดการณ์ วันตกไข่ถัดไป</string>
     <string name="help_seek">เลื่อนปฎิทิน เพื่อหาวันที่มีการตกไข่/วันที่ไม่มีการตกไข่</string>
     <string name="help_help">คลิ๊กที่ ไอค่อนนี้ เพื่อแสดงวิธีใช้</string>
     <string name="help_de_menstrual">เลือกวันที่เป็นประจำเดือน</string>
-    <string name="help_de_menstrual2">จากนั้นกดปุ่ม "วันนี้ไม่เป็นประจำเดือน", วันนั้นจะกลายเป็นวันที่ไม่เป็นประจำเดือน</string>
+    <string name="help_de_menstrual2">จากนั้นกดปุ่ม "หยุดเป็นประจำเดือน", วันนั้นจะกลายเป็นวันที่ไม่เป็นประจำเดือน</string>
     <string name="help_do_not_show_this_in_the_future">แสดงวิธีใช้อีกครั้งหน้า</string>
     <string name="help_close_help">บันทึกและปิด</string>
     <string name="menu_title">เมนู</string>
@@ -31,4 +31,7 @@
     <string name="setting_period_length">ระยะเวลาในการเป็นเมนส์ (วัน)</string>
     <string name="setting_cancel_button">ยกเลิก</string>
     <string name="setting_ok_button">ตกลง</string>
+    <string name="setting_calendar_type">รูปแบบปฏิทิน</string>
+    <string name="setting_calendar_type_day">แบบวัน</string>
+    <string name="setting_calendar_type_month">แบบเดือน</string>
 </resources>

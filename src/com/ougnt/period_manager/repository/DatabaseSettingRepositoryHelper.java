@@ -16,14 +16,17 @@ public class DatabaseSettingRepositoryHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String createdQuery = "CREATE TABLE setting (period_cycle FLOAT, period_length FLOAT, average_cycle FLOAT, average_length FLOAT, data_count INTEGER, is_first_time INTEGER)";
+        String createdQuery = "CREATE TABLE setting (period_cycle FLOAT, period_length FLOAT, average_cycle FLOAT, average_length FLOAT, data_count INTEGER, is_first_time INTEGER, flag INTEGER)";
         db.execSQL(createdQuery);
-        String insertQuery = "INSERT INTO setting VALUES (28,7,28,7,1,1)";
+        String insertQuery = "INSERT INTO setting VALUES (28,7,28,7,1,1,0)";
         db.execSQL(insertQuery);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // DO NOTHING
+        if(oldVersion == 1) {
+            String alterTable = "ALTER TABLE setting ADD COLUMN flag INTEGER";
+            db.execSQL(alterTable);
+        }
     }
 }

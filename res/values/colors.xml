@@ -11,4 +11,5 @@
     <color name="transparent">#00000000</color>
     <color name="menu_bg">#EFEFEF</color>
     <color name="edit_text_bg">#B0B0B0</color>
+    <color name="calendar_bg">#FCF3DE</color>
 </resources>
