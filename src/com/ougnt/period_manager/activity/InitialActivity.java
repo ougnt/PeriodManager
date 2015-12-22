@@ -204,6 +204,14 @@ public class InitialActivity extends Activity {
             paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 7), dateToBePainted.plusDays((int)setting.periodCycle - 1), DateMeter.Nothing);
             paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle), dateToBePainted.plusDays((int)setting.periodCycle), DateMeter.Menstrual);
             newType = DateMeter.Menstrual;
+
+            Intent summaryIntent = new Intent(this, SummaryActivity.class);
+            summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int)setting.periodCycle - 1).toString("yyyy-MMM-dd"));
+            summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int)setting.periodCycle + 1).toString("yyyy-MMM-dd"));
+            summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(7).toString("yyyy-MMM-dd"));
+            summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int)setting.periodCycle - 7).toString("yyyy-MMM-dd"));
+            startActivity(summaryIntent);
+
         } else if(srcView.getId() == R.id.makeSafeZoneButton) {
 
             ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);

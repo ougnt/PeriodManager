@@ -34,4 +34,7 @@
     <string name="setting_calendar_type">รูปแบบปฏิทิน</string>
     <string name="setting_calendar_type_day">แบบวัน</string>
     <string name="setting_calendar_type_month">แบบเดือน</string>
+    <string name="summary_close">ปิด</string>
+    <string name="summary_menstrual_period">คาดการณ์วันเป็นประจำเดือน</string>
+    <string name="summary_ovulation_period">คาดการณ์วันตกไข่</string>
 </resources>
