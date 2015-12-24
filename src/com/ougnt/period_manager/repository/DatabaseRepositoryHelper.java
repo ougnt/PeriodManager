@@ -13,8 +13,10 @@ import java.util.LinkedList;
  */
 public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
 
+    static final int CurrentVersion = 2;
+
     public DatabaseRepositoryHelper(Context context) {
-        super(context, "period_manager_core.db", null, 1);
+        super(context, "period_manager_core.db", null, CurrentVersion);
         this.context = context;
     }
 
@@ -23,7 +25,7 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String creationString = "CREATE TABLE DATE_REPOSITORY (date DATE PRIMARY KEY, date_type INTEGER, comment VARCHAR DEFAULT '')";
+        String creationString = "CREATE TABLE IF NOT EXISTS DATE_REPOSITORY (date DATE PRIMARY KEY, date_type INTEGER, comment VARCHAR DEFAULT '')";
 
         db.execSQL(creationString);
 
@@ -48,16 +50,19 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
         insertString = insertString.replace(", %s", "");
 
         db.execSQL(insertString);
+
+        String summaryQuery = "CREATE TABLE summary (exp_menstrual_from DATE, exp_menstrual_to DATE, exp_ovulation_from DATE, exp_ovulation_to DATE)";
+        db.execSQL(summaryQuery);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        String DROP_TABLE = "DROP TABLE IF EXISTS DATE_REPOSITORY";
+        if(oldVersion <= 1) {
 
-        db.execSQL(DROP_TABLE);
-
-        onCreate(db);
+            String summaryQuery = "CREATE TABLE summary (exp_menstrual_from DATE, exp_menstrual_to DATE, exp_ovulation_from DATE, exp_ovulation_to DATE)";
+            db.execSQL(summaryQuery);
+        }
 
     }
 }

@@ -37,6 +37,9 @@
     <string name="not_menstrual_day_button_caption">Period End</string>
     <string name="menstrual_day_button_caption">Period Start</string>
     <string name="summary_close">Close</string>
-    <string name="summary_menstrual_period">Estimated Menstrual Period</string>
-    <string name="summary_ovulation_period">Estimated Ovulation Period</string>
+    <string name="summary_menstrual_period_from">Estimated Menstrual Period From</string>
+    <string name="summary_menstrual_period_to">To</string>
+    <string name="summary_ovulation_period_from">Estimated Ovulation Period From</string>
+    <string name="summary_ovulation_period_to">To</string>
+    <string name="menu_summary">Summary</string>
 </resources>

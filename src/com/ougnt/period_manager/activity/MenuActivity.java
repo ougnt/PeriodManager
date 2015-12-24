@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.ougnt.period_manager.*;
+import com.ougnt.period_manager.repository.SummaryRepository;
 
 /**
  * * # Created by wacharint on 12/13/15.
@@ -18,6 +19,7 @@ public class MenuActivity extends Activity {
     public static final int SelectNothing = 0;
     public static final int SelectDisplayHelp = 1;
     public static final int SelectDisplaySetting = 2;
+    public static final int SelectSummary = 4;
     public static final String SelectedMenuExtra = "SELECTED_MENU";
 
     @Override
@@ -50,6 +52,9 @@ public class MenuActivity extends Activity {
             }
         });
 
+        TextView summary = (TextView)findViewById(R.id.summary_menu);
+        summary.setOnClickListener(new ShowSummary());
+
         LinearLayout close1 = (LinearLayout)findViewById(R.id.close1);
         LinearLayout close2 = (LinearLayout)findViewById(R.id.close2);
         close1.setOnClickListener(new CloseActivity());
@@ -71,6 +76,17 @@ public class MenuActivity extends Activity {
         public void onClick(View v) {
             Intent retIntent = new Intent();
             retIntent.putExtra(SelectedMenuExtra, SelectNothing);
+            setResult(RESULT_OK, retIntent);
+            finish();
+        }
+    }
+
+    private class ShowSummary implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            Intent retIntent = new Intent();
+            retIntent.putExtra(SelectedMenuExtra, SelectSummary);
             setResult(RESULT_OK, retIntent);
             finish();
         }
