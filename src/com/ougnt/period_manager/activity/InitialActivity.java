@@ -238,72 +238,12 @@ public class InitialActivity extends Activity {
                 break;
             }
             case DisplayMenu : {
-                int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
-                switch (selectedMenu) {
-                    case MenuActivity.SelectDisplayHelp : {
-                        initialHelpActivity(null);
-                        break;
-                    }
-                    case MenuActivity.SelectSummary: {
-                        SummaryRepository summary = SummaryRepository.getSummary(this);
-                        Intent summaryIntent = new Intent(this, SummaryActivity.class);
-                        summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, summary.expectedMenstrualDateFrom.toString("yyyy-MM-dd"));
-                        summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, summary.expectedMenstrualDateTo.toString("yyyy-MM-dd"));
-                        summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, summary.expectedOvulationDateFrom.toString("yyyy-MM-dd"));
-                        summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, summary.expectedOvulationDateTo.toString("yyyy-MM-dd"));
-
-                        startActivityForResult(summaryIntent, DisplaySummary);
-                        break;
-                    }
-                    case MenuActivity.SelectDisplaySetting : {
-
-                        Intent settingIntent = new Intent(this, SettingActivity.class);
-                        settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
-                        settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
-                        settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
-                        settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
-                        settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
-                        settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
-                        startActivityForResult(settingIntent, DisplaySetting);
-                    }
-                }
+                onDisplayMenuResult(data);
                 break;
             }
             case DisplaySetting: {
 
-                switch (data.getIntExtra(SettingActivity.ActionExtra, 0)) {
-
-                    case SettingActivity.SaveAction : {
-
-                        setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra, 0f);
-                        setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
-                        setting.flag = data.getIntExtra(SettingActivity.FlagExtra, 0);
-                        setting.saveSetting(this);
-
-                        LinearLayout.LayoutParams visibleParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0.9f);
-                        LinearLayout.LayoutParams hideParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0);
-
-                        View dayView = findViewById(R.id.day_view);
-
-                        if((setting.flag & SettingRepository.FlagCalendarMonthView) != 0 ) {
-
-                            // TODO : swap to month view
-                            dayView.setVisibility(View.GONE);
-                        } else {
-
-                            // TODO : swap to day view
-                            dayView.setVisibility(View.VISIBLE);
-                        }
-                        break;
-                    }
-                    case SettingActivity.CancelAction : {
-
-
-                        break;
-                    }
-                }
-
-
+                onDisplaySettingResult(data);
                 break;
             }
             case DisplaySummary : {
@@ -316,6 +256,74 @@ public class InitialActivity extends Activity {
                 summary.expectedOvulationDateTo = (DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationToExtra).toString()));
 
                 summary.save(this);
+                break;
+            }
+        }
+    }
+
+    private void onDisplayMenuResult(Intent data) {
+        int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
+        switch (selectedMenu) {
+            case MenuActivity.SelectDisplayHelp : {
+                initialHelpActivity(null);
+                break;
+            }
+            case MenuActivity.SelectSummary: {
+                SummaryRepository summary = SummaryRepository.getSummary(this);
+                if(summary != null) {
+                    Intent summaryIntent = new Intent(this, SummaryActivity.class);
+                    summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, summary.expectedMenstrualDateFrom.toString("yyyy-MM-dd"));
+                    summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, summary.expectedMenstrualDateTo.toString("yyyy-MM-dd"));
+                    summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, summary.expectedOvulationDateFrom.toString("yyyy-MM-dd"));
+                    summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, summary.expectedOvulationDateTo.toString("yyyy-MM-dd"));
+
+                    startActivityForResult(summaryIntent, DisplaySummary);
+                }
+                break;
+            }
+            case MenuActivity.SelectDisplaySetting : {
+
+                Intent settingIntent = new Intent(this, SettingActivity.class);
+                settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
+                settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
+                settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
+                settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
+                settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
+                settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
+                startActivityForResult(settingIntent, DisplaySetting);
+            }
+        }
+    }
+
+    private void onDisplaySettingResult(Intent data) {
+        switch (data.getIntExtra(SettingActivity.ActionExtra, 0)) {
+
+            case SettingActivity.SaveAction : {
+
+                setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra, 0f);
+                setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
+                setting.flag = data.getIntExtra(SettingActivity.FlagExtra, 0);
+                setting.saveSetting(this);
+
+                LinearLayout.LayoutParams visibleParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0.9f);
+                LinearLayout.LayoutParams hideParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0);
+
+                View dayView = findViewById(R.id.day_view);
+
+                if((setting.flag & SettingRepository.FlagCalendarMonthView) != 0 ) {
+
+                    // TODO : swap to month view
+                    dayView.setVisibility(View.GONE);
+                } else {
+
+                    // TODO : swap to day view
+                    dayView.setVisibility(View.VISIBLE);
+                }
+                break;
+            }
+            case SettingActivity.CancelAction : {
+
+
                 break;
             }
         }
