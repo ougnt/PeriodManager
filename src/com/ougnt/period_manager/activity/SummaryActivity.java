@@ -59,4 +59,9 @@ public class SummaryActivity extends Activity {
         setResult(RESULT_OK, retIntent);
         finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        close(null);
+    }
 }

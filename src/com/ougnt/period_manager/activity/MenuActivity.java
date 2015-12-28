@@ -54,6 +54,10 @@ public class MenuActivity extends Activity {
 
         TextView summary = (TextView)findViewById(R.id.summary_menu);
         summary.setOnClickListener(new ShowSummary());
+//        if(SummaryRepository.getSummary(getBaseContext()) == null) {
+//
+//            summary.setEnabled(false);
+//        }
 
         LinearLayout close1 = (LinearLayout)findViewById(R.id.close1);
         LinearLayout close2 = (LinearLayout)findViewById(R.id.close2);
