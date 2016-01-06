@@ -35,9 +35,9 @@
     <string name="setting_calendar_type_day">แบบวัน</string>
     <string name="setting_calendar_type_month">แบบเดือน</string>
     <string name="summary_close">ปิด</string>
-    <string name="summary_menstrual_period_from">คาดการณ์ประจำเดือนครั้งหน้าประมาณวันที่</string>
+    <string name="summary_menstrual_period_from">คาดการณ์ประจำเดือน ครั้งหน้าประมาณวันที่</string>
     <string name="summary_menstrual_period_to">ถึงวันที่</string>
-    <string name="summary_ovulation_period_from">คาดการณ์วันตกไข่ครั้งหน้าประมาณวันที่</string>
+    <string name="summary_ovulation_period_from">คาดการณ์วันตกไข่ ครั้งหน้าประมาณวันที่</string>
     <string name="summary_ovulation_period_to">ถึงวันที่</string>
     <string name="menu_summary">ภาพรวม</string>
 </resources>
