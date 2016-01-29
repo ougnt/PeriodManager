@@ -39,5 +39,6 @@
     <string name="summary_menstrual_period_to">ถึงวันที่</string>
     <string name="summary_ovulation_period_from">คาดการณ์วันตกไข่ ครั้งหน้าประมาณวันที่</string>
     <string name="summary_ovulation_period_to">ถึงวันที่</string>
-    <string name="menu_summary">ภาพรวม</string>
+    <string name="menu_summary">สรุป</string>
+    <string name="menu_month_view">แสดงแบบเดือน</string>
 </resources>

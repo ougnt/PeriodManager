@@ -42,4 +42,5 @@
     <string name="summary_ovulation_period_from">Estimated Ovulation Period From</string>
     <string name="summary_ovulation_period_to">To</string>
     <string name="menu_summary">Summary</string>
+    <string name="menu_month_view">Month View</string>
 </resources>

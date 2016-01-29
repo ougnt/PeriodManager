@@ -88,7 +88,7 @@ public class DateMeter extends LinearLayout {
 
     public boolean isMenstrual() {
 
-        return (dateType & Menstrual) == Menstrual;
+            return (dateType & Menstrual) == Menstrual;
     }
 
     public boolean isOvulation() {
@@ -220,7 +220,7 @@ public class DateMeter extends LinearLayout {
         checkboxPart.setGravity(Gravity.BOTTOM| Gravity.RIGHT);
         _editCheckBox = new CheckBox(layout.getContext());
 
-        // TODO : Add action to this checkbox
+        // TODO : Add action to this check b
         _editCheckBox.setVisibility(GONE);
 
         checkboxPart.addView(_editCheckBox);

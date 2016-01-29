@@ -10,6 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.ougnt.period_manager.*;
 import com.ougnt.period_manager.repository.SummaryRepository;
+import org.w3c.dom.Text;
 
 /**
  * * # Created by wacharint on 12/13/15.
@@ -20,6 +21,7 @@ public class MenuActivity extends Activity {
     public static final int SelectDisplayHelp = 1;
     public static final int SelectDisplaySetting = 2;
     public static final int SelectSummary = 4;
+    public static final int SelectMonthView = 8;
     public static final String SelectedMenuExtra = "SELECTED_MENU";
 
     @Override
@@ -54,10 +56,9 @@ public class MenuActivity extends Activity {
 
         TextView summary = (TextView)findViewById(R.id.summary_menu);
         summary.setOnClickListener(new ShowSummary());
-//        if(SummaryRepository.getSummary(getBaseContext()) == null) {
-//
-//            summary.setEnabled(false);
-//        }
+
+        TextView monthView = (TextView)findViewById(R.id.month_view_menu);
+        monthView.setOnClickListener(new ShowMonthView());
 
         LinearLayout close1 = (LinearLayout)findViewById(R.id.close1);
         LinearLayout close2 = (LinearLayout)findViewById(R.id.close2);
@@ -91,6 +92,17 @@ public class MenuActivity extends Activity {
         public void onClick(View v) {
             Intent retIntent = new Intent();
             retIntent.putExtra(SelectedMenuExtra, SelectSummary);
+            setResult(RESULT_OK, retIntent);
+            finish();
+        }
+    }
+
+    private class ShowMonthView implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            Intent retIntent = new Intent();
+            retIntent.putExtra(SelectedMenuExtra, SelectMonthView);
             setResult(RESULT_OK, retIntent);
             finish();
         }

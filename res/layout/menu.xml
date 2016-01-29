@@ -35,6 +35,10 @@
                       android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/menu_summary"
                       android:id="@+id/summary_menu" android:textColor="@color/text_color"
                       android:background="@color/menu_bg" android:layout_margin="2dp" android:gravity="center"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/menu_month_view"
+                      android:id="@+id/month_view_menu" android:textColor="@color/text_color"
+                      android:background="@color/menu_bg" android:layout_margin="2dp" android:gravity="center"/>
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

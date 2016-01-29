@@ -291,6 +291,15 @@ public class InitialActivity extends Activity {
                 settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
                 settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
                 startActivityForResult(settingIntent, DisplaySetting);
+                break;
+            }
+            case MenuActivity.SelectMonthView : {
+
+                Intent monthViewIntent = new Intent(this, MonthViewActivity.class);
+                monthViewIntent.putExtra(MonthViewActivity.MonthExtra, selectedDate.getMonthOfYear());
+                monthViewIntent.putExtra(MonthViewActivity.YearExtra, selectedDate.getYear());
+
+                startActivity(monthViewIntent);
             }
         }
     }

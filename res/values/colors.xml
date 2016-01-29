@@ -7,6 +7,9 @@
     <color name="ovulation_zone_bg">#A1FF97</color>
     <color name="on_select_zone_bg">#8989FF</color>
     <color name="text_color">#7F7F7F</color>
+    <color name="calendar_other_month_text">#CDCDCD</color>
+    <color name="calendar_ovulation_text">#63C769</color>
+    <color name="calendar_period_text">#FF0060</color>
     <color name="today_text_color">#EF7A54</color>
     <color name="transparent">#00000000</color>
     <color name="menu_bg">#EFEFEF</color>
