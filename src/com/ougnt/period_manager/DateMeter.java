@@ -1,6 +1,7 @@
 package com.ougnt.period_manager;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Point;
@@ -10,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.ougnt.period_manager.activity.InitialActivity;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import org.joda.time.DateTime;
 import org.w3c.dom.Text;
@@ -69,9 +71,7 @@ public class DateMeter extends LinearLayout {
 
         setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                onTouchFormat();
-            }
+            public void onClick(View v) { onTouchFormat(); }
         });
 
         setOnLongClickListener(new OnLongClickListener() {

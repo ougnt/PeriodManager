@@ -3,7 +3,9 @@ package com.ougnt.period_manager.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.*;
@@ -15,6 +17,7 @@ import com.ougnt.period_manager.*;
 import org.joda.time.DateTime;
 
 import java.util.List;
+import java.util.UUID;
 
 public class InitialActivity extends Activity {
 
@@ -23,6 +26,29 @@ public class InitialActivity extends Activity {
     final int DisplayMenu = 0x04;
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
+
+    public static final String PName = "period_manager_preference";
+    public static final String PUuid = "period_manager_preference_uuid";
+    public static final String PUsageCounter = "period_manager_preference_usage_counter";
+    public static final String PTimeOfUsageBeforeReview = "period_manager_preference_time_of_usage_before_review";
+    public static final String PPeriodButtonUsageCounter = "period_manager_preference_period_button_usage_counter";
+    public static final String PNonPeriodButtonUsageCounter = "period_manager_preference_non_period_button_usage_counter";
+    public static final String PCommentButtonUsageCounter = "period_manager_preference_comment_button_usage_counter";
+    public static final String PCommentTextUsageCounter = "period_manager_preference_comment_text_usage_counter";
+    public static final String PMenuButtonUsageCounter = "period_manager_preference_menu_button_usage_counter";
+    public static final String PCurrentVersion = "period_manager_preference_current_version";
+
+    public static final String PReviewNow =  "period_manager_preference_review_now";
+    public static final String PReviewLater =  "period_manager_preference_review_later";
+    public static final String PNoReview =  "period_manager_preference_review_non";
+
+    public static final String PFetchNextMonthUsageCounter = "period_manager_preference_fetch_next_usage_counter";
+    public static final String PFetchPreviousMonthUsageCounter = "period_manager_preference_fetch_previous_usage_counter";
+
+    public static final String PMenuSettingClickCounter = "period_manager_preference_menu_setting_click_counter";
+    public static final String PMenuSummaryClickCounter = "period_manager_preference_menu_summary_click_counter";
+    public static final String PMenuMonthViewClickCounter = "period_manager_preference_menu_month_view_click_counter";
+    public static final String PMenuHelpClickCounter = "period_manager_preference_menu_help_click_counter";
 
     SettingRepository setting;
 
@@ -36,6 +62,12 @@ public class InitialActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        initUsageToReview();
+        setApplicationVersion();
+        setDeviceId();
+        addUsageCounter(PUsageCounter);
+
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.main);
@@ -157,77 +189,6 @@ public class InitialActivity extends Activity {
         }, 250);
     }
 
-    public void initialHelpActivity(View view) {
-        Intent intent = new Intent(this, HelpActivity.class);
-        intent.putExtra("INDICATOR", HelpIndicatorRepository.getIndicator(getBaseContext()));
-        startActivityForResult(intent, DisplayHelp);
-    }
-
-    public void hamburgerMenuClick(View view) {
-
-        Intent intent = new Intent(this, MenuActivity.class);
-        startActivityForResult(intent, DisplayMenu);
-    }
-
-    public void commentSave(View view) {
-        // save
-        if(selectedDate == null) {return;}
-        EditText commentText = (EditText)findViewById(R.id.notation_text);
-        Intent commentIntent = new Intent(this, CommentActivity.class);
-        commentIntent.putExtra("Date", selectedDate.toString("yyyy-MM-dd"));
-        commentIntent.putExtra("Comment", commentText.getText().toString());
-        startActivityForResult(commentIntent, EditComment);
-    }
-
-    public void buttonClickHandler(View srcView) {
-
-        if(selectedDate == null) {return;}
-
-        int index = 0;
-        int newType = 0;
-
-        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
-        for(int i = 1 ; i < v.getChildCount(); i++) {
-
-            if(((DateMeter)v.getChildAt(i)).getDate() == selectedDate) {
-
-                index = i;
-                break;
-            }
-        }
-
-        if(srcView.getId() == R.id.makePeriodButton) {
-
-            ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
-            DateTime dateToBePainted = ((DateMeter)(v.getChildAt(index))).getDate();
-            paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int)setting.periodLength - 1), DateMeter.Menstrual);
-            paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int)setting.periodCycle - 7), DateMeter.Ovulation);
-            paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 7), dateToBePainted.plusDays((int)setting.periodCycle - 1), DateMeter.Nothing);
-            paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 1), dateToBePainted.plusDays((int)setting.periodCycle + 1), DateMeter.Menstrual);
-            newType = DateMeter.Menstrual;
-
-            Intent summaryIntent = new Intent(this, SummaryActivity.class);
-            summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int)setting.periodCycle - 1).toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int)setting.periodCycle + 1).toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int)setting.periodCycle - 8).toString("yyyy-MM-dd"));
-
-            startActivityForResult(summaryIntent, DisplaySummary);
-
-        } else if(srcView.getId() == R.id.makeSafeZoneButton) {
-
-            ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
-            newType = DateMeter.Nothing;
-        } else {return;}
-
-        DateRepository.updateDateRepository(this, ((DateMeter)(v.getChildAt(index))).getDate(), newType);
-
-    }
-
-    public void setOnDateMeterTouchEventListener(OnDateMeterTouchEventListener listener) {
-        dateTouchListener = listener;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -261,14 +222,185 @@ public class InitialActivity extends Activity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+//        edit.putInt(PUsageCounter,2);
+//        edit.commit();
+        if(getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview)) {
+
+            setContentView(R.layout.review);
+
+            Button reviewNowButton = (Button)findViewById(R.id.review_open);
+            Button laterButton = (Button)findViewById(R.id.review_later);
+            Button noShowButton = (Button)findViewById(R.id.review_no_show);
+
+            reviewNowButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    addUsageCounter(PReviewNow);
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
+                    finish();
+                }
+            });
+
+            laterButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    addUsageCounter(PReviewLater);
+                    edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview,0) + 2);
+                    edit.commit();
+                    finish();
+                }
+            });
+
+            noShowButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    addUsageCounter(PNoReview);
+                    edit.putInt(PTimeOfUsageBeforeReview,-1);
+                    edit.commit();
+                    finish();
+                }
+            });
+
+        } else {
+            finish();
+        }
+    }
+
+    public void initialHelpActivity(View view) {
+        Intent intent = new Intent(this, HelpActivity.class);
+        intent.putExtra("INDICATOR", HelpIndicatorRepository.getIndicator(getBaseContext()));
+        startActivityForResult(intent, DisplayHelp);
+    }
+
+    public void hamburgerMenuClick(View view) {
+
+        addUsageCounter(PMenuButtonUsageCounter);
+        Intent intent = new Intent(this, MenuActivity.class);
+        startActivityForResult(intent, DisplayMenu);
+    }
+
+    public void commentSave(View view) {
+        // save
+        if(selectedDate == null) {return;}
+
+        if(view.getId() == R.id.comment_button) {
+            addUsageCounter(PCommentButtonUsageCounter);
+        } else if(view.getId() == R.id.notation_text) {
+            addUsageCounter(PCommentTextUsageCounter);
+        }
+
+        EditText commentText = (EditText)findViewById(R.id.notation_text);
+        Intent commentIntent = new Intent(this, CommentActivity.class);
+        commentIntent.putExtra("Date", selectedDate.toString("yyyy-MM-dd"));
+        commentIntent.putExtra("Comment", commentText.getText().toString());
+        startActivityForResult(commentIntent, EditComment);
+    }
+
+    public void buttonClickHandler(View srcView) {
+
+        if(selectedDate == null) {return;}
+
+        int index = 0;
+        int newType = 0;
+
+        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        for(int i = 1 ; i < v.getChildCount(); i++) {
+
+            if(((DateMeter)v.getChildAt(i)).getDate() == selectedDate) {
+
+                index = i;
+                break;
+            }
+        }
+
+        if(srcView.getId() == R.id.makePeriodButton) {
+
+            addUsageCounter(PPeriodButtonUsageCounter);
+            ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
+            DateTime dateToBePainted = ((DateMeter)(v.getChildAt(index))).getDate();
+            paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int)setting.periodLength - 1), DateMeter.Menstrual);
+            paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int)setting.periodCycle - 7), DateMeter.Ovulation);
+            paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 7), dateToBePainted.plusDays((int)setting.periodCycle - 1), DateMeter.Nothing);
+            paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 1), dateToBePainted.plusDays((int)setting.periodCycle + 1), DateMeter.Menstrual);
+            newType = DateMeter.Menstrual;
+
+            Intent summaryIntent = new Intent(this, SummaryActivity.class);
+            summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int)setting.periodCycle - 1).toString("yyyy-MM-dd"));
+            summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int)setting.periodCycle + 1).toString("yyyy-MM-dd"));
+            summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
+            summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int)setting.periodCycle - 8).toString("yyyy-MM-dd"));
+
+            startActivityForResult(summaryIntent, DisplaySummary);
+
+        } else if(srcView.getId() == R.id.makeSafeZoneButton) {
+
+            addUsageCounter(PNonPeriodButtonUsageCounter);
+            ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
+            newType = DateMeter.Nothing;
+        } else {return;}
+
+        DateRepository.updateDateRepository(this, ((DateMeter)(v.getChildAt(index))).getDate(), newType);
+
+    }
+
+    public void setOnDateMeterTouchEventListener(OnDateMeterTouchEventListener listener) {
+        dateTouchListener = listener;
+    }
+
+    private void initUsageToReview() {
+
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 2));
+        edit.commit();
+    }
+
+    private void setDeviceId() {
+
+        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(PUuid, pref.getString(PUuid, UUID.randomUUID().toString()));
+        edit.commit();
+    }
+
+    private void setApplicationVersion(){
+
+        SharedPreferences pref = getSharedPreferences(PName,MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putInt(PCurrentVersion,23);
+    }
+
+    private void addUsageCounter(String key) {
+
+        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putInt(key, pref.getInt(key, 0) + 1);
+        edit.commit();
+    }
+
+    private int getUsageCounter(String key) {
+
+        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+        return pref.getInt(key, 0);
+    }
+
     private void onDisplayMenuResult(Intent data) {
         int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
         switch (selectedMenu) {
             case MenuActivity.SelectDisplayHelp : {
+                addUsageCounter(PMenuHelpClickCounter);
                 initialHelpActivity(null);
                 break;
             }
             case MenuActivity.SelectSummary: {
+                addUsageCounter(PMenuSummaryClickCounter);
                 SummaryRepository summary = SummaryRepository.getSummary(this);
                 if(summary != null) {
                     Intent summaryIntent = new Intent(this, SummaryActivity.class);
@@ -282,7 +414,7 @@ public class InitialActivity extends Activity {
                 break;
             }
             case MenuActivity.SelectDisplaySetting : {
-
+                addUsageCounter(PMenuSettingClickCounter);
                 Intent settingIntent = new Intent(this, SettingActivity.class);
                 settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
                 settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
@@ -294,7 +426,7 @@ public class InitialActivity extends Activity {
                 break;
             }
             case MenuActivity.SelectMonthView : {
-
+                addUsageCounter(PMenuMonthViewClickCounter);
                 Intent monthViewIntent = new Intent(this, MonthViewActivity.class);
                 monthViewIntent.putExtra(MonthViewActivity.MonthExtra, selectedDate.getMonthOfYear());
                 monthViewIntent.putExtra(MonthViewActivity.YearExtra, selectedDate.getYear());
@@ -396,11 +528,17 @@ public class InitialActivity extends Activity {
             public void onClick(View v) {
 
                 if(isRightEnd) {
+
+                    addUsageCounter(PFetchNextMonthUsageCounter);
+
                     DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(callbackLayout.getChildCount() - 2);
                     callbackLayout.removeViewAt(callbackLayout.getChildCount() - 1);
                     addDateMeter(callbackLayout, lastDateMeter.getDate().plusDays(1), lastDateMeter.getDate().plusDays(15), true);
                     callbackLayout.addView(generateEndLayout(callbackLayout));
                 } else {
+
+                    addUsageCounter(PFetchPreviousMonthUsageCounter);
+
                     DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(1);
                     callbackLayout.removeViewAt(0);
                     addDateMeter(callbackLayout, lastDateMeter.getDate().minusDays(15), lastDateMeter.getDate().minusDays(1), false);

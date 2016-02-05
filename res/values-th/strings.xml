@@ -41,4 +41,8 @@
     <string name="summary_ovulation_period_to">ถึงวันที่</string>
     <string name="menu_summary">สรุป</string>
     <string name="menu_month_view">แสดงแบบเดือน</string>
+    <string name="review_asking">หลังจากใช้งานแอฟ แล้วรู้สึงอย่างไรกับ แอฟ ตัวนี้บ้าง บอกหน่อยได้ไหม</string>
+    <string name="review_dont_show">ไม่ต้องโขว์อีก</string>
+    <string name="review_later">ตอนนี้ยุ่งอยู่ ไว้คราวหน้านะ</string>
+    <string name="review_open_review">ได้สิ เปิดหน้า รีวิวเลย</string>
 </resources>

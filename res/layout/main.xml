@@ -135,7 +135,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:text="@string/edit_comment_button_caption"
-                        android:id="@+id/button" android:textColor="@color/text_color"
+                        android:id="@+id/comment_button" android:textColor="@color/text_color"
                         android:onClick="commentSave" style="@android:style/DeviceDefault.ButtonBar.AlertDialog"
                         android:background="@drawable/save_button"/>
             </LinearLayout>
