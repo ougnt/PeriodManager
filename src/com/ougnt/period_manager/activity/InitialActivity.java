@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.net.http.AndroidHttpClient;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.*;
@@ -14,8 +16,25 @@ import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import com.ougnt.period_manager.repository.*;
 import com.ougnt.period_manager.*;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.message.BasicHttpRequest;
+import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +45,8 @@ public class InitialActivity extends Activity {
     final int DisplayMenu = 0x04;
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
+
+    final String statUri = "http://25.9.30.106:9000/usageStat";
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
@@ -227,8 +248,7 @@ public class InitialActivity extends Activity {
 
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
-//        edit.putInt(PUsageCounter,2);
-//        edit.commit();
+
         if(getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview)) {
 
             setContentView(R.layout.review);
@@ -243,6 +263,7 @@ public class InitialActivity extends Activity {
 
                     addUsageCounter(PReviewNow);
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
+                    submitStat();
                     finish();
                 }
             });
@@ -253,6 +274,7 @@ public class InitialActivity extends Activity {
                     addUsageCounter(PReviewLater);
                     edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview,0) + 2);
                     edit.commit();
+                    submitStat();
                     finish();
                 }
             });
@@ -264,11 +286,13 @@ public class InitialActivity extends Activity {
                     addUsageCounter(PNoReview);
                     edit.putInt(PTimeOfUsageBeforeReview,-1);
                     edit.commit();
+                    submitStat();
                     finish();
                 }
             });
 
         } else {
+            submitStat();
             finish();
         }
     }
@@ -354,6 +378,59 @@ public class InitialActivity extends Activity {
         dateTouchListener = listener;
     }
 
+    private void submitStat() {
+        HttpClient client = new DefaultHttpClient();
+        HttpPost httpPost = new HttpPost(statUri);
+
+        JSONObject json = new JSONObject();
+
+        AsyncTask<Void,Void,Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+
+                    json.put("deviceId", getDeviceId());
+                    json.put("applicationVersion", getUsageCounter(PCurrentVersion));
+                    json.put("usageCounter", getUsageCounter(PUsageCounter));
+                    json.put("periodButtonUsageCounter", getUsageCounter(PPeriodButtonUsageCounter));
+                    json.put("nonPeriodButtonUsageCounter", getUsageCounter(PNonPeriodButtonUsageCounter));
+                    json.put("comment_button_usage_counter", getUsageCounter(PCommentButtonUsageCounter));
+                    json.put("comment_text_usage_counter", getUsageCounter(PCommentTextUsageCounter));
+                    json.put("menu_button_usage_counter", getUsageCounter(PMenuButtonUsageCounter));
+                    json.put("review_now", getUsageCounter(PReviewNow));
+                    json.put("review_later", getUsageCounter(PReviewLater));
+                    json.put("review_non", getUsageCounter(PNoReview));
+                    json.put("fetch_next_usage_counter", getUsageCounter(PFetchNextMonthUsageCounter));
+                    json.put("fetch_previous_usage_counter", getUsageCounter(PFetchPreviousMonthUsageCounter));
+                    json.put("menu_setting_click_counter", getUsageCounter(PMenuSettingClickCounter));
+                    json.put("menu_summary_click_counter", getUsageCounter(PMenuSummaryClickCounter));
+                    json.put("menu_month_view_click_counter", getUsageCounter(PMenuMonthViewClickCounter));
+                    json.put("menu_help_click_counter", getUsageCounter(PMenuHelpClickCounter));
+
+                    StringEntity entry = new StringEntity(json.toString());
+
+                    httpPost.setEntity(entry);
+                    httpPost.setHeader("Content-Type","application/Json");
+
+                    client.execute(httpPost);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.execute();
+    }
+
     private void initUsageToReview() {
 
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
@@ -370,11 +447,18 @@ public class InitialActivity extends Activity {
         edit.commit();
     }
 
+    private UUID getDeviceId() {
+
+        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+        return UUID.fromString(pref.getString(PUuid, ""));
+    }
+
     private void setApplicationVersion(){
 
         SharedPreferences pref = getSharedPreferences(PName,MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putInt(PCurrentVersion,23);
+        edit.commit();
     }
 
     private void addUsageCounter(String key) {
