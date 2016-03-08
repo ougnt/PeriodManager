@@ -46,6 +46,7 @@ public class InitialActivity extends Activity {
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
 
+    // TODO : Change this to the real one
     final String statUri = "http://25.9.30.106:9000/usageStat";
 
     public static final String PName = "period_manager_preference";
@@ -70,6 +71,7 @@ public class InitialActivity extends Activity {
     public static final String PMenuSummaryClickCounter = "period_manager_preference_menu_summary_click_counter";
     public static final String PMenuMonthViewClickCounter = "period_manager_preference_menu_month_view_click_counter";
     public static final String PMenuHelpClickCounter = "period_manager_preference_menu_help_click_counter";
+    public static final String PMenuReviewClickCounter = "period_manager_preference_menu_review_click_counter";
 
     SettingRepository setting;
 
@@ -406,6 +408,7 @@ public class InitialActivity extends Activity {
                     json.put("menu_summary_click_counter", getUsageCounter(PMenuSummaryClickCounter));
                     json.put("menu_month_view_click_counter", getUsageCounter(PMenuMonthViewClickCounter));
                     json.put("menu_help_click_counter", getUsageCounter(PMenuHelpClickCounter));
+                    json.put("menu_review_click_counter", getUsageCounter(PMenuReviewClickCounter));
 
                     StringEntity entry = new StringEntity(json.toString());
 
@@ -516,6 +519,13 @@ public class InitialActivity extends Activity {
                 monthViewIntent.putExtra(MonthViewActivity.YearExtra, selectedDate.getYear());
 
                 startActivity(monthViewIntent);
+                break;
+            }
+            case MenuActivity.SelectReview : {
+
+                addUsageCounter(PMenuReviewClickCounter);
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
+                break;
             }
         }
     }

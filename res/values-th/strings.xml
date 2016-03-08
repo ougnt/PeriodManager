@@ -45,4 +45,5 @@
     <string name="review_dont_show">ไม่ต้องโขว์อีก</string>
     <string name="review_later">ตอนนี้ยุ่งอยู่ ไว้คราวหน้านะ</string>
     <string name="review_open_review">ได้สิ เปิดหน้า รีวิวเลย</string>
+    <string name="menu_submit_review">แสดงความคิดเห็น</string>
 </resources>

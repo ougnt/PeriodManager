@@ -2,6 +2,7 @@ package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -22,6 +23,7 @@ public class MenuActivity extends Activity {
     public static final int SelectDisplaySetting = 2;
     public static final int SelectSummary = 4;
     public static final int SelectMonthView = 8;
+    public static final int SelectReview = 16;
     public static final String SelectedMenuExtra = "SELECTED_MENU";
 
     @Override
@@ -53,6 +55,9 @@ public class MenuActivity extends Activity {
                 finish();
             }
         });
+
+        TextView reviewItem = (TextView)findViewById(R.id.submit_review_menu);
+        reviewItem.setOnClickListener(new OpenReview());
 
         TextView summary = (TextView)findViewById(R.id.summary_menu);
         summary.setOnClickListener(new ShowSummary());
@@ -103,6 +108,18 @@ public class MenuActivity extends Activity {
         public void onClick(View v) {
             Intent retIntent = new Intent();
             retIntent.putExtra(SelectedMenuExtra, SelectMonthView);
+            setResult(RESULT_OK, retIntent);
+            finish();
+        }
+    }
+
+    private class OpenReview implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+
+            Intent retIntent = new Intent();
+            retIntent.putExtra(SelectedMenuExtra, SelectReview);
             setResult(RESULT_OK, retIntent);
             finish();
         }
