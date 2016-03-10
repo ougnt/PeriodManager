@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.ougnt.period_manager.*;
 import com.ougnt.period_manager.repository.DateRepository;
@@ -15,7 +16,7 @@ import org.joda.time.DateTime;
 public class MonthViewActivity extends Activity {
 
     public static final String MonthExtra = "MonthExtra";
-    public static final String YearExtra = "TearExtra";
+    public static final String YearExtra = "YearExtra";
 
     public PeriodCalendar calendar;
 
@@ -79,54 +80,32 @@ public class MonthViewActivity extends Activity {
 
     private void loadDatesToView(){
 
-        loadDateTiView( calendar.dateRepositories[0][0], (TextView)findViewById(R.id.monthdate_11));
-        loadDateTiView( calendar.dateRepositories[0][1], (TextView)findViewById(R.id.monthdate_12));
-        loadDateTiView( calendar.dateRepositories[0][2], (TextView)findViewById(R.id.monthdate_13));
-        loadDateTiView( calendar.dateRepositories[0][3], (TextView)findViewById(R.id.monthdate_14));
-        loadDateTiView( calendar.dateRepositories[0][4], (TextView)findViewById(R.id.monthdate_15));
-        loadDateTiView( calendar.dateRepositories[0][5], (TextView)findViewById(R.id.monthdate_16));
-        loadDateTiView( calendar.dateRepositories[0][6], (TextView)findViewById(R.id.monthdate_17));
+        for(int row = 0; row < calendar.dateRepositories.length; row++) {
 
-        loadDateTiView( calendar.dateRepositories[1][0], (TextView)findViewById(R.id.monthdate_21));
-        loadDateTiView( calendar.dateRepositories[1][1], (TextView)findViewById(R.id.monthdate_22));
-        loadDateTiView( calendar.dateRepositories[1][2], (TextView)findViewById(R.id.monthdate_23));
-        loadDateTiView( calendar.dateRepositories[1][3], (TextView)findViewById(R.id.monthdate_24));
-        loadDateTiView( calendar.dateRepositories[1][4], (TextView)findViewById(R.id.monthdate_25));
-        loadDateTiView( calendar.dateRepositories[1][5], (TextView)findViewById(R.id.monthdate_26));
-        loadDateTiView( calendar.dateRepositories[1][6], (TextView)findViewById(R.id.monthdate_27));
+            for(int col = 0; col < calendar.dateRepositories[row].length; col++) {
 
-        loadDateTiView( calendar.dateRepositories[2][0], (TextView)findViewById(R.id.monthdate_31));
-        loadDateTiView( calendar.dateRepositories[2][1], (TextView)findViewById(R.id.monthdate_32));
-        loadDateTiView( calendar.dateRepositories[2][2], (TextView)findViewById(R.id.monthdate_33));
-        loadDateTiView( calendar.dateRepositories[2][3], (TextView)findViewById(R.id.monthdate_34));
-        loadDateTiView( calendar.dateRepositories[2][4], (TextView)findViewById(R.id.monthdate_35));
-        loadDateTiView( calendar.dateRepositories[2][5], (TextView)findViewById(R.id.monthdate_36));
-        loadDateTiView( calendar.dateRepositories[2][6], (TextView)findViewById(R.id.monthdate_37));
+                TextView targetLayout = (TextView)findViewById(getResources().getIdentifier(
+                        String.format("monthdate_%s%s", row + 1, col + 1),
+                        "id",
+                        getPackageName()));
 
-        loadDateTiView( calendar.dateRepositories[3][0], (TextView)findViewById(R.id.monthdate_41));
-        loadDateTiView( calendar.dateRepositories[3][1], (TextView)findViewById(R.id.monthdate_42));
-        loadDateTiView( calendar.dateRepositories[3][2], (TextView)findViewById(R.id.monthdate_43));
-        loadDateTiView( calendar.dateRepositories[3][3], (TextView)findViewById(R.id.monthdate_44));
-        loadDateTiView( calendar.dateRepositories[3][4], (TextView)findViewById(R.id.monthdate_45));
-        loadDateTiView( calendar.dateRepositories[3][5], (TextView)findViewById(R.id.monthdate_46));
-        loadDateTiView( calendar.dateRepositories[3][6], (TextView)findViewById(R.id.monthdate_47));
+                if(calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
 
-        loadDateTiView( calendar.dateRepositories[4][0], (TextView)findViewById(R.id.monthdate_51));
-        loadDateTiView( calendar.dateRepositories[4][1], (TextView)findViewById(R.id.monthdate_52));
-        loadDateTiView( calendar.dateRepositories[4][2], (TextView)findViewById(R.id.monthdate_53));
-        loadDateTiView( calendar.dateRepositories[4][3], (TextView)findViewById(R.id.monthdate_54));
-        loadDateTiView( calendar.dateRepositories[4][4], (TextView)findViewById(R.id.monthdate_55));
-        loadDateTiView( calendar.dateRepositories[4][5], (TextView)findViewById(R.id.monthdate_56));
-        loadDateTiView( calendar.dateRepositories[4][6], (TextView)findViewById(R.id.monthdate_57));
+                    targetLayout.setBackgroundColor(getResources().getColor(R.color.today_text_color));
+                } else {
 
-        loadDateTiView( calendar.dateRepositories[5][0], (TextView)findViewById(R.id.monthdate_61));
-        loadDateTiView( calendar.dateRepositories[5][1], (TextView)findViewById(R.id.monthdate_62));
-        loadDateTiView( calendar.dateRepositories[5][2], (TextView)findViewById(R.id.monthdate_63));
-        loadDateTiView( calendar.dateRepositories[5][3], (TextView)findViewById(R.id.monthdate_64));
-        loadDateTiView( calendar.dateRepositories[5][4], (TextView)findViewById(R.id.monthdate_65));
-        loadDateTiView( calendar.dateRepositories[5][5], (TextView)findViewById(R.id.monthdate_66));
-        loadDateTiView( calendar.dateRepositories[5][6], (TextView)findViewById(R.id.monthdate_67));
+                    targetLayout.setBackgroundColor(0);
+                }
 
+                loadDateTiView(
+                        calendar.dateRepositories[row][col],
+                        (TextView)findViewById(getResources().getIdentifier(
+                                String.format("monthdate_%s%s", row + 1, col + 1),
+                                "id",
+                                getPackageName()
+                        )));
+            }
+        }
     }
 
     private void loadDateTiView(DateRepository date, TextView view) {
