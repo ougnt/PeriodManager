@@ -46,4 +46,5 @@
     <string name="review_later">ตอนนี้ยุ่งอยู่ ไว้คราวหน้านะ</string>
     <string name="review_open_review">ได้สิ เปิดหน้า รีวิวเลย</string>
     <string name="menu_submit_review">แสดงความคิดเห็น</string>
+    <string name="notify_when">เปิดเตือนเมื่อ : </string>
 </resources>

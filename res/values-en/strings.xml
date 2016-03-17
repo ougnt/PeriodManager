@@ -48,4 +48,5 @@
     <string name="review_later">I\'m quite busy now. May be later.</string>
     <string name="review_open_review">Ok, open the review page for me.</string>
     <string name="menu_submit_review">Give us a feedback</string>
+    <string name="notify_when">Notify when : </string>
 </resources>
