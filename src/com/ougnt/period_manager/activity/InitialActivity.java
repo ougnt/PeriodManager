@@ -1,18 +1,15 @@
 package com.ougnt.period_manager.activity;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.app.*;
+import android.content.*;
 import android.database.Cursor;
 import android.net.Uri;
 import android.net.http.AndroidHttpClient;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.*;
 import android.view.*;
 import android.widget.*;
 import com.ougnt.period_manager.DateMeter;
+import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import com.ougnt.period_manager.repository.*;
 import com.ougnt.period_manager.*;
@@ -47,7 +44,7 @@ public class InitialActivity extends Activity {
     final int DisplaySummary = 0x10;
 
     // TODO : Change this to the real one
-    final String statUri = "http://25.9.30.106:9000/usageStat";
+    final String statUri = "http://ougnt.com:5555/usageStat";
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
