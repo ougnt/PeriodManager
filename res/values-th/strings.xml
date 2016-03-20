@@ -47,4 +47,11 @@
     <string name="review_open_review">ได้สิ เปิดหน้า รีวิวเลย</string>
     <string name="menu_submit_review">แสดงความคิดเห็น</string>
     <string name="notify_when">เปิดเตือนเมื่อ : </string>
+    <string name="setting_day">วัน</string>
+    <string name="setting_warn_before_period">เตือนก่อนเป็นเมนส์</string>
+    <string name="setting_warn_before_ovulation">เตือนก่อนวันตกไข่</string>
+    <string name="notify_ovulation_message">คลิ้กเพื่อดูข้อมูลเพิ่มเติม</string>
+    <string name="notify_period_message">คลิ้กเพื่อดูข้อมูลเพิ่มเติม</string>
+    <string name="notify_ovulation_title">เตือนก่อนตกไข่</string>
+    <string name="notify_period_title">เตือนก่อนเป็นเมนส์</string>
 </resources>

@@ -1,37 +1,32 @@
 package com.ougnt.period_manager.activity;
 
-import android.app.*;
-import android.content.*;
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.net.http.AndroidHttpClient;
-import android.os.*;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
 import android.view.*;
 import android.widget.*;
 import com.ougnt.period_manager.DateMeter;
+import com.ougnt.period_manager.*;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import com.ougnt.period_manager.repository.*;
-import com.ougnt.period_manager.*;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicHttpRequest;
-import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,6 +64,13 @@ public class InitialActivity extends Activity {
     public static final String PMenuMonthViewClickCounter = "period_manager_preference_menu_month_view_click_counter";
     public static final String PMenuHelpClickCounter = "period_manager_preference_menu_help_click_counter";
     public static final String PMenuReviewClickCounter = "period_manager_preference_menu_review_click_counter";
+
+    public static final String PSettingIsNotifyPeriod = "period_manager_preference_setting_is_notify_period";
+    public static final String PSettingIsNotifyOvulation = "period_manager_preference_setting_is_notify_ovulation";
+    public static final String PSettingNotifyPeriodDay = "period_manager_preference_setting_notify_period_day";
+    public static final String PSettingNotifyOvulationDay = "period_manager_preference_setting_notify_ovulation_day";
+    public static final String PSettingNotifyPeriodCounter = "period_manager_preference_setting_notify_period_counter";
+    public static final String PSettingNotifyOvulationCounter = "period_manager_preference_setting_notify_ovulation_counter";
 
     SettingRepository setting;
 
@@ -384,6 +386,8 @@ public class InitialActivity extends Activity {
         JSONObject json = new JSONObject();
 
         AsyncTask<Void,Void,Void> task = new AsyncTask<Void, Void, Void>() {
+
+            // TODO : Add Notifier usage statistics
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -475,6 +479,14 @@ public class InitialActivity extends Activity {
         return pref.getInt(key, 0);
     }
 
+    private void setSharedPreference(String key, int value) {
+
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putInt(key, value);
+        edit.commit();
+    }
+
     private void onDisplayMenuResult(Intent data) {
         int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
         switch (selectedMenu) {
@@ -506,6 +518,10 @@ public class InitialActivity extends Activity {
                 settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
                 settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
                 settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
+                settingIntent.putExtra(SettingActivity.IsNotifyPeriodCheckExtra, getUsageCounter(PSettingIsNotifyPeriod));
+                settingIntent.putExtra(SettingActivity.IsNotifyOvulationCheckExtra, getUsageCounter(PSettingIsNotifyOvulation));
+                settingIntent.putExtra(SettingActivity.NotifyPeriodDaysExtra, getUsageCounter(PSettingNotifyPeriodDay));
+                settingIntent.putExtra(SettingActivity.NotifyOvulationDaysExtra, getUsageCounter(PSettingNotifyOvulationDay));
                 startActivityForResult(settingIntent, DisplaySetting);
                 break;
             }
@@ -537,20 +553,45 @@ public class InitialActivity extends Activity {
                 setting.flag = data.getIntExtra(SettingActivity.FlagExtra, 0);
                 setting.saveSetting(this);
 
-                LinearLayout.LayoutParams visibleParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0.9f);
-                LinearLayout.LayoutParams hideParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,0,0);
+                Bundle extras = data.getExtras();
+                boolean isNotifyPeriod = extras.getBoolean(SettingActivity.IsNotifyPeriodCheckExtra);
+                boolean isNotifyOvulation = extras.getBoolean(SettingActivity.IsNotifyOvulationCheckExtra);
+                int notifyPeriodDay = extras.getInt(SettingActivity.NotifyPeriodDaysExtra);
+                int notifyOvulationDay = extras.getInt(SettingActivity.NotifyOvulationDaysExtra);
 
-                View dayView = findViewById(R.id.day_view);
+                setSharedPreference(PSettingIsNotifyPeriod, isNotifyPeriod?1:0);
+                setSharedPreference(PSettingIsNotifyOvulation, isNotifyOvulation?1:0);
+                setSharedPreference(PSettingNotifyPeriodDay, notifyPeriodDay);
+                setSharedPreference(PSettingNotifyOvulationDay, notifyOvulationDay);
 
-                if((setting.flag & SettingRepository.FlagCalendarMonthView) != 0 ) {
+                if(isNotifyOvulation || isNotifyPeriod) {
 
-                    // TODO : swap to month view
-                    dayView.setVisibility(View.GONE);
-                } else {
+                    SummaryRepository summary = SummaryRepository.getSummary(this);
+                    BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
 
-                    // TODO : swap to day view
-                    dayView.setVisibility(View.VISIBLE);
+                    if(isNotifyPeriod) {
+
+                        notifier.setNotification(
+                                this,
+                                summary.expectedMenstrualDateFrom.minusDays(notifyPeriodDay),
+                                getResources().getString(R.string.notify_period_title),
+                                getResources().getString(R.string.notify_period_message)
+                        );
+                        addUsageCounter(PSettingNotifyPeriodCounter);
+                    }
+
+                    if(isNotifyOvulation) {
+
+                        notifier.setNotification(
+                                this,
+                                summary.expectedOvulationDateFrom.minusDays(notifyOvulationDay),
+                                getResources().getString(R.string.notify_ovulation_title),
+                                getResources().getString(R.string.notify_ovulation_message)
+                        );
+                        addUsageCounter(PSettingNotifyOvulationCounter);
+                    }
                 }
+
                 break;
             }
             case SettingActivity.CancelAction : {

@@ -49,4 +49,11 @@
     <string name="review_open_review">Ok, open the review page for me.</string>
     <string name="menu_submit_review">Give us a feedback</string>
     <string name="notify_when">Notify when : </string>
+    <string name="setting_day">Days</string>
+    <string name="setting_warn_before_period">Warn me before my period</string>
+    <string name="setting_warn_before_ovulation">Warn me before my ovulation date</string>
+    <string name="notify_ovulation_message">Click to see more info</string>
+    <string name="notify_period_message">Click to see more info</string>
+    <string name="notify_ovulation_title">Notify Ovulation</string>
+    <string name="notify_period_title">Notify Period</string>
 </resources>
