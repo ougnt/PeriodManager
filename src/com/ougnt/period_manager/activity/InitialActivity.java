@@ -38,8 +38,10 @@ public class InitialActivity extends Activity {
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
 
+    final int ApplicationVersion=  25;
+
     // TODO : Change this to the real one
-    final String statUri = "http://ougnt.com:5555/usageStat";
+    final String statUri = "http://27.254.81.190:5555/usageStat";
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
@@ -461,7 +463,7 @@ public class InitialActivity extends Activity {
 
         SharedPreferences pref = getSharedPreferences(PName,MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(PCurrentVersion,23);
+        edit.putInt(PCurrentVersion,ApplicationVersion);
         edit.commit();
     }
 
