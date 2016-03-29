@@ -38,7 +38,7 @@ public class InitialActivity extends Activity {
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
 
-    final int ApplicationVersion=  25;
+    final int ApplicationVersion=  26;
 
     // TODO : Change this to the real one
     final String statUri = "http://27.254.81.190:5555/usageStat";
@@ -67,12 +67,14 @@ public class InitialActivity extends Activity {
     public static final String PMenuHelpClickCounter = "period_manager_preference_menu_help_click_counter";
     public static final String PMenuReviewClickCounter = "period_manager_preference_menu_review_click_counter";
 
+    // Available in version 26
     public static final String PSettingIsNotifyPeriod = "period_manager_preference_setting_is_notify_period";
     public static final String PSettingIsNotifyOvulation = "period_manager_preference_setting_is_notify_ovulation";
     public static final String PSettingNotifyPeriodDay = "period_manager_preference_setting_notify_period_day";
     public static final String PSettingNotifyOvulationDay = "period_manager_preference_setting_notify_ovulation_day";
     public static final String PSettingNotifyPeriodCounter = "period_manager_preference_setting_notify_period_counter";
     public static final String PSettingNotifyOvulationCounter = "period_manager_preference_setting_notify_ovulation_counter";
+    public static final String PSettingNotificationClickCounter = "period_manager_preference_setting_notification_click_counter";
 
     SettingRepository setting;
 
@@ -86,6 +88,13 @@ public class InitialActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(getIntent() != null ||
+                getIntent().getExtras().size() > 0 ||
+                getIntent().getExtras().get(BroadcastNotificationPublisher.ExtraOpenFromNotification) != null) {
+
+            addUsageCounter(PSettingNotificationClickCounter);
+        }
 
         initUsageToReview();
         setApplicationVersion();
@@ -412,6 +421,13 @@ public class InitialActivity extends Activity {
                     json.put("menu_month_view_click_counter", getUsageCounter(PMenuMonthViewClickCounter));
                     json.put("menu_help_click_counter", getUsageCounter(PMenuHelpClickCounter));
                     json.put("menu_review_click_counter", getUsageCounter(PMenuReviewClickCounter));
+
+                    // Available in version 26 or above
+                    json.put("setting_notify_period_usage_counter", getUsageCounter(PSettingNotifyPeriodCounter));
+                    json.put("setting_notify_ovulation_usage_counter", getUsageCounter(PSettingNotifyOvulationCounter));
+                    json.put("setting_notify_period_days", getUsageCounter(PSettingNotifyPeriodDay));
+                    json.put("setting_notify_ovulation_days", getUsageCounter(PSettingNotifyOvulationDay));
+                    json.put("setting_notify_notification_click_counter", getUsageCounter(PSettingNotificationClickCounter));
 
                     StringEntity entry = new StringEntity(json.toString());
 

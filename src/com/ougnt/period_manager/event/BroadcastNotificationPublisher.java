@@ -20,6 +20,7 @@ public class BroadcastNotificationPublisher extends BroadcastReceiver {
 
     public static String ExtraContentTitle = "ExtraContentTitle";
     public static String ExtraContentText = "ExtraContentText";
+    public static final String ExtraOpenFromNotification = "ExtraOpenFromNotification";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -27,6 +28,12 @@ public class BroadcastNotificationPublisher extends BroadcastReceiver {
         builder.setContentTitle(intent.getExtras().getString(ExtraContentTitle));
         builder.setContentText(intent.getExtras().getString(ExtraContentText));
         builder.setSmallIcon(R.drawable.icon);
+
+        Intent openApplicationIntent = new Intent(context, InitialActivity.class);
+        openApplicationIntent.putExtra(ExtraOpenFromNotification, ExtraOpenFromNotification);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, openApplicationIntent, 0);
+        builder.setContentIntent(pendingIntent);
+
         Notification notification = builder.getNotification();
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(0, notification);
