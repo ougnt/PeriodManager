@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:orientation="vertical"
+	android:weightSum="10">
+
+	<LinearLayout
+		android:layout_height="0dp"
+		android:layout_width="wrap_content"
+		android:orientation="vertical"
+		android:layout_weight="1"/>
+
+	<LinearLayout
+		android:layout_height="0dp"
+		android:layout_width="match_parent"
+		android:orientation="horizontal"
+		android:layout_weight="8"
+		android:weightSum="1.0">
+
+		<LinearLayout
+			android:layout_height="match_parent"
+			android:layout_width="0dp"
+			android:orientation="horizontal"
+			android:layout_weight="0.05"/>
+
+		<LinearLayout
+			android:layout_height="match_parent"
+			android:layout_width="0dp"
+			android:orientation="vertical"
+			android:layout_weight="0.9"
+			android:weightSum="1.0"
+			android:background="#E6C0FF">
+
+			<LinearLayout
+				android:layout_height="0dp"
+				android:layout_width="match_parent"
+				android:orientation="vertical"
+				android:layout_weight="0.35">
+
+				<TextView
+					android:layout_height="match_parent"
+					android:textAppearance="?android:attr/textAppearanceMedium"
+					android:layout_width="match_parent"
+					android:text="@string/review_asking"
+					android:gravity="center_vertical|center_horizontal"
+					android:textColor="#787878"
+					android:layout_margin="10dp"/>
+
+			</LinearLayout>
+
+			<LinearLayout
+				android:layout_height="0dp"
+				android:layout_width="match_parent"
+				android:orientation="vertical"
+				android:layout_weight="0.65"
+				android:weightSum="3">
+
+				<LinearLayout
+					android:layout_height="0dp"
+					android:layout_width="match_parent"
+					android:orientation="vertical"
+					android:layout_weight="1.0">
+
+					<Button
+						android:layout_height="match_parent"
+						android:layout_width="match_parent"
+						android:text="@string/review_open_review"
+						android:layout_margin="10dp"
+						android:id="@+id/review_open"
+						android:background="#89FFB7"
+						android:textColor="#787878"/>
+
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_height="0dp"
+					android:layout_width="match_parent"
+					android:orientation="vertical"
+					android:layout_weight="1.0">
+
+					<Button
+						android:layout_height="match_parent"
+						android:layout_width="match_parent"
+						android:text="@string/review_later"
+						android:layout_margin="10dp"
+						android:id="@+id/review_later"
+						android:background="#C1C1C1"
+						android:textColor="#787878"/>
+
+				</LinearLayout>
+
+				<LinearLayout
+					android:layout_height="0dp"
+					android:layout_width="match_parent"
+					android:orientation="vertical"
+					android:layout_weight="1.0">
+
+					<Button
+						android:layout_height="match_parent"
+						android:layout_width="match_parent"
+						android:text="@string/review_dont_show"
+						android:layout_margin="10dp"
+						android:id="@+id/review_no_show"
+						android:background="#C1C1C1"
+						android:textColor="#787878"/>
+
+				</LinearLayout>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_height="match_parent"
+			android:layout_width="0dp"
+			android:orientation="horizontal"
+			android:layout_weight="0.05"/>
+
+	</LinearLayout>
+
+	<LinearLayout
+		android:layout_height="0dp"
+		android:layout_width="wrap_content"
+		android:orientation="horizontal"
+		android:layout_weight="1.0"/>
+
+</LinearLayout>
+

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setting_period_cycle">Period cycle (days)</string>
+    <string name="setting_period_length">Period length (days)</string>
+    <string name="setting_calendar_type">Calendar Type</string>
+    <string name="setting_calendar_type_month">Month</string>
+    <string name="setting_calendar_type_day">Day</string>
+    <string name="setting_cancel_button">Cancel</string>
+    <string name="setting_ok_button">Ok</string>
+    <string name="setting_warn_before_period">Warn me before my period</string>
+    <string name="setting_warn_before_ovulation">Warn me before my ovulation date</string>
+    <string name="setting_day">Days</string>
+</resources>
