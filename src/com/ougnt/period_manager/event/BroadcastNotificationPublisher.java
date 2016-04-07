@@ -21,6 +21,7 @@ public class BroadcastNotificationPublisher extends BroadcastReceiver {
     public static String ExtraContentTitle = "ExtraContentTitle";
     public static String ExtraContentText = "ExtraContentText";
     public static final String ExtraOpenFromNotification = "ExtraOpenFromNotification";
+    public static int idCounter = 1;
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -44,12 +45,13 @@ public class BroadcastNotificationPublisher extends BroadcastReceiver {
         Intent initialIntent = new Intent(context, BroadcastNotificationPublisher.class);
         initialIntent.putExtra(ExtraContentTitle, contentTitle);
         initialIntent.putExtra(ExtraContentText, contentText);
-        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, initialIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, idCounter++, initialIntent, PendingIntent.FLAG_ONE_SHOT);
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-        int dateFormatFlag = android.text.format.DateUtils.FORMAT_SHOW_DATE | android.text.format.DateUtils.FORMAT_ABBREV_MONTH | android.text.format.DateUtils.FORMAT_SHOW_YEAR;
         am.set(AlarmManager.RTC_WAKEUP, timeToNotify.getMillis(), pIntent );
-        String notifyWhen = context.getResources().getString(R.string.notify_when);
+
+        int dateFormatFlag = android.text.format.DateUtils.FORMAT_SHOW_DATE | android.text.format.DateUtils.FORMAT_ABBREV_MONTH | android.text.format.DateUtils.FORMAT_SHOW_YEAR;
+        String notifyWhen = contentTitle + " " + context.getResources().getString(R.string.notify_when);
         Toast.makeText(context,notifyWhen + DateUtils.formatDateTime(context, timeToNotify.getMillis(), dateFormatFlag) , Toast.LENGTH_LONG).show();
     }
 }

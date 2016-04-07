@@ -38,7 +38,7 @@ public class InitialActivity extends Activity {
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
 
-    final int ApplicationVersion=  26;
+    final int ApplicationVersion=  27;
 
     // TODO : Change this to the real one
     final String statUri = "http://27.254.81.190:5555/usageStat";
@@ -372,6 +372,29 @@ public class InitialActivity extends Activity {
             summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int)setting.periodCycle + 1).toString("yyyy-MM-dd"));
             summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
             summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int)setting.periodCycle - 8).toString("yyyy-MM-dd"));
+
+            if(getUsageCounter(PSettingIsNotifyPeriod) == 1) {
+
+                DateTime dateToBeNotified = DateTime.parse(summaryIntent.getExtras()
+                        .getString(SummaryActivity.NextMenstrualFromExtra))
+                        .minusDays(getUsageCounter(PSettingNotifyPeriodDay));
+
+                BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
+                notifier.setNotification(this, dateToBeNotified,
+                        getResources().getString(R.string.notify_period_title),
+                        getResources().getString(R.string.notify_period_message));
+            }
+
+            if(getUsageCounter(PSettingIsNotifyOvulation) == 1) {
+
+                DateTime dateTimeToBeNotified = DateTime.parse(summaryIntent.getExtras()
+                        .getString(SummaryActivity.NextOvulationFromExtra))
+                        .minusDays(getUsageCounter(PSettingNotifyOvulationDay));
+                BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
+                notifier.setNotification(this, dateTimeToBeNotified,
+                        getResources().getString(R.string.notify_ovulation_title),
+                        getResources().getString(R.string.notify_ovulation_message));
+            }
 
             startActivityForResult(summaryIntent, DisplaySummary);
 
