@@ -5,4 +5,5 @@
     <string name="notify_period_message">Click to see more info</string>
     <string name="notify_ovulation_title">Notify Ovulation</string>
     <string name="notify_ovulation_message">Click to see more info</string>
+    <string name="notify_summary_not_set">Please setup period date</string>
 </resources>

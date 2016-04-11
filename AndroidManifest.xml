@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.ougnt.period_manager"
-          android:versionCode="27"
-          android:versionName="1.16.2">
+          android:versionCode="29"
+          android:versionName="1.17">
     <uses-sdk android:minSdkVersion="16"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <!--<application android:label="@string/app_name" android:icon="@drawable/icon" android:debuggable="false">-->
@@ -20,6 +20,7 @@
     <activity android:name=".activity.SummaryActivity" android:theme="@style/Theme.Transparent"/>
     <activity android:name=".activity.SettingActivity"/>
     <activity android:name=".activity.CalendarActivity"/>
+    <activity android:name=".activity.LanguageSelectorActivity"/>
     <activity android:name=".activity.MonthViewActivity" android:theme="@style/Theme.Transparent"/>
     <receiver android:name="com.ougnt.period_manager.event.BroadcastNotificationPublisher">
         <intent-filter>

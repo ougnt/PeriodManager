@@ -220,7 +220,6 @@ public class DateMeter extends LinearLayout {
         checkboxPart.setGravity(Gravity.BOTTOM| Gravity.RIGHT);
         _editCheckBox = new CheckBox(layout.getContext());
 
-        // TODO : Add action to this check b
         _editCheckBox.setVisibility(GONE);
 
         checkboxPart.addView(_editCheckBox);

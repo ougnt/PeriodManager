@@ -59,4 +59,6 @@
     <string name="setting_warn_before_period">生理のお知らせほうがいい</string>
     <string name="summary_menstrual_period_from">割り出すの生理日から</string>
     <string name="summary_ovulation_period_from">割り出すの排卵日から</string>
+    <string name="setting_language">言語</string>
+    <string name="notify_summary_not_set">生理日を指定して下さい</string>
 </resources>

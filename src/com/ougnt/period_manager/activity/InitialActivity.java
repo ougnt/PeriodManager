@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 public class InitialActivity extends Activity {
@@ -37,8 +39,9 @@ public class InitialActivity extends Activity {
     final int DisplayMenu = 0x04;
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
+    final int DisplayLanguageSelector = 0x20;
 
-    final int ApplicationVersion=  27;
+    final int ApplicationVersion=  29;
 
     // TODO : Change this to the real one
     final String statUri = "http://27.254.81.190:5555/usageStat";
@@ -76,6 +79,10 @@ public class InitialActivity extends Activity {
     public static final String PSettingNotifyOvulationCounter = "period_manager_preference_setting_notify_ovulation_counter";
     public static final String PSettingNotificationClickCounter = "period_manager_preference_setting_notification_click_counter";
 
+    // Available in version 29
+    public static final String PSettingDisplayedLanguage = "period_manager_preference_setting_displayed_language";
+    public static final String PSettingDisplayedLanguageUsageCounter = "period_manager_preference_setting_displayed_language_usage_counter";
+
     SettingRepository setting;
 
     public InitialActivity(){
@@ -87,6 +94,7 @@ public class InitialActivity extends Activity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
 
         if(getIntent() != null ||
@@ -103,6 +111,21 @@ public class InitialActivity extends Activity {
 
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+        String language = pref.getString(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+        Configuration config = new Configuration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+
+        initialApplication();
+    }
+
+    private void initialApplication() {
+
         setContentView(R.layout.main);
 
         final LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
@@ -250,6 +273,20 @@ public class InitialActivity extends Activity {
                 summary.expectedOvulationDateTo = (DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationToExtra).toString()));
 
                 summary.save(this);
+                break;
+            }
+            case DisplayLanguageSelector : {
+
+                if(resultCode == RESULT_CANCELED) {break;}
+
+                String language = data.getExtras().getString(LanguageSelectorActivity.LanguageExtra);
+                Locale locale = new Locale(language);
+                Locale.setDefault(locale);
+                Configuration config = new Configuration();
+                config.locale = locale;
+                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+                initialApplication();
+                setSharedPreference(PSettingDisplayedLanguage, language);
                 break;
             }
         }
@@ -421,7 +458,6 @@ public class InitialActivity extends Activity {
 
         AsyncTask<Void,Void,Void> task = new AsyncTask<Void, Void, Void>() {
 
-            // TODO : Add Notifier usage statistics
             @Override
             protected Void doInBackground(Void... params) {
                 try {
@@ -451,6 +487,10 @@ public class InitialActivity extends Activity {
                     json.put("setting_notify_period_days", getUsageCounter(PSettingNotifyPeriodDay));
                     json.put("setting_notify_ovulation_days", getUsageCounter(PSettingNotifyOvulationDay));
                     json.put("setting_notify_notification_click_counter", getUsageCounter(PSettingNotificationClickCounter));
+
+                    // Available in version 29 or above
+                    json.put("setting_language_change_usage_counter", getUsageCounter(PSettingDisplayedLanguageUsageCounter));
+                    json.put("setting_displayed_language", getStringPreference(PSettingDisplayedLanguage));
 
                     StringEntity entry = new StringEntity(json.toString());
 
@@ -514,6 +554,12 @@ public class InitialActivity extends Activity {
         edit.commit();
     }
 
+    private String getStringPreference(String key) {
+
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+        return pref.getString(key, "");
+    }
+
     private int getUsageCounter(String key) {
 
         SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
@@ -525,6 +571,14 @@ public class InitialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putInt(key, value);
+        edit.commit();
+    }
+
+    private void setSharedPreference(String key, String value) {
+
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(key, value);
         edit.commit();
     }
 
@@ -581,6 +635,13 @@ public class InitialActivity extends Activity {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
                 break;
             }
+            case MenuActivity.SelectLanguageSelecter : {
+
+                addUsageCounter(PSettingDisplayedLanguageUsageCounter);
+                Intent intent = new Intent(this, LanguageSelectorActivity.class);
+                startActivityForResult(intent, DisplayLanguageSelector);
+                break;
+            }
         }
     }
 
@@ -608,6 +669,12 @@ public class InitialActivity extends Activity {
                 if(isNotifyOvulation || isNotifyPeriod) {
 
                     SummaryRepository summary = SummaryRepository.getSummary(this);
+                    if(summary == null) {
+
+                        Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG);
+                        break;
+                    }
+
                     BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
 
                     if(isNotifyPeriod) {

@@ -10,4 +10,5 @@
     <string name="setting_warn_before_period">Warn me before my period</string>
     <string name="setting_warn_before_ovulation">Warn me before my ovulation date</string>
     <string name="setting_day">Days</string>
+    <string name="setting_language">Language</string>
 </resources>

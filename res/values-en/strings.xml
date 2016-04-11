@@ -56,4 +56,6 @@
     <string name="notify_period_message">Click to see more info</string>
     <string name="notify_ovulation_title">Notify Ovulation</string>
     <string name="notify_period_title">Notify Period</string>
+    <string name="setting_language">Language</string>
+    <string name="notify_summary_not_set">Please specify period date</string>
 </resources>

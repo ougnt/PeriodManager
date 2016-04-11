@@ -54,4 +54,6 @@
     <string name="notify_period_message">คลิ้กเพื่อดูข้อมูลเพิ่มเติม</string>
     <string name="notify_ovulation_title">เตือนก่อนตกไข่</string>
     <string name="notify_period_title">เตือนก่อนเป็นเมนส์</string>
+    <string name="setting_language">ภาษา</string>
+    <string name="notify_summary_not_set">กรุณาระบุวันที่เป็นเมนส์</string>
 </resources>
