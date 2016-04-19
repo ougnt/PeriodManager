@@ -41,7 +41,7 @@ public class InitialActivity extends Activity {
     final int DisplaySummary = 0x10;
     final int DisplayLanguageSelector = 0x20;
 
-    final int ApplicationVersion=  30;
+    final int ApplicationVersion=  31;
 
     // TODO : Change this to the real one
     final String statUri = "http://27.254.81.190:5555/usageStat";

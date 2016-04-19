@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ovulation Diary</string>
+    <string name="app_name">Ovulation Calendar</string>
     <string name="edit_comment_button_caption">Edit Comment</string>
     <string name="comment_edit_text_hint">Push the "Edit Comment" button to edit</string>
 </resources>

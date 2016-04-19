@@ -89,6 +89,10 @@ public class MenuActivity extends Activity {
 
             LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
             flagLayout.setBackgroundResource(R.drawable.flag_thai);
+        } else if (language.equals("vi")) {
+
+            LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
+            flagLayout.setBackgroundResource(R.drawable.flag_vietnamese);
         }
     }
 

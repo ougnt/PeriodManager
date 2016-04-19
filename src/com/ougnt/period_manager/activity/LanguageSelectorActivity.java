@@ -15,6 +15,7 @@ public class LanguageSelectorActivity extends Activity {
     public static final String EnglishLanguage = "en";
     public static final String ThaiLanguage = "th";
     public static final String JapaneseLanguage = "ja";
+    public static final String VietnameseLanguage = "vi";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,14 @@ public class LanguageSelectorActivity extends Activity {
 
         Intent retIntent = new Intent();
         retIntent.putExtra(LanguageExtra, JapaneseLanguage);
+        setResult(RESULT_OK, retIntent);
+        finish();
+    }
+
+    public void vietnameseOnclick(View view) {
+
+        Intent retIntent = new Intent();
+        retIntent.putExtra(LanguageExtra, VietnameseLanguage);
         setResult(RESULT_OK, retIntent);
         finish();
     }
