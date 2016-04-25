@@ -15,4 +15,6 @@
     <color name="menu_bg">#EFEFEF</color>
     <color name="edit_text_bg">#B0B0B0</color>
     <color name="calendar_bg">#FCF3DE</color>
+    <color name="ads_background">#84FFCF</color>
+    <color name="ads_text">#FF4743</color>
 </resources>

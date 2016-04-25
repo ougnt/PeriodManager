@@ -15,6 +15,7 @@ import android.widget.*;
 import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.*;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
+import com.ougnt.period_manager.event.OnAdsRequestReturnEventListener;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import com.ougnt.period_manager.repository.*;
 import org.apache.http.client.ClientProtocolException;
@@ -28,6 +29,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -41,10 +43,16 @@ public class InitialActivity extends Activity {
     final int DisplaySummary = 0x10;
     final int DisplayLanguageSelector = 0x20;
 
-    final int ApplicationVersion=  31;
+    final int ApplicationVersion=  33;
 
     // TODO : Change this to the real one
-    final String statUri = "http://27.254.81.190:5555/usageStat";
+    // Live Env
+    public static final String StatServer = "27.254.81.190:5555";
+    // Dev env
+//    public static final String StatServer = "192.168.56.1:9000";
+    public static final String StatUri = String.format("http://%s/usageStat", StatServer);
+    public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
+    public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
@@ -129,6 +137,8 @@ public class InitialActivity extends Activity {
     private void initialApplication() {
 
         setContentView(R.layout.main);
+
+        manageAds(getDeviceId());
 
         final LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
 
@@ -454,7 +464,7 @@ public class InitialActivity extends Activity {
 
     private void submitStat() {
         HttpClient client = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost(statUri);
+        HttpPost httpPost = new HttpPost(StatUri);
 
         JSONObject json = new JSONObject();
 
@@ -802,6 +812,50 @@ public class InitialActivity extends Activity {
         return retLayout;
     }
 
+    private void manageAds(UUID deviceId) {
+
+        adsManager = adsManager == null ? new AdsManagerImpl(deviceId) : adsManager;
+
+        adsManager.requestAds(new OnAdsRequestReturnEventListener() {
+            @Override
+            public void onAdsInfoReturn(AdsInfo adsInfo) {
+
+                adsText = adsInfo.AdsText;
+                adsUrl = adsInfo.AdsUrl;
+
+                if(!adsUrl.isEmpty())
+                    adjustLayoutForAds();
+            }
+        }, getStringPreference(PSettingDisplayedLanguage));
+    }
+
+    private void adjustLayoutForAds() {
+
+        LinearLayout appLayout = (LinearLayout) findViewById(R.id.day_view);
+        LinearLayout adsLayout = (LinearLayout) findViewById(R.id.ads_view);
+
+        if(adsManager.shouldDisplayAds()) {
+
+            appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
+            adsLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
+
+            TextView adsTextView = (TextView) findViewById(R.id.ads_text);
+            adsTextView.setText(adsText);
+            adsTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    adsManager.addCounter();
+                    adsManager.submitAndResetAdsClick();
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(adsUrl)));
+                }
+            });
+        } else {
+
+            appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f));
+            adsLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.0f));
+        }
+    }
+
     private void addDateMeter(LinearLayout targetLayout, DateTime startDate, DateTime endDate, boolean isRight) {
 
         List<DateRepository> dates = DateRepository.getDateRepositories(this, startDate, endDate);
@@ -847,6 +901,9 @@ public class InitialActivity extends Activity {
     }
 
     private OnDateMeterTouchEventListener dateTouchListener;
+    private String adsUrl;
+    private String adsText;
+    private IAdsManager adsManager;
     private DateTime selectedDate = null;
     private Context _thisContext = this;
 }

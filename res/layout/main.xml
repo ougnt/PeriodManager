@@ -148,7 +148,19 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp" android:layout_weight="0.9">
+            android:layout_height="0dp" android:layout_weight="0.1"
+            android:background="#ff0000" android:id="@+id/ads_view">
+        <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="0dp"
+                      android:layout_weight="0.1" android:background="@color/ads_background"
+                      android:layout_margin="2dp">
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:id="@+id/ads_text" android:gravity="center_vertical|center_horizontal"
+                    android:textColor="@color/ads_text"/>
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>
 
