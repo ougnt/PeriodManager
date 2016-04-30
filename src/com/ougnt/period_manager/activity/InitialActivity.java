@@ -42,8 +42,9 @@ public class InitialActivity extends Activity {
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
     final int DisplayLanguageSelector = 0x20;
+    final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  33;
+    final int ApplicationVersion=  34;
 
     // TODO : Change this to the real one
     // Live Env
@@ -167,6 +168,9 @@ public class InitialActivity extends Activity {
                 }
 
                 selectedDate = touchDate;
+
+                Intent intent = new Intent(getBaseContext(), ActionActivity.class);
+                startActivityForResult(intent, DisplayActionPanel);
             }
         });
 
@@ -230,7 +234,6 @@ public class InitialActivity extends Activity {
 
                 scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
-                today.onTouchFormat();
 
                 if(setting.isFirstTime) {
                     setting.isFirstTime = false;
@@ -299,6 +302,27 @@ public class InitialActivity extends Activity {
                 getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
                 initialApplication();
                 setSharedPreference(PSettingDisplayedLanguage, language);
+                break;
+            }
+            case DisplayActionPanel: {
+
+                int action = data.getExtras().getInt(ActionActivity.ActionExtra);
+                switch(action){
+
+                    case ActionActivity.ActionPeriodButton : {
+
+                        addPeriodAndOvulationFlagToDateMeters();
+                        break;
+                    }
+                    case ActionActivity.ActionNonPeriodButton: {
+
+                        removePeriodAndOvulationFlagtoDateMeter();
+                        break;
+                    }
+                    case ActionActivity.ActionNothing: {
+                        // Nothing
+                    }
+                }
                 break;
             }
         }
@@ -898,6 +922,78 @@ public class InitialActivity extends Activity {
                 targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType), 0);
             }
         }
+    }
+
+    private void addPeriodAndOvulationFlagToDateMeters() {
+
+        addUsageCounter(PPeriodButtonUsageCounter);
+
+        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        int index = getSelectedDateMeterIndex();
+        int newType = 0;
+
+        ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
+        DateTime dateToBePainted = ((DateMeter)(v.getChildAt(index))).getDate();
+        paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int)setting.periodLength - 1), DateMeter.Menstrual);
+        paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int)setting.periodCycle - 7), DateMeter.Ovulation);
+        paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 7), dateToBePainted.plusDays((int)setting.periodCycle - 1), DateMeter.Nothing);
+        paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 1), dateToBePainted.plusDays((int)setting.periodCycle + 1), DateMeter.Menstrual);
+        newType = DateMeter.Menstrual;
+
+        Intent summaryIntent = new Intent(this, SummaryActivity.class);
+        summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int)setting.periodCycle - 1).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int)setting.periodCycle + 1).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int)setting.periodCycle - 8).toString("yyyy-MM-dd"));
+
+        if(getUsageCounter(PSettingIsNotifyPeriod) == 1) {
+
+            DateTime dateToBeNotified = DateTime.parse(summaryIntent.getExtras()
+                    .getString(SummaryActivity.NextMenstrualFromExtra))
+                    .minusDays(getUsageCounter(PSettingNotifyPeriodDay));
+
+            BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
+            notifier.setNotification(this, dateToBeNotified,
+                    getResources().getString(R.string.notify_period_title),
+                    getResources().getString(R.string.notify_period_message));
+        }
+
+        if(getUsageCounter(PSettingIsNotifyOvulation) == 1) {
+
+            DateTime dateTimeToBeNotified = DateTime.parse(summaryIntent.getExtras()
+                    .getString(SummaryActivity.NextOvulationFromExtra))
+                    .minusDays(getUsageCounter(PSettingNotifyOvulationDay));
+            BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
+            notifier.setNotification(this, dateTimeToBeNotified,
+                    getResources().getString(R.string.notify_ovulation_title),
+                    getResources().getString(R.string.notify_ovulation_message));
+        }
+
+        startActivityForResult(summaryIntent, DisplaySummary);
+    }
+
+    private void removePeriodAndOvulationFlagtoDateMeter() {
+
+        int index = getSelectedDateMeterIndex();
+        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        int newType = 0;
+
+        addUsageCounter(PNonPeriodButtonUsageCounter);
+        ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
+        newType = DateMeter.Nothing;
+    }
+
+    private int getSelectedDateMeterIndex() {
+
+        int index = 0;
+
+        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
+
+        DateTime firstDate = ((DateMeter)v.getChildAt(1)).getDate();
+        int dateDiff = (int) ((selectedDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
+
+        index = dateDiff + 1;
+        return index;
     }
 
     private OnDateMeterTouchEventListener dateTouchListener;

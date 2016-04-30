@@ -111,6 +111,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/setting_ok_button"
-                android:id="@+id/setting_ok" android:layout_margin="10dp" android:onClick="onOkButtonClick"/>
+                android:id="@+id/setting_ok" android:layout_margin="10dp" android:onClick="onOkButtonClick"
+                android:background="@color/button_urgent"/>
     </LinearLayout>
 </LinearLayout>

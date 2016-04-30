@@ -194,7 +194,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/help_close_help"
                     android:id="@+id/help_close_button" android:layout_weight="0.4" android:layout_marginLeft="20dp"
-                    android:onClick="saveAndExit"/>
+                    android:onClick="saveAndExit" android:background="@color/button_urgent"/>
         </LinearLayout>
     </LinearLayout>
     <LinearLayout android:orientation="vertical" android:layout_width="wrap_content"

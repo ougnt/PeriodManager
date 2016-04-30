@@ -17,4 +17,5 @@
     <color name="calendar_bg">#FCF3DE</color>
     <color name="ads_background">#84FFCF</color>
     <color name="ads_text">#FF4743</color>
+    <color name="button_urgent">#7DBCF3</color>
 </resources>

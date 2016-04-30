@@ -35,7 +35,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_weight="0.3"
+                android:layout_weight="0.5"
                 android:id="@+id/date_scroller" android:weightSum="1"
                 android:background="#ff00b3" android:layout_marginBottom="10dp">
             <LinearLayout android:orientation="horizontal" android:layout_width="0dp" android:layout_height="match_parent"
@@ -71,8 +71,8 @@
             </LinearLayout>
         </LinearLayout>
         <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="0dip"
-                          android:layout_weight="0.3" android:id="@+id/button_layout" android:weightSum="1"
-                          android:background="@color/main_bg">
+                      android:layout_weight="0.3" android:id="@+id/button_layout" android:weightSum="1"
+                      android:background="@color/main_bg" android:visibility="gone">
             <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="0dp"
@@ -109,7 +109,7 @@
             </LinearLayout>
         </LinearLayout>
         <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
-                      android:layout_height="0dip" android:layout_weight="0.3" android:id="@+id/calendar_panel"
+                      android:layout_height="0dip" android:layout_weight="0.4" android:id="@+id/calendar_panel"
                       android:weightSum="1.0" android:visibility="visible">
             <LinearLayout
                     android:orientation="vertical"
