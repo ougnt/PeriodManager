@@ -18,4 +18,12 @@
     <color name="ads_background">#84FFCF</color>
     <color name="ads_text">#FF4743</color>
     <color name="button_urgent">#7DBCF3</color>
+    <color name="calendar_month_bg_lite">#FFDFDF</color>
+    <color name="calendar_month_bg_dark">#D0AFAF</color>
+    <color name="calendar_date_bg_lite">#3EFFD4</color>
+    <color name="calendar_date_bg">#38E3BB</color>
+    <color name="calendar_date_bg_dark">#2FC8A8</color>
+    <color name="date_calendar_switcher">#31D6DA</color>
+    <color name="date_calendar_switcher_lite">#34EEF3</color>
+    <color name="date_calendar_switcher_dark">#24ABB0</color>
 </resources>
