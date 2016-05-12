@@ -823,6 +823,37 @@ public class InitialActivity extends Activity {
         return generateEndLayout(callbackLayout, true);
     }
 
+    private void endLayoutAction(LinearLayout callbackLayout, boolean isRightEnd) {
+
+        if(isRightEnd) {
+
+            addUsageCounter(PFetchNextMonthUsageCounter);
+
+            DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(callbackLayout.getChildCount() - 2);
+            callbackLayout.removeViewAt(callbackLayout.getChildCount() - 1);
+            addDateMeter(callbackLayout, lastDateMeter.getDate().plusDays(1), lastDateMeter.getDate().plusDays(15), true);
+            callbackLayout.addView(generateEndLayout(callbackLayout));
+        } else {
+
+            addUsageCounter(PFetchPreviousMonthUsageCounter);
+
+            DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(1);
+            callbackLayout.removeViewAt(0);
+            addDateMeter(callbackLayout, lastDateMeter.getDate().minusDays(15), lastDateMeter.getDate().minusDays(1), false);
+            callbackLayout.addView(generateEndLayout(callbackLayout, false), 0);
+
+            Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    HorizontalScrollView parant = (HorizontalScrollView)callbackLayout.getParent();
+                    parant.scrollTo(callbackLayout.getChildAt(1).getWidth() * 15, 0);
+                }
+            }, 50);
+        }
+    }
+
     private LinearLayout generateEndLayout(LinearLayout callbackLayout, boolean isRightEnd) {
 
         FetchingButton retLayout = new FetchingButton(this, isRightEnd);
@@ -831,33 +862,7 @@ public class InitialActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if(isRightEnd) {
-
-                    addUsageCounter(PFetchNextMonthUsageCounter);
-
-                    DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(callbackLayout.getChildCount() - 2);
-                    callbackLayout.removeViewAt(callbackLayout.getChildCount() - 1);
-                    addDateMeter(callbackLayout, lastDateMeter.getDate().plusDays(1), lastDateMeter.getDate().plusDays(15), true);
-                    callbackLayout.addView(generateEndLayout(callbackLayout));
-                } else {
-
-                    addUsageCounter(PFetchPreviousMonthUsageCounter);
-
-                    DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(1);
-                    callbackLayout.removeViewAt(0);
-                    addDateMeter(callbackLayout, lastDateMeter.getDate().minusDays(15), lastDateMeter.getDate().minusDays(1), false);
-                    callbackLayout.addView(generateEndLayout(callbackLayout, false), 0);
-
-                    Handler h = new Handler();
-                    h.postDelayed(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            HorizontalScrollView parant = (HorizontalScrollView)callbackLayout.getParent();
-                            parant.scrollTo(callbackLayout.getChildAt(1).getWidth() * 15, 0);
-                        }
-                    }, 50);
-                }
+                endLayoutAction(callbackLayout, isRightEnd);
             }
         });
 
@@ -952,11 +957,33 @@ public class InitialActivity extends Activity {
         }
     }
 
+    private boolean selectedDateIsBeforeTheFirstDateMeter(LinearLayout dateMeterHolder) {
+
+        return ((DateMeter)(dateMeterHolder.getChildAt(1))).getDate().isAfter(selectedDate.getMillis());
+    }
+
+    private boolean selectedDateIsAfterTheLastDateMeter(LinearLayout dateMeterHolder) {
+
+        return ((DateMeter)(dateMeterHolder.getChildAt(dateMeterHolder.getChildCount()-2))).getDate().isBefore(selectedDate.getMillis());
+    }
+
     private void addPeriodAndOvulationFlagToDateMeters() {
 
         addUsageCounter(PPeriodButtonUsageCounter);
 
-        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
+        int counter = 10;
+
+        while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
+
+            endLayoutAction(v, false);
+        }
+        counter = 10;
+        while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
+
+            endLayoutAction(v, true);
+        }
+
         int index = getSelectedDateMeterIndex();
         int newType = 0;
 
@@ -1002,8 +1029,20 @@ public class InitialActivity extends Activity {
 
     private void removePeriodAndOvulationFlagToDateMeter() {
 
+        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
+        int counter = 10;
+
+        while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0 ) {
+
+            endLayoutAction(v, false);
+        }
+        counter = 10;
+        while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
+
+            endLayoutAction(v, true);
+        }
+
         int index = getSelectedDateMeterIndex();
-        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
 
         addUsageCounter(PNonPeriodButtonUsageCounter);
         paintDateMeter(((DateMeter)(v.getChildAt(index))).getDate(), ((DateMeter)(v.getChildAt(index))).getDate(), DateMeter.SafeZoneColor);
