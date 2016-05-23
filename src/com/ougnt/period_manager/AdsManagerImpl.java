@@ -26,7 +26,7 @@ public class AdsManagerImpl extends IAdsManager {
     }
 
     @Override
-    public void requestAds(OnAdsRequestReturnEventListener listener, String adsLanguage) {
+    public void requestAds(final OnAdsRequestReturnEventListener listener, String adsLanguage) {
         client = client == null ? new DefaultHttpClient() : client;
         get = new HttpGet(String.format("%s?deviceId=%s&language=%s",InitialActivity.AdsRequestUri, deviceId.toString(), adsLanguage));
         get.setHeader("Content-Type","application/Json");

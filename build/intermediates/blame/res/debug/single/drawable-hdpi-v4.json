@@ -1,0 +1,134 @@
+[
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/flag_vietnamese.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/flag_vietnamese.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/flag_thai.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/flag_thai.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_help.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_help.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/ic_launcher.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_menstrual_day_button.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_menstrual_day_button.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/ovulation_icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/ovulation_icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_ovulation_seeking.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_ovulation_seeking.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/date_icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/date_icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/calendar_icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/calendar_icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/hamburger_manu_icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/hamburger_manu_icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/save_button.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/save_button.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/menstrual_icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/menstrual_icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/common_ic_googleplayservices.png",
+        "source": "/Users/wacharint/PeriodManager/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.1.0/res/drawable-hdpi/common_ic_googleplayservices.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/flag_english.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/flag_english.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/blue_button_push.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/blue_button_push.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/blue_button.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/blue_button.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_select_date.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_select_date.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/common_full_open_on_phone.png",
+        "source": "/Users/wacharint/PeriodManager/build/intermediates/exploded-aar/com.google.android.gms/play-services-basement/8.1.0/res/drawable-hdpi/common_full_open_on_phone.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_demenstrual2.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_demenstrual2.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/left_edge.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/left_edge.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_ovulation_prediction.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_ovulation_prediction.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/face.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/face.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/red_button_push.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/red_button_push.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/flag_japanese.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/flag_japanese.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_demenstrual.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_demenstrual.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/toggle_icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/toggle_icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/close_button.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/close_button.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/non_ovulation_icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/non_ovulation_icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/icon.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/icon.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/help_1.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/help_1.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/right_edge.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/right_edge.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/red_button.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/red_button.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable-hdpi-v4/side_bar.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable-hdpi/side_bar.png"
+    }
+]

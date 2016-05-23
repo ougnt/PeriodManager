@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--xmlns:ads="http://schemas.android.com/apk/res-auto"-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="fill_parent"
@@ -30,7 +31,7 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp" android:layout_weight="0.9" android:id="@+id/day_view">
+            android:layout_height="0dp" android:layout_weight="0.8" android:id="@+id/day_view">
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -622,7 +623,7 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp" android:layout_weight="0.1"
+            android:layout_height="0dp" android:layout_weight="0.0"
             android:background="#ff0000" android:id="@+id/ads_view">
         <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="0dp"
                       android:layout_weight="0.1" android:background="@color/ads_background"
@@ -635,6 +636,19 @@
                     android:id="@+id/ads_text" android:gravity="center_vertical|center_horizontal"
                     android:textColor="@color/ads_text"/>
         </LinearLayout>
+    </LinearLayout>
+    <LinearLayout
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" android:layout_weight="0.1"
+            android:background="#ff0000" android:id="@+id/ads_mob_view" >
+        <com.google.android.gms.ads.AdView
+                android:id="@+id/ad_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                ads:adSize="SMART_BANNER"
+                ads:adUnitId="ca-app-pub-2522554213803646/2989170212" />
     </LinearLayout>
 </LinearLayout>
 

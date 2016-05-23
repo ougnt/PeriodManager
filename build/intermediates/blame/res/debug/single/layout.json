@@ -1,0 +1,42 @@
+[
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/review.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/review.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/language_selecter.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/language_selecter.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/help.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/help.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/month_view.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/month_view.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/action.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/action.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/main.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/main.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/comment.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/comment.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/menu.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/menu.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/summary.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/summary.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/layout/setting.xml",
+        "source": "/Users/wacharint/PeriodManager/res/layout/setting.xml"
+    }
+]

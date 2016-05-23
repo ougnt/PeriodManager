@@ -12,6 +12,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.*;
 import android.widget.*;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.*;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
@@ -43,7 +45,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  36;
+    final int ApplicationVersion=  37;
 
     // TODO : Change this to the real one
     // Live Env
@@ -144,6 +146,12 @@ public class InitialActivity extends Activity {
     private void initialApplication() {
 
         setContentView(R.layout.main);
+
+        AdRequest.Builder adBuilder = new AdRequest.Builder();
+        adBuilder.setGender(AdRequest.GENDER_FEMALE);
+        AdRequest adRequest = adBuilder.build();
+        AdView adView = (AdView)findViewById(R.id.ad_view);
+        adView.loadAd(adRequest);
 
         manageAds(getDeviceId());
 
@@ -368,8 +376,8 @@ public class InitialActivity extends Activity {
     @Override
     public void onBackPressed() {
 
-        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
+        final SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+        final SharedPreferences.Editor edit = pref.edit();
 
         if(getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview)) {
 
@@ -509,10 +517,10 @@ public class InitialActivity extends Activity {
     }
 
     private void submitStat() {
-        HttpClient client = new DefaultHttpClient();
-        HttpPost httpPost = new HttpPost(StatUri);
+        final HttpClient client = new DefaultHttpClient();
+        final HttpPost httpPost = new HttpPost(StatUri);
 
-        JSONObject json = new JSONObject();
+        final JSONObject json = new JSONObject();
 
         AsyncTask<Void,Void,Void> task = new AsyncTask<Void, Void, Void>() {
 
@@ -823,7 +831,7 @@ public class InitialActivity extends Activity {
         return generateEndLayout(callbackLayout, true);
     }
 
-    private void endLayoutAction(LinearLayout callbackLayout, boolean isRightEnd) {
+    private void endLayoutAction(final LinearLayout callbackLayout, boolean isRightEnd) {
 
         if(isRightEnd) {
 
@@ -854,7 +862,7 @@ public class InitialActivity extends Activity {
         }
     }
 
-    private LinearLayout generateEndLayout(LinearLayout callbackLayout, boolean isRightEnd) {
+    private LinearLayout generateEndLayout(final LinearLayout callbackLayout, final boolean isRightEnd) {
 
         FetchingButton retLayout = new FetchingButton(this, isRightEnd);
 
@@ -880,7 +888,7 @@ public class InitialActivity extends Activity {
                 adsText = adsInfo.AdsText;
                 adsUrl = adsInfo.AdsUrl;
 
-                if(!adsUrl.isEmpty())
+//                if(!adsUrl.isEmpty())
                     adjustLayoutForAds();
             }
         }, getStringPreference(PSettingDisplayedLanguage));
@@ -890,6 +898,7 @@ public class InitialActivity extends Activity {
 
         LinearLayout appLayout = (LinearLayout) findViewById(R.id.day_view);
         LinearLayout adsLayout = (LinearLayout) findViewById(R.id.ads_view);
+        LinearLayout adsMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
 
         if(adsManager.shouldDisplayAds()) {
 
@@ -908,8 +917,8 @@ public class InitialActivity extends Activity {
             });
         } else {
 
-            appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f));
-            adsLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.0f));
+            appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
+            adsMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
         }
     }
 

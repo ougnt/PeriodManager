@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.ougnt.period_manager"
-          android:versionCode="36"
-          android:versionName="2.20">
+          android:versionCode="37"
+          android:versionName="2.21">
     <uses-sdk android:minSdkVersion="16"/>
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!--<application android:label="@string/app_name" android:icon="@drawable/icon" android:debuggable="false">-->
     <application android:label="@string/app_name" android:icon="@drawable/icon">
     <activity android:name=".activity.InitialActivity"
@@ -22,6 +23,11 @@
         <activity android:name=".activity.LanguageSelectorActivity"/>
     <activity android:name=".activity.ActionActivity" android:theme="@style/Theme.Transparent"/>
     <activity android:name=".activity.MonthViewActivity" android:theme="@style/Theme.Transparent"/>
+
+    <activity
+            android:name="com.google.android.gms.ads.AdActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
+
     <receiver android:name="com.ougnt.period_manager.event.BroadcastNotificationPublisher">
         <intent-filter>
             <action android:name="com.ougnt.period_manager.activity.InitialActivity"/>

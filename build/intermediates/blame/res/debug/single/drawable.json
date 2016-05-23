@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable/tick_checkbox.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable/tick_checkbox.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable/checkbox_selector.xml",
+        "source": "/Users/wacharint/PeriodManager/res/drawable/checkbox_selector.xml"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable/untick_checkbox.png",
+        "source": "/Users/wacharint/PeriodManager/res/drawable/untick_checkbox.png"
+    },
+    {
+        "merged": "/Users/wacharint/PeriodManager/build/intermediates/res/merged/debug/drawable/radio_button_selector.xml",
+        "source": "/Users/wacharint/PeriodManager/res/drawable/radio_button_selector.xml"
+    }
+]
