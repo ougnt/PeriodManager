@@ -45,7 +45,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  37;
+    final int ApplicationVersion=  38;
 
     // TODO : Change this to the real one
     // Live Env
@@ -99,6 +99,7 @@ public class InitialActivity extends Activity {
 
     public static final int DisplayModeDateScroller = 0;
     public static final int DisplayModeMonthView = 1;
+    public static DateTime startTime = DateTime.now();
 
     SettingRepository setting;
 
@@ -113,6 +114,8 @@ public class InitialActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
+
+        startTime = DateTime.now();
 
         if(getIntent() != null ||
                 getIntent().getExtras().size() > 0 ||
@@ -143,6 +146,12 @@ public class InitialActivity extends Activity {
         initialApplication();
     }
 
+    @Override
+    protected void onResume(){
+        super.onResume();
+        startTime = DateTime.now();
+    }
+
     private void initialApplication() {
 
         setContentView(R.layout.main);
@@ -169,20 +178,21 @@ public class InitialActivity extends Activity {
             @Override
             public void onNewTouch(DateTime touchDate) {
 
-                DateMeter currentDate = (DateMeter)dateMeterLayout.getChildAt(1);;
-                for(int i = 1 ; i < dateMeterLayout.getChildCount() - 1 ; i++) {
-                    DateMeter dateMeter = (DateMeter)dateMeterLayout.getChildAt(i);
-                    if(dateMeter.getDate() != touchDate) {
+                DateMeter currentDate = (DateMeter) dateMeterLayout.getChildAt(1);
+                ;
+                for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
+                    DateMeter dateMeter = (DateMeter) dateMeterLayout.getChildAt(i);
+                    if (dateMeter.getDate() != touchDate) {
 
                         dateMeter.resetFormat();
 
                     } else {
 
-                        EditText comment = (EditText)findViewById(R.id.notation_text);
+                        EditText comment = (EditText) findViewById(R.id.notation_text);
 
                         comment.setText(dateMeter.comment);
-                        if(i > 1 ) {
-                            currentDate = (DateMeter)dateMeterLayout.getChildAt(i);
+                        if (i > 1) {
+                            currentDate = (DateMeter) dateMeterLayout.getChildAt(i);
                         }
 
                     }
@@ -414,7 +424,7 @@ public class InitialActivity extends Activity {
                 public void onClick(View v) {
 
                     addUsageCounter(PNoReview);
-                    edit.putInt(PTimeOfUsageBeforeReview,-1);
+                    edit.putInt(PTimeOfUsageBeforeReview, -1);
                     edit.commit();
                     submitStat();
                     finish();
@@ -560,6 +570,9 @@ public class InitialActivity extends Activity {
 
                     // Available in version 36 or above
                     json.put("setting_display_mode", getUsageCounter(PMainDisplayMode));
+
+                    // Available in version 38 or above
+                    json.put("duration", DateTime.now().getMillis() - startTime.getMillis());
 
                     StringEntity entry = new StringEntity(json.toString());
 
@@ -900,25 +913,30 @@ public class InitialActivity extends Activity {
         LinearLayout adsLayout = (LinearLayout) findViewById(R.id.ads_view);
         LinearLayout adsMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
 
-        if(adsManager.shouldDisplayAds()) {
+        try {
 
-            appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
-            adsLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
+            if (adsManager.shouldDisplayAds()) {
 
-            TextView adsTextView = (TextView) findViewById(R.id.ads_text);
-            adsTextView.setText(adsText);
-            adsTextView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    adsManager.addCounter();
-                    adsManager.submitAndResetAdsClick();
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(adsUrl)));
-                }
-            });
-        } else {
+                appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
+                adsLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
 
-            appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
-            adsMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
+                TextView adsTextView = (TextView) findViewById(R.id.ads_text);
+                adsTextView.setText(adsText);
+                adsTextView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        adsManager.addCounter();
+                        adsManager.submitAndResetAdsClick();
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(adsUrl)));
+                    }
+                });
+            } else {
+
+                appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
+                adsMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
+            }
+        } catch(Exception e) {
+            // Do nothing
         }
     }
 
