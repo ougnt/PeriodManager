@@ -13,11 +13,12 @@ import java.util.List;
  */
 public class DateRepository {
 
-    private DateRepository(Context context, DateTime date, int dateType, String comment) {
+    private DateRepository(Context context, DateTime date, int dateType, String comment, float temperature) {
 
         this.date = date;
         this.dateType = dateType;
         this.comment = comment;
+        this.temperature = temperature;
     }
 
     public DateTime date;
@@ -29,13 +30,16 @@ public class DateRepository {
 
     public String comment;
 
+    public float temperature;
+
     public static List<DateRepository> getDateRepositories(Context context, DateTime startDate, DateTime endDate) {
 
         if(dbHelper == null) {
             dbHelper = new DatabaseRepositoryHelper(context);
         }
 
-        String[] columns = {"date", "date_type", "comment"};
+        // TODO: add temperature
+        String[] columns = {"date", "date_type", "comment", "temperature_value"};
         Cursor cursor = dbHelper.getWritableDatabase().query(
                 "DATE_REPOSITORY",
                 columns,
@@ -53,14 +57,14 @@ public class DateRepository {
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
 
-            dates.add(new DateRepository(context, DateTime.parse(cursor.getString(0)), cursor.getInt(1), cursor.getString(2)));
+            dates.add(new DateRepository(context, DateTime.parse(cursor.getString(0)), cursor.getInt(1), cursor.getString(2), cursor.getFloat(3)));
             cursor.moveToNext();
         }
 
         return dates;
     }
 
-    public static void updateDateRepository(Context context, DateTime targetDate, int newDateType) {
+    public static void updateDateRepositorySetDateType(Context context, DateTime targetDate, int newDateType) {
 
         if(dbHelper == null) {
             dbHelper = new DatabaseRepositoryHelper(context);
@@ -75,13 +79,29 @@ public class DateRepository {
                 null);
     }
 
-    public static void updateDateRepository(Context context, DateTime targetDate, String comment) {
+    public static void updateDateRepositorySetComment(Context context, DateTime targetDate, String comment) {
 
         if(dbHelper == null) {
             dbHelper = new DatabaseRepositoryHelper(context);
         }
         ContentValues values = new ContentValues();
         values.put("comment", comment);
+
+        dbHelper.getWritableDatabase().update(
+                "DATE_REPOSITORY",
+                values,
+                "date = '" + targetDate.toString("yyyy-MM-dd") + "'",
+                null);
+
+    }
+
+    public static void updateDateRepositorySetTemperature(Context context, DateTime targetDate, float temperature) {
+
+        if(dbHelper == null) {
+            dbHelper = new DatabaseRepositoryHelper(context);
+        }
+        ContentValues values = new ContentValues();
+        values.put("temperature_value", temperature);
 
         dbHelper.getWritableDatabase().update(
                 "DATE_REPOSITORY",

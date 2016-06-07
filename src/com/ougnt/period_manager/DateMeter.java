@@ -33,7 +33,7 @@ public class DateMeter extends LinearLayout {
 
     static int IconWidth = 0;
 
-    public DateMeter(Context context, DateTime initialDate, int color, OnDateMeterTouchEventListener listener, String comment, int dateType ) {
+    public DateMeter(Context context, DateTime initialDate, int color, OnDateMeterTouchEventListener listener, String comment, int dateType, float temperature ) {
         super(context);
 
 
@@ -49,6 +49,7 @@ public class DateMeter extends LinearLayout {
 
         this.comment = comment;
         this.dateType = dateType;
+        this.temperature = temperature;
 
         _mainColor = color;
         setBackgroundColor(getResources().getColor(R.color.main_bg));
@@ -83,6 +84,8 @@ public class DateMeter extends LinearLayout {
     }
 
     public String comment = "";
+
+    public float temperature = 0f;
 
     public DateTime getDate() {return date;}
 

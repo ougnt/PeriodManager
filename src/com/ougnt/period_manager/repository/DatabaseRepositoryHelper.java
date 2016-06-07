@@ -13,7 +13,8 @@ import java.util.LinkedList;
  */
 public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
 
-    static final int CurrentVersion = 2;
+    // Version 3 add temperature
+    static final int CurrentVersion = 3;
 
     public DatabaseRepositoryHelper(Context context) {
         super(context, "period_manager_core.db", null, CurrentVersion);
@@ -25,7 +26,8 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        String creationString = "CREATE TABLE IF NOT EXISTS DATE_REPOSITORY (date DATE PRIMARY KEY, date_type INTEGER, comment VARCHAR DEFAULT '')";
+        // Temperature in degree celsius
+        String creationString = "CREATE TABLE IF NOT EXISTS DATE_REPOSITORY (date DATE PRIMARY KEY, date_type INTEGER, comment VARCHAR DEFAULT '', temperature_value FLOAT DEFAULT 0)";
 
         db.execSQL(creationString);
 
@@ -62,6 +64,12 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
 
             String summaryQuery = "CREATE TABLE summary (exp_menstrual_from DATE, exp_menstrual_to DATE, exp_ovulation_from DATE, exp_ovulation_to DATE)";
             db.execSQL(summaryQuery);
+        }
+
+        if(oldVersion <= 2) {
+
+            String alterQuery = "ALTER TABLE DATE_REPOSITORY ADD COLUMN temperature_value FLOAT DEFAULT 0";
+            db.execSQL(alterQuery);
         }
 
     }

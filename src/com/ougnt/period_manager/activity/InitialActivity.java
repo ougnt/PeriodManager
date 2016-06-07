@@ -45,7 +45,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  38;
+    final int ApplicationVersion=  40;
 
     // TODO : Change this to the real one
     // Live Env
@@ -179,7 +179,7 @@ public class InitialActivity extends Activity {
             public void onNewTouch(DateTime touchDate) {
 
                 DateMeter currentDate = (DateMeter) dateMeterLayout.getChildAt(1);
-                ;
+
                 for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
                     DateMeter dateMeter = (DateMeter) dateMeterLayout.getChildAt(i);
                     if (dateMeter.getDate() != touchDate) {
@@ -200,8 +200,10 @@ public class InitialActivity extends Activity {
                 }
 
                 selectedDate = touchDate;
+                DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
 
                 Intent intent = new Intent(getBaseContext(), ActionActivity.class);
+                intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
                 startActivityForResult(intent, DisplayActionPanel);
             }
         });
@@ -259,7 +261,7 @@ public class InitialActivity extends Activity {
 
             for(int col = 0; col < calendar.dateRepositories[row].length; col++) {
 
-                TextView targetLayout = (TextView)findViewById(getResources().getIdentifier(
+                final TextView targetLayout = (TextView)findViewById(getResources().getIdentifier(
                         String.format("calendar_monthdate_%s%s", row + 1, col + 1),
                         "id",
                         getPackageName()));
@@ -280,12 +282,22 @@ public class InitialActivity extends Activity {
                                 getPackageName()
                         )));
 
+                final int finalRow = row;
+                final int finalCol = col;
+                final Context context = this.getBaseContext();
                 targetLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         selectedDate = DateTime.parse(String.format("%s-%s-%s", calendarCurrentYear,calendarCurrentMonth, ((TextView)v).getText()));
 
+                        EditText comment = (EditText) findViewById(R.id.notation_text);
+                        DateRepository currentDate = DateRepository.getDateRepositories(context, calendar.dateRepositories[finalRow][finalCol].date, calendar.dateRepositories[finalRow][finalCol].date).get(0);
+                        comment.setText(currentDate.comment);
+
+                        DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
+
                         Intent intent = new Intent(getBaseContext(), ActionActivity.class);
+                        intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
                         startActivityForResult(intent, DisplayActionPanel);
                     }
                 });
@@ -373,10 +385,17 @@ public class InitialActivity extends Activity {
                         removePeriodAndOvulationFlagToDateMeter();
                         break;
                     }
+                    case ActionActivity.ActionAddTemperature: {
+
+                        float temperature = data.getExtras().getFloat(ActionActivity.ActionTemperatureExtra);
+                        setTemperatureToDateMeter(selectedDate, temperature);
+                        break;
+                    }
                     case ActionActivity.ActionNothing: {
                         // Nothing
                     }
                 }
+
                 addMonthView();
                 break;
             }
@@ -807,7 +826,7 @@ public class InitialActivity extends Activity {
         final LinearLayout dateLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
         final EditText commentText = (EditText)findViewById(R.id.notation_text);
 
-        DateRepository.updateDateRepository(this, targetDate, comment);
+        DateRepository.updateDateRepositorySetComment(this, targetDate, comment);
 
         DateTime firstDate = ((DateMeter) dateLayout.getChildAt(1)).getDate();
         int dateDiff = (int)((targetDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
@@ -835,7 +854,7 @@ public class InitialActivity extends Activity {
 
         for(int i = 0; i <= (endDate.getMillis() - startDate.getMillis()) / 86400000 ; i++) {
 
-            DateRepository.updateDateRepository(this, startDate.plusDays(i), type);
+            DateRepository.updateDateRepositorySetDateType(this, startDate.plusDays(i), type);
         }
     }
 
@@ -902,7 +921,7 @@ public class InitialActivity extends Activity {
                 adsUrl = adsInfo.AdsUrl;
 
 //                if(!adsUrl.isEmpty())
-                    adjustLayoutForAds();
+                adjustLayoutForAds();
             }
         }, getStringPreference(PSettingDisplayedLanguage));
     }
@@ -949,7 +968,7 @@ public class InitialActivity extends Activity {
         c.moveToFirst();
 
         // to setting up the DateMeter's color
-        new DateMeter(this, DateTime.now(), 0, null, null, 0);
+        new DateMeter(this, DateTime.now(), 0, null, null, 0, 0f);
 
         if(isRight) {
             for (int i = 0; i < dates.size(); i++) {
@@ -967,7 +986,7 @@ public class InitialActivity extends Activity {
                         color = DateMeter.SafeZoneColor;
                         break;
                 }
-                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType));
+                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature));
             }
         } else {
             for(int i = dates.size() - 1; i >= 0; i--) {
@@ -979,7 +998,7 @@ public class InitialActivity extends Activity {
                     case DateMeter.Nothing:
                     default: color = DateMeter.SafeZoneColor; break;
                 }
-                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType), 0);
+                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature), 0);
             }
         }
     }
@@ -1087,6 +1106,11 @@ public class InitialActivity extends Activity {
 
         index = dateDiff + 1;
         return index;
+    }
+
+    private void setTemperatureToDateMeter(DateTime toDate, float temperature) {
+
+        DateRepository.updateDateRepositorySetTemperature(this, toDate, temperature);
     }
 
     private void moveDateMeterToCurrentDate() {
