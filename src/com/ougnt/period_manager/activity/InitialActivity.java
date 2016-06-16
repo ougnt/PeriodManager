@@ -1116,13 +1116,13 @@ public class InitialActivity extends Activity {
         addUsageCounter(PPeriodButtonUsageCounter);
 
         LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
-        int counter = 10;
+        int counter = 50;
 
         while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
 
             endLayoutAction(v, false);
         }
-        counter = 10;
+        counter = 50;
         while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
 
             endLayoutAction(v, true);
@@ -1174,13 +1174,13 @@ public class InitialActivity extends Activity {
     private void removePeriodAndOvulationFlagToDateMeter() {
 
         LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
-        int counter = 10;
+        int counter = 50;
 
         while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0 ) {
 
             endLayoutAction(v, false);
         }
-        counter = 10;
+        counter = 50;
         while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
 
             endLayoutAction(v, true);
