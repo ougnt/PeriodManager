@@ -31,7 +31,7 @@
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp" android:layout_weight="0.8" android:id="@+id/day_view">
+            android:layout_height="0dp" android:layout_weight="0.9" android:id="@+id/day_view">
         <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -71,9 +71,10 @@
                     android:background="@drawable/right_edge">
             </LinearLayout>
         </LinearLayout>
+
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
                       android:layout_height="0dp" android:weightSum="1.0" android:orientation="vertical"
-                      android:layout_weight="0.5" android:id="@+id/month_view_panel" android:visibility="visible">
+                      android:layout_weight="0.5" android:id="@+id/month_view_panel" android:visibility="gone">
             <LinearLayout android:layout_height="0dp" android:layout_width="match_parent" android:orientation="vertical"
                           android:layout_weight="0.2" android:weightSum="1.0">
                 <LinearLayout
@@ -536,57 +537,203 @@
                               android:background="@color/calendar_date_bg_dark"/>
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout
-                android:orientation="vertical"
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:weightSum="1.0"
+            android:orientation="vertical"
+            android:layout_weight="0.5"
+            android:id="@+id/chart_view_panel"
+            android:visibility="visible" >
+
+            <com.github.mikephil.charting.charts.LineChart
+                android:id="@+id/temperature_chart"
                 android:layout_width="match_parent"
-                android:layout_height="0dp" android:layout_weight="0.1" android:weightSum="1"
-                android:layout_marginTop="10dp">
-            <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
-                          android:layout_height="0dp" android:id="@+id/linearLayout"
-                          android:onClick="toggleView" android:layout_weight="0.1"
-                          android:background="@color/date_calendar_switcher_lite" android:layout_marginLeft="20dp"
-                          android:layout_marginRight="20dp"/>
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.1"
+            android:weightSum="9"
+            android:layout_marginTop="10dp" >
+
             <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp" android:id="@+id/view_toggle" android:onClick="toggleView"
-                    android:layout_weight="0.8" android:background="@color/date_calendar_switcher"
-                    android:layout_marginLeft="20dp" android:layout_marginRight="20dp" android:weightSum="9">
+                    android:orientation="vertical"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent" android:layout_weight="3" android:weightSum="1"
+                    android:layout_marginTop="10dp">
+                <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
+                              android:layout_height="0dp" android:id="@+id/linearLayout"
+                              android:onClick="toggleView" android:layout_weight="0.1"
+                              android:background="@color/date_view_button_color_lite" android:layout_marginLeft="20dp"
+                              android:layout_marginRight="10dp"/>
                 <LinearLayout
                         android:orientation="horizontal"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent" android:layout_weight="3" android:layout_gravity="center_vertical|right"
-                >
-                    <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/imageView12"
-                            android:src="@drawable/date_icon" android:layout_gravity="center"/>
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp" android:id="@+id/date_view_toggle" android:onClick="toggleView"
+                        android:layout_weight="0.8" android:background="@color/date_view_button_color"
+                        android:layout_marginLeft="20dp" android:layout_marginRight="10dp" android:weightSum="9">
+                    <LinearLayout
+                            android:orientation="horizontal"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent" android:layout_weight="9" android:layout_gravity="center_vertical|right"
+                    >
+                        <ImageView
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:id="@+id/imageView12"
+                                android:src="@drawable/date_icon" android:layout_gravity="center"/>
+                    </LinearLayout>
+
                 </LinearLayout>
-                <LinearLayout android:orientation="horizontal" android:layout_width="0dp"
-                              android:layout_height="match_parent" android:layout_weight="3"
-                              android:layout_gravity="center">
-                    <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/imageView14" android:layout_gravity="center"
-                            android:src="@drawable/toggle_icon"/>
-                </LinearLayout>
-                <LinearLayout android:orientation="horizontal" android:layout_width="0dp"
-                              android:layout_height="match_parent" android:layout_weight="3"
-                              android:layout_gravity="left|center_vertical">
-                    <ImageView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:id="@+id/imageView13" android:layout_gravity="center"
-                            android:src="@drawable/calendar_icon"/>
-                </LinearLayout>
+                <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
+                              android:layout_height="0dp" android:id="@+id/linearLayout45"
+                              android:onClick="toggleView" android:layout_weight="0.1" android:layout_marginRight="10dp"
+                              android:layout_marginLeft="20dp" android:background="@color/date_view_button_color_dark"/>
             </LinearLayout>
-            <LinearLayout android:orientation="vertical" android:layout_width="match_parent"
-                          android:layout_height="0dp" android:id="@+id/linearLayout45"
-                          android:onClick="toggleView" android:layout_weight="0.1" android:layout_marginRight="20dp"
-                          android:layout_marginLeft="20dp" android:background="@color/date_calendar_switcher_dark"/>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:weightSum="1"
+                android:layout_marginTop="10dp" >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/linearLayout51"
+                    android:onClick="toggleView"
+                    android:layout_weight="0.1"
+                    android:background="@color/date_calendar_switcher_lite"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/month_view_toggle"
+                    android:onClick="toggleView"
+                    android:layout_weight="0.8"
+                    android:background="@color/date_calendar_switcher"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:weightSum="9" >
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="9"
+                        android:layout_gravity="left|center_vertical" >
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/imageView20"
+                            android:layout_gravity="center"
+                            android:src="@drawable/calendar_icon" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/linearLayout53"
+                    android:onClick="toggleView"
+                    android:layout_weight="0.1"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/date_calendar_switcher_dark" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:weightSum="1"
+                android:layout_marginTop="10dp" >
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/linearLayout48"
+                    android:onClick="toggleView"
+                    android:layout_weight="0.1"
+                    android:background="@color/chart_view_button_color_lite"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/chart_view_toggle"
+                    android:onClick="toggleView"
+                    android:layout_weight="0.8"
+                    android:background="@color/chart_view_button_color"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="20dp"
+                    android:weightSum="9" >
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:layout_gravity="center_vertical|right" >
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:layout_gravity="center" >
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:id="@+id/imageView15"
+                            android:src="@drawable/chart_icon"
+                            android:layout_gravity="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:layout_gravity="left|center_vertical" >
+
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:id="@+id/linearLayout50"
+                    android:onClick="toggleView"
+                    android:layout_weight="0.1"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:background="@color/chart_view_button_color_dark" />
+            </LinearLayout>
         </LinearLayout>
+
         <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
                       android:layout_height="0dip" android:layout_weight="0.3" android:id="@+id/comment_panel"
                       android:weightSum="1.0" android:visibility="visible">
@@ -641,8 +788,8 @@
             xmlns:ads="http://schemas.android.com/apk/res-auto"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="0dp" android:layout_weight="0.1"
-            android:background="#ff0000" android:id="@+id/ads_mob_view" >
+            android:layout_height="1dp"
+        android:background="#ff0000" android:id="@+id/ads_mob_view" >
         <com.google.android.gms.ads.AdView
                 android:id="@+id/ad_view"
                 android:layout_width="wrap_content"

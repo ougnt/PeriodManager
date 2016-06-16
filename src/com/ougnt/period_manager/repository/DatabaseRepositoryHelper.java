@@ -40,7 +40,7 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
         }
 
         for(int i = 0; i < dates.size(); i++) {
-            insertString = String.format(insertString, "('" + dates.get(i).toString("yyyy-MM-dd") + "',0,''), %s");
+            insertString = String.format(insertString, "('" + dates.get(i).toString("yyyy-MM-dd") + "',0,'',0), %s");
             if(i % 500 == 0) {
 
                 insertString = insertString.replace(", %s", "");
@@ -68,7 +68,7 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
 
         if(oldVersion <= 2) {
 
-            String alterQuery = "ALTER TABLE DATE_REPOSITORY ADD COLUMN temperature_value FLOAT DEFAULT 0";
+            String alterQuery = "ALTER TABLE DATE_REPOSITORY ADD COLUMN /*temperature_value*/ FLOAT DEFAULT 0";
             db.execSQL(alterQuery);
         }
 

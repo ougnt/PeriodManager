@@ -61,4 +61,7 @@
     <string name="summary_ovulation_period_from">割り出すの排卵日から</string>
     <string name="setting_language">言語</string>
     <string name="notify_summary_not_set">生理日を指定して下さい</string>
+    <string name="action_activity_enter_your_body_temperature">体温</string>
+    <string name="action_activity_save">保存</string>
+    <string name="action_activity_temperature_hint">体温</string>
 </resources>

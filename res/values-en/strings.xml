@@ -58,4 +58,7 @@
     <string name="notify_period_title">Notify Period</string>
     <string name="setting_language">Language</string>
     <string name="notify_summary_not_set">Please specify period date</string>
+    <string name="action_activity_enter_your_body_temperature">Enter your body temperature</string>
+    <string name="action_activity_save">Save</string>
+    <string name="action_activity_temperature_hint">Body temperature</string>
 </resources>

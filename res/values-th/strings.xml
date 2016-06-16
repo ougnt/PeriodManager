@@ -56,4 +56,7 @@
     <string name="notify_period_title">เตือนก่อนเป็นเมนส์</string>
     <string name="setting_language">ภาษา</string>
     <string name="notify_summary_not_set">กรุณาระบุวันที่เป็นเมนส์</string>
+    <string name="action_activity_enter_your_body_temperature">อุณหภูมิร่างกายของวันนี้คือ</string>
+    <string name="action_activity_save">บันทึก</string>
+    <string name="action_activity_temperature_hint">อุณหภูมิร่างกาย</string>
 </resources>

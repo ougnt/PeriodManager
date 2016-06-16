@@ -12,6 +12,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.*;
 import android.widget.*;
+
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.DateMeter;
@@ -31,6 +38,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -45,7 +54,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  40;
+    final int ApplicationVersion=  41;
 
     // TODO : Change this to the real one
     // Live Env
@@ -99,6 +108,7 @@ public class InitialActivity extends Activity {
 
     public static final int DisplayModeDateScroller = 0;
     public static final int DisplayModeMonthView = 1;
+    public static final int DisplayModeChartView = 2;
     public static DateTime startTime = DateTime.now();
 
     SettingRepository setting;
@@ -159,15 +169,26 @@ public class InitialActivity extends Activity {
         AdRequest.Builder adBuilder = new AdRequest.Builder();
         adBuilder.setGender(AdRequest.GENDER_FEMALE);
         AdRequest adRequest = adBuilder.build();
-        AdView adView = (AdView)findViewById(R.id.ad_view);
+        final AdView adView = (AdView)findViewById(R.id.ad_view);
         adView.loadAd(adRequest);
+        final LinearLayout adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
+        adMobLayout.setVisibility(View.GONE);
 
-        manageAds(getDeviceId());
+        adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
+                adMobLayout.setVisibility(View.VISIBLE);
+                super.onAdLoaded();
+            }
+        });
+
+//        manageAds(getDeviceId());
 
         addDateMeterView();
         addMonthView();
 
-        adjustLayoutForDisplayMode();
+        adjustLayoutForDisplayModeAccordingToPDisplayMode();
     }
 
     private void addDateMeterView() {
@@ -519,30 +540,107 @@ public class InitialActivity extends Activity {
         dateTouchListener = listener;
     }
 
-    public void toggleView(View v) {
+    public void toggleView(View clickedButton) {
 
-        int currentDisplayMode = getUsageCounter(PMainDisplayMode);
-        int newDisplayMode = currentDisplayMode == DisplayModeDateScroller ? DisplayModeMonthView : DisplayModeDateScroller;
+        int newDisplayMode = 0;
+
+        switch(clickedButton.getId()) {
+
+            case R.id.date_view_toggle: {
+
+                newDisplayMode = DisplayModeDateScroller;
+                break;
+            }
+            case R.id.month_view_toggle: {
+
+                newDisplayMode = DisplayModeMonthView;
+                break;
+            }
+            case R.id.chart_view_toggle: {
+
+                newDisplayMode = DisplayModeChartView;
+                break;
+            }
+            default: newDisplayMode = DisplayModeDateScroller;
+        }
 
         setSharedPreference(PMainDisplayMode, newDisplayMode);
 
-        adjustLayoutForDisplayMode();
+        adjustLayoutForDisplayModeAccordingToPDisplayMode();
     }
 
-    private void adjustLayoutForDisplayMode() {
+    private void adjustLayoutForDisplayModeAccordingToPDisplayMode() {
 
         LinearLayout dateScrollerView = (LinearLayout) findViewById(R.id.date_scroller);
         LinearLayout monthView = (LinearLayout) findViewById(R.id.month_view_panel);
+        LinearLayout chartView = (LinearLayout) findViewById(R.id.chart_view_panel);
 
-        if(getUsageCounter(PMainDisplayMode) == DisplayModeDateScroller) {
+        switch(getUsageCounter(PMainDisplayMode)) {
 
-            dateScrollerView.setVisibility(View.VISIBLE);
-            monthView.setVisibility(View.GONE);
-        } else if(getUsageCounter(PMainDisplayMode) == DisplayModeMonthView) {
+            case DisplayModeMonthView: {
 
-            dateScrollerView.setVisibility(View.GONE);
-            monthView.setVisibility(View.VISIBLE);
+                // Show only month view hide other
+                monthView.setVisibility(View.VISIBLE);
+                dateScrollerView.setVisibility(View.GONE);
+                chartView.setVisibility(View.GONE);
+                break;
+            }
+            case DisplayModeChartView: {
+
+                // Show only chart view, hide other
+                chartView.setVisibility(View.VISIBLE);
+                dateScrollerView.setVisibility(View.GONE);
+                monthView.setVisibility(View.GONE);
+                loadChartData();
+                break;
+            }
+            case DisplayModeDateScroller:
+            default: {
+
+                // The default is show only date scroller view, hide other
+                dateScrollerView.setVisibility(View.VISIBLE);
+                monthView.setVisibility(View.GONE);
+                chartView.setVisibility(View.GONE);
+            }
         }
+    }
+
+    private void loadChartData() {
+
+        // TODO : Create TemperatureHelpActivity with Layout
+        LineChart temperatureChart = (LineChart) findViewById(R.id.temperature_chart);
+        LinkedList<String> dataX = new LinkedList<>();
+        LinkedList<Entry> dataY = new LinkedList<>();
+
+        List<DateRepository> dateRepositoriesForChart = DateRepository.getDateRepositories(this, DateTime.now().minusDays(20),DateTime.now().plusDays(20));
+
+        for (int dateIndex = 0; dateIndex < dateRepositoriesForChart.size(); dateIndex++) {
+
+            dataX.add(dateRepositoriesForChart.get(dateIndex).date.toString("yyyy-MM-dd"));
+            dataY.add(new Entry(dateRepositoriesForChart.get(dateIndex).temperature, dateIndex));
+        }
+
+        LineData temperatureData = new LineData(dataX);
+        LineDataSet dataSet = new LineDataSet(dataY, "temperature");
+
+        dataSet.setColor(getResources().getColor(R.color.chart_line_color));
+        dataSet.setLineWidth(3f);
+
+        temperatureData.addDataSet(dataSet);
+
+        // Color of the text explained the point info
+        temperatureData.setValueTextColor(getResources().getColor(R.color.chart_value_text));
+        temperatureData.setValueTextSize(14f);
+
+        temperatureChart.setData(temperatureData);
+
+        temperatureChart.setBackgroundColor(getResources().getColor(R.color.chart_background_color));
+        temperatureChart.setDescription("");
+        temperatureChart.animateX(100);
+        temperatureChart.animateY(100);
+        temperatureChart.getXAxis().setLabelsToSkip(6);
+        temperatureChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
+
     }
 
     private void submitStat() {
@@ -920,7 +1018,6 @@ public class InitialActivity extends Activity {
                 adsText = adsInfo.AdsText;
                 adsUrl = adsInfo.AdsUrl;
 
-//                if(!adsUrl.isEmpty())
                 adjustLayoutForAds();
             }
         }, getStringPreference(PSettingDisplayedLanguage));
@@ -953,6 +1050,7 @@ public class InitialActivity extends Activity {
 
                 appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
                 adsMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
+                adsMobLayout.setVisibility(View.GONE);
             }
         } catch(Exception e) {
             // Do nothing

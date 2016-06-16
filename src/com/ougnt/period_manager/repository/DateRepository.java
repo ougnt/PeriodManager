@@ -38,7 +38,6 @@ public class DateRepository {
             dbHelper = new DatabaseRepositoryHelper(context);
         }
 
-        // TODO: add temperature
         String[] columns = {"date", "date_type", "comment", "temperature_value"};
         Cursor cursor = dbHelper.getWritableDatabase().query(
                 "DATE_REPOSITORY",

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="main_bg">#FFFFFF</color>
+    <color name="main_bg">#FFF4EE</color>
     <color name="calendar_text_color">#0F0F0F</color>
     <color name="safe_zone_bg">#BEFCF0</color>
     <color name="menstrual_zone_bg">#F3CDFF</color>
@@ -26,4 +26,13 @@
     <color name="date_calendar_switcher">#31D6DA</color>
     <color name="date_calendar_switcher_lite">#34EEF3</color>
     <color name="date_calendar_switcher_dark">#24ABB0</color>
+    <color name="chart_background_color">#FFE4FF</color>
+    <color name="chart_value_text">#999999</color>
+    <color name="chart_line_color">#2E99F0</color>
+    <color name="date_view_button_color">#63F296</color>
+    <color name="date_view_button_color_lite">#67FFA0</color>
+    <color name="date_view_button_color_dark">#59DA89</color>
+    <color name="chart_view_button_color">#E4C2E5</color>
+    <color name="chart_view_button_color_lite">#FDD8FF</color>
+    <color name="chart_view_button_color_dark">#CCAECE</color>
 </resources>

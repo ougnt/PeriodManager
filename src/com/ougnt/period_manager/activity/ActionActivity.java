@@ -71,8 +71,20 @@ public class ActionActivity extends Activity {
             @Override
             public void onClick(View v) {
                 float temperature = 0f;
-                temperature = Float.parseFloat(temperatureEditText.getText().toString());
+                try {
+                    temperature = Float.parseFloat(temperatureEditText.getText().toString());
+                } catch (NumberFormatException e) {
+                    temperature = 0f;
+                }
                 ActionActivity.this.setTemperature(temperature);
+            }
+        });
+
+        TextView help = (TextView) findViewById(R.id.temperature_help);
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openUsage();
             }
         });
     }
@@ -103,5 +115,11 @@ public class ActionActivity extends Activity {
     public void noAction(View view) {
 
         onBackPressed();
+    }
+
+    public void openUsage() {
+
+        Intent intent = new Intent(this, TemperatureHelpActivity.class);
+        startActivity(intent);
     }
 }

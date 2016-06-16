@@ -11,10 +11,12 @@ apply plugin: 'android'
 dependencies {
     repositories {
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
     compile fileTree(include: '*.jar', dir: 'libs')
     compile 'com.google.android.gms:play-services-ads:8.1.0'
     compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
 }
 
 android {
