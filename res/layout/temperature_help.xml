@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:theme="@style/Theme.Transparent" android:weightSum="1">
+
+    <WebView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/temperature_help_web_view"
+        android:layout_weight="0.9" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Ok"
+            android:id="@+id/help_ok_button"
+            android:gravity="center"
+            android:background="@color/button_urgent" />
+    </LinearLayout>
+</LinearLayout>
