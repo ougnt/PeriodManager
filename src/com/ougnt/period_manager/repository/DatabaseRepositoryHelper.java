@@ -3,6 +3,7 @@ package com.ougnt.period_manager.repository;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import org.joda.time.DateTime;
 
@@ -14,7 +15,7 @@ import java.util.LinkedList;
 public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
 
     // Version 3 add temperature
-    static final int CurrentVersion = 3;
+    static final int CurrentVersion = 4;
 
     public DatabaseRepositoryHelper(Context context) {
         super(context, "period_manager_core.db", null, CurrentVersion);
@@ -66,10 +67,12 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
             db.execSQL(summaryQuery);
         }
 
-        if(oldVersion <= 2) {
+        if(oldVersion <= 3) {
 
-            String alterQuery = "ALTER TABLE DATE_REPOSITORY ADD COLUMN /*temperature_value*/ FLOAT DEFAULT 0";
-            db.execSQL(alterQuery);
+            String alterQuery = "ALTER TABLE DATE_REPOSITORY ADD COLUMN temperature_value FLOAT DEFAULT 0";
+            try {
+                db.execSQL(alterQuery);
+            } catch (SQLiteException e) {}
         }
 
     }

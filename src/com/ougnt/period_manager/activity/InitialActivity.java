@@ -54,7 +54,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  41;
+    final int ApplicationVersion=  42;
 
     // TODO : Change this to the real one
     // Live Env
@@ -607,12 +607,12 @@ public class InitialActivity extends Activity {
 
     private void loadChartData() {
 
-        // TODO : Create TemperatureHelpActivity with Layout
         LineChart temperatureChart = (LineChart) findViewById(R.id.temperature_chart);
         LinkedList<String> dataX = new LinkedList<>();
         LinkedList<Entry> dataY = new LinkedList<>();
+        final int daysOffset = 20;
 
-        List<DateRepository> dateRepositoriesForChart = DateRepository.getDateRepositories(this, DateTime.now().minusDays(20),DateTime.now().plusDays(20));
+        List<DateRepository> dateRepositoriesForChart = DateRepository.getDateRepositories(this, DateTime.now().minusDays(daysOffset),DateTime.now().plusDays(daysOffset));
 
         for (int dateIndex = 0; dateIndex < dateRepositoriesForChart.size(); dateIndex++) {
 
@@ -641,6 +641,7 @@ public class InitialActivity extends Activity {
         temperatureChart.getXAxis().setLabelsToSkip(6);
         temperatureChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
 
+        temperatureChart.zoom(3f,1f,0,0);
     }
 
     private void submitStat() {
