@@ -35,4 +35,5 @@
     <color name="chart_view_button_color">#E4C2E5</color>
     <color name="chart_view_button_color_lite">#FDD8FF</color>
     <color name="chart_view_button_color_dark">#CCAECE</color>
+    <color name="chart_fetch_button_color">#AE99B3</color>
 </resources>

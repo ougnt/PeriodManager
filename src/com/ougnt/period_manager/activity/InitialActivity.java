@@ -14,18 +14,16 @@ import android.view.*;
 import android.widget.*;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.*;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
+import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
 import com.ougnt.period_manager.event.OnAdsRequestReturnEventListener;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
+import com.ougnt.period_manager.handler.ChartHandler;
 import com.ougnt.period_manager.repository.*;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -38,8 +36,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -54,7 +50,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  42;
+    final int ApplicationVersion=  43;
 
     // TODO : Change this to the real one
     // Live Env
@@ -295,9 +291,9 @@ public class InitialActivity extends Activity {
                     targetLayout.setBackgroundColor(0);
                 }
 
-                loadDateTiView(
+                loadDateToView(
                         calendar.dateRepositories[row][col],
-                        (TextView)findViewById(getResources().getIdentifier(
+                        (TextView) findViewById(getResources().getIdentifier(
                                 String.format("calendar_monthdate_%s%s", row + 1, col + 1),
                                 "id",
                                 getPackageName()
@@ -326,7 +322,7 @@ public class InitialActivity extends Activity {
         }
     }
 
-    private void loadDateTiView(DateRepository date, TextView view) {
+    private void loadDateToView(DateRepository date, TextView view) {
 
         int color = 0;
 
@@ -608,40 +604,18 @@ public class InitialActivity extends Activity {
     private void loadChartData() {
 
         LineChart temperatureChart = (LineChart) findViewById(R.id.temperature_chart);
-        LinkedList<String> dataX = new LinkedList<>();
-        LinkedList<Entry> dataY = new LinkedList<>();
-        final int daysOffset = 20;
+        final int initialDaysOffset = 20;
+        _chartHandler = new ChartHandler(this, temperatureChart);
 
-        List<DateRepository> dateRepositoriesForChart = DateRepository.getDateRepositories(this, DateTime.now().minusDays(daysOffset),DateTime.now().plusDays(daysOffset));
+        _chartHandler.initialChart(initialDaysOffset);
 
-        for (int dateIndex = 0; dateIndex < dateRepositoriesForChart.size(); dateIndex++) {
+        Button fetchPreviousButton = (Button) findViewById(R.id.chart_fetch_previous_data_button);
+        Button fetchNextButton = (Button) findViewById(R.id.chart_fetch_next_data_button);
 
-            dataX.add(dateRepositoriesForChart.get(dateIndex).date.toString("yyyy-MM-dd"));
-            dataY.add(new Entry(dateRepositoriesForChart.get(dateIndex).temperature, dateIndex));
-        }
+        _chartButtonHandler = new ChartFetchingOnclickHandler(_chartHandler);
 
-        LineData temperatureData = new LineData(dataX);
-        LineDataSet dataSet = new LineDataSet(dataY, "temperature");
-
-        dataSet.setColor(getResources().getColor(R.color.chart_line_color));
-        dataSet.setLineWidth(3f);
-
-        temperatureData.addDataSet(dataSet);
-
-        // Color of the text explained the point info
-        temperatureData.setValueTextColor(getResources().getColor(R.color.chart_value_text));
-        temperatureData.setValueTextSize(14f);
-
-        temperatureChart.setData(temperatureData);
-
-        temperatureChart.setBackgroundColor(getResources().getColor(R.color.chart_background_color));
-        temperatureChart.setDescription("");
-        temperatureChart.animateX(100);
-        temperatureChart.animateY(100);
-        temperatureChart.getXAxis().setLabelsToSkip(6);
-        temperatureChart.getXAxis().setPosition(XAxis.XAxisPosition.BOTTOM);
-
-        temperatureChart.zoom(3f,1f,0,0);
+        fetchNextButton.setOnClickListener(_chartButtonHandler);
+        fetchPreviousButton.setOnClickListener(_chartButtonHandler);
     }
 
     private void submitStat() {
@@ -1258,5 +1232,7 @@ public class InitialActivity extends Activity {
     private String adsText;
     private IAdsManager adsManager;
     private DateTime selectedDate = null;
+    private ChartHandler _chartHandler = null;
+    private ChartFetchingOnclickHandler _chartButtonHandler = null;
     private Context _thisContext = this;
 }

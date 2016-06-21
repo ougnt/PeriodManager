@@ -542,15 +542,46 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:weightSum="1.0"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:layout_weight="0.5"
             android:id="@+id/chart_view_panel"
             android:visibility="visible" >
 
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1" >
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="&lt;"
+                    android:id="@+id/chart_fetch_previous_data_button"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:background="@color/chart_fetch_button_color" />
+            </LinearLayout>
+
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/temperature_chart"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.8" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.1">
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text=">"
+                    android:id="@+id/chart_fetch_next_data_button"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:background="@color/chart_fetch_button_color" />
+            </LinearLayout>
 
         </LinearLayout>
 
