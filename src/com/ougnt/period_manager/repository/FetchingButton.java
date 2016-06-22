@@ -2,6 +2,7 @@ package com.ougnt.period_manager.repository;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -21,10 +22,15 @@ public class FetchingButton extends LinearLayout {
         this.setLayoutParams(params);
         TextView innerText = new TextView(context);
         innerText.setLayoutParams(params);
-        innerText.setText("Next");
-        innerText.setTextColor(Color.BLACK);
-        this.addView(innerText);
+        if(isRightEdge) {
+            innerText.setText("  >  ");
+        } else {
+            innerText.setText("  <  ");
+        }
 
+        innerText.setTextColor(Color.BLACK);
+        innerText.setGravity(Gravity.CENTER);
+        this.addView(innerText);
     }
 
     public boolean isRightEdge;

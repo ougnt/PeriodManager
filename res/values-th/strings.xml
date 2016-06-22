@@ -22,7 +22,7 @@
     <string name="help_seek">เลื่อนปฎิทิน เพื่อหาวันที่มีการตกไข่/วันที่ไม่มีการตกไข่</string>
     <string name="help_help">คลิ๊กที่ ไอค่อนนี้ เพื่อแสดงวิธีใช้</string>
     <string name="help_de_menstrual">เลือกวันที่เป็นประจำเดือน</string>
-    <string name="help_de_menstrual2">จากนั้นกดปุ่ม "หยุดเป็นประจำเดือน", วันนั้นจะกลายเป็นวันที่ไม่เป็นประจำเดือน</string>
+    <string name="help_de_menstrual2">จากนั้นกดปุ่ม "หยุดเป็นประจำเดือน", หลังจากนั้นวันนี้จะไม่ได้ถูกมาร์ค ว่าเป็นประจำเดือน</string>
     <string name="help_do_not_show_this_in_the_future">แสดงวิธีใช้อีกครั้งหน้า</string>
     <string name="help_close_help">บันทึกและปิด</string>
     <string name="menu_title">เมนู</string>

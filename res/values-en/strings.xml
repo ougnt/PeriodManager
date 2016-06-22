@@ -22,7 +22,7 @@
     <string name="help_seek">Scroll the calendar to seek for the ovulation/non-ovulation days</string>
     <string name="help_help">Click this icon to show this usage</string>
     <string name="help_de_menstrual">Select a day with period icon</string>
-    <string name="help_de_menstrual2">Then click "Period End" button, it will become a non ovulation day</string>
+    <string name="help_de_menstrual2">Then click "Not Menstrual Day" button, it will no longer mark the day as a "Menstrual Day"</string>
     <string name="help_do_not_show_this_in_the_future">Show this again next time</string>
     <string name="help_close_help">Save and Close</string>
     <string name="menu_title">Menu</string>
