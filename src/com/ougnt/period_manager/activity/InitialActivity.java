@@ -51,11 +51,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-<<<<<<< HEAD
-    final int ApplicationVersion=  1044;
-=======
-    final int ApplicationVersion=  46;
->>>>>>> master
+    final int ApplicationVersion=  1046;
 
     // TODO : Change this to the real one
     // Live Env
