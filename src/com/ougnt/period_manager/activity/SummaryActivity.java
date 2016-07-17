@@ -34,23 +34,23 @@ public class SummaryActivity extends Activity {
         setContentView(R.layout.summary);
 
         Intent intent = getIntent();
+        int dateFormatFlag = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_SHOW_YEAR;
+
         menstrualFrom = DateTime.parse(intent.getExtras().getString(NextMenstrualFromExtra));
         menstrualTo   = DateTime.parse(intent.getExtras().getString(NextMenstrualToExtra));
         ovulationFrom = DateTime.parse(intent.getExtras().getString(NextOvulationFromExtra));
         ovulationTo   = DateTime.parse(intent.getExtras().getString(NextOvulationToExtra));
 
-        TextView expectedMenstrualFrom = (TextView)findViewById(R.id.expected_menstrual_from);
-        TextView expectedOvulationFrom = (TextView)findViewById(R.id.expected_ovulation_from);
-        TextView expectedMenstrualTo = (TextView)findViewById(R.id.expected_menstrual_to);
-        TextView expectedOvulationTo = (TextView)findViewById(R.id.expected_ovulation_to);
+        String menstrualFromText = DateUtils.formatDateTime(this, menstrualFrom.getMillis(), dateFormatFlag);
+        String menstrualToText = DateUtils.formatDateTime(this, menstrualTo.getMillis(), dateFormatFlag);
+        String ovulationFromText = DateUtils.formatDateTime(this, ovulationFrom.getMillis(), dateFormatFlag);
+        String ovulationToText = DateUtils.formatDateTime(this, ovulationTo.getMillis(), dateFormatFlag);
 
-        int dateFormatFlag = DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_MONTH | DateUtils.FORMAT_SHOW_YEAR;
+        TextView expectedMenstrual = (TextView)findViewById(R.id.expected_menstrual);
+        TextView expectedOvulation = (TextView)findViewById(R.id.expected_ovulation);
 
-        expectedMenstrualFrom.setText(DateUtils.formatDateTime(this, menstrualFrom.getMillis(), dateFormatFlag));
-        expectedMenstrualTo.setText(DateUtils.formatDateTime(this, menstrualTo.getMillis(), dateFormatFlag));
-        expectedOvulationFrom.setText(DateUtils.formatDateTime(this, ovulationFrom.getMillis(), dateFormatFlag));
-        expectedOvulationTo.setText(DateUtils.formatDateTime(this, ovulationTo.getMillis(), dateFormatFlag));
-
+        expectedMenstrual.setText(String.format(expectedMenstrual.getText().toString(), menstrualFromText, menstrualToText));
+        expectedOvulation.setText(String.format(expectedOvulation.getText().toString(), ovulationFromText, ovulationToText));
     }
 
     public void close(View view) {

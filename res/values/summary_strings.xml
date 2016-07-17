@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="summary_ovulation_period_from">Estimated Ovulation Period From</string>
-    <string name="summary_menstrual_period_from">Estimated Menstrual Period From</string>
-    <string name="summary_ovulation_period_to">Estimated Ovulation Period To</string>
-    <string name="summary_menstrual_period_to">Estimated Menstrual Period To</string>
+    <string name="summary_estimated_ovulation">Estimated Ovulation Period From %1$s to %2$s</string>
+    <string name="summary_estimated_menstrual">Estimated Menstrual Period From %1$s to %2$s</string>
     <string name="summary_close">Close</string>
 </resources>

@@ -29,28 +29,10 @@
                           android:layout_marginLeft="10dp" android:layout_marginRight="10dp">
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                           android:textAppearance="?android:attr/textAppearanceMedium"
-                          android:text="@string/summary_ovulation_period_from" android:id="@+id/textView22"
-                          android:layout_weight="0.5" android:textColor="@color/text_color"/>
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                          android:textAppearance="?android:attr/textAppearanceMedium" android:text="Medium Text"
-                          android:id="@+id/expected_ovulation_from" android:layout_weight="0.5"
-                          android:textColor="@color/text_color"/>
+                          android:text="@string/summary_estimated_menstrual" android:id="@+id/expected_menstrual"
+                          android:layout_weight="1" android:textColor="@color/text_color"/>
             </LinearLayout>
-            <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
-                          android:layout_height="10dp" android:weightSum="1" android:layout_marginLeft="10dp"
-                          android:layout_marginRight="10dp" android:layout_weight="0.1"/>
-            <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
-                          android:layout_height="wrap_content" android:weightSum="1" android:layout_marginLeft="10dp"
-                          android:layout_marginRight="10dp">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                          android:textAppearance="?android:attr/textAppearanceMedium" android:text="@string/summary_menstrual_period_to"
-                          android:id="@+id/textView23" android:layout_weight="0.5"
-                          android:textColor="@color/text_color"/>
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                          android:textAppearance="?android:attr/textAppearanceMedium" android:text="Medium Text"
-                          android:id="@+id/expected_ovulation_to" android:layout_weight="0.5"
-                          android:textColor="@color/text_color"/>
-            </LinearLayout>
+
             <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
                           android:layout_height="20dp" android:weightSum="1" android:layout_marginLeft="10dp"
                           android:layout_marginRight="10dp" android:layout_weight="0.1"/>
@@ -59,32 +41,13 @@
                           android:layout_marginRight="10dp">
                 <TextView android:layout_width="0dp" android:layout_height="wrap_content"
                           android:textAppearance="?android:attr/textAppearanceMedium"
-                          android:text="@string/summary_menstrual_period_from" android:id="@+id/textView24"
-                          android:layout_weight="0.5" android:textColor="@color/text_color"/>
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                          android:textAppearance="?android:attr/textAppearanceMedium" android:text="Medium Text"
-                          android:id="@+id/expected_menstrual_from" android:layout_weight="0.5"
-                          android:textColor="@color/text_color"/>
+                          android:text="@string/summary_estimated_ovulation" android:id="@+id/expected_ovulation"
+                          android:layout_weight="1" android:textColor="@color/text_color"/>
             </LinearLayout>
             <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
                           android:layout_height="10dp" android:weightSum="1" android:layout_marginLeft="10dp"
                           android:layout_marginRight="10dp" android:layout_weight="0.1"/>
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:weightSum="1" android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp">
-                <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/summary_menstrual_period_to"
-                        android:id="@+id/textView21" android:layout_weight="0.5" android:textColor="@color/text_color"/>
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content"
-                          android:textAppearance="?android:attr/textAppearanceMedium" android:text="Medium Text"
-                          android:id="@+id/expected_menstrual_to" android:layout_weight="0.5"
-                          android:textColor="@color/text_color"/>
-            </LinearLayout>
+
             <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
                           android:layout_height="0dp" android:weightSum="1" android:layout_marginLeft="10dp"
                           android:layout_marginRight="10dp" android:layout_weight="0.1" android:gravity="right">
