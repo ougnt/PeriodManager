@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -50,7 +51,11 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
+<<<<<<< HEAD
     final int ApplicationVersion=  1044;
+=======
+    final int ApplicationVersion=  46;
+>>>>>>> master
 
     // TODO : Change this to the real one
     // Live Env
@@ -285,7 +290,13 @@ public class InitialActivity extends Activity {
 
                 if(calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
 
-                    targetLayout.setBackgroundColor(getResources().getColor(R.color.today_text_color));
+                    Drawable bg = getResources().getDrawable(R.drawable.circle_ink);
+                    int width = getResources().getDisplayMetrics().widthPixels / 8;
+                    targetLayout.setBackground(bg);
+
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width);
+                    targetLayout.setLayoutParams(params);
+
                 } else {
 
                     targetLayout.setBackgroundColor(0);

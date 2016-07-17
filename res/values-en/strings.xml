@@ -37,10 +37,6 @@
     <string name="not_menstrual_day_button_caption">Period End</string>
     <string name="menstrual_day_button_caption">Period Start</string>
     <string name="summary_close">Close</string>
-    <string name="summary_menstrual_period_from">Estimated Menstrual Period From</string>
-    <string name="summary_menstrual_period_to">To</string>
-    <string name="summary_ovulation_period_from">Estimated Ovulation Period From</string>
-    <string name="summary_ovulation_period_to">To</string>
     <string name="menu_summary">Summary</string>
     <string name="menu_month_view">Month View</string>
     <string name="review_asking">How do you feel about this application? Please provide the feedback.</string>
@@ -61,4 +57,6 @@
     <string name="action_activity_enter_your_body_temperature">Enter your body temperature</string>
     <string name="action_activity_save">Save</string>
     <string name="action_activity_temperature_hint">Body temperature</string>
+    <string name="summary_estimated_menstrual">Estimated Menstrual Period From %1$s to %2$s</string>
+    <string name="summary_estimated_ovulation">Estimated Ovulation Period From %1$s to %2$s</string>
 </resources>

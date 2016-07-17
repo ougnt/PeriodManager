@@ -35,10 +35,6 @@
     <string name="setting_calendar_type_day">แบบวัน</string>
     <string name="setting_calendar_type_month">แบบเดือน</string>
     <string name="summary_close">ปิด</string>
-    <string name="summary_menstrual_period_from">คาดการณ์ประจำเดือน ครั้งหน้าประมาณวันที่</string>
-    <string name="summary_menstrual_period_to">ถึงวันที่</string>
-    <string name="summary_ovulation_period_from">คาดการณ์วันตกไข่ ครั้งหน้าประมาณวันที่</string>
-    <string name="summary_ovulation_period_to">ถึงวันที่</string>
     <string name="menu_summary">สรุป</string>
     <string name="menu_month_view">แสดงแบบเดือน</string>
     <string name="review_asking">หลังจากใช้งานแอฟ แล้วรู้สึงอย่างไรกับ แอฟ ตัวนี้บ้าง บอกหน่อยได้ไหม</string>
@@ -59,4 +55,6 @@
     <string name="action_activity_enter_your_body_temperature">อุณหภูมิร่างกายของวันนี้คือ</string>
     <string name="action_activity_save">บันทึก</string>
     <string name="action_activity_temperature_hint">อุณหภูมิร่างกาย</string>
+    <string name="summary_estimated_menstrual">คาดการณ์ประจำเดือน ครั้งหน้าประมาณวันที่ %1$s ถึงวันที่ %2$s</string>
+    <string name="summary_estimated_ovulation">คาดการณ์วันตกไข่ ครั้งหน้าประมาณวันที่ %1$s ถึงวันที่ %2$s</string>
 </resources>

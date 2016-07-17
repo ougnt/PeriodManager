@@ -21,8 +21,6 @@
     <string name="setting_period_cycle">生理の期間</string>
     <string name="setting_period_length">生理のいく日</string>
     <string name="summary_close">終る</string>
-    <string name="summary_menstrual_period_to">まで</string>
-    <string name="summary_ovulation_period_to">まで</string>
     <string name="sunday">日</string>
     <string name="thursday">木</string>
     <string name="tuesday">火</string>
@@ -57,8 +55,8 @@
     <string name="notify_ovulation_title">排卵のお知らせ</string>
     <string name="setting_warn_before_ovulation">排卵のお知らせほうがいい</string>
     <string name="setting_warn_before_period">生理のお知らせほうがいい</string>
-    <string name="summary_menstrual_period_from">割り出すの生理日から</string>
-    <string name="summary_ovulation_period_from">割り出すの排卵日から</string>
+    <string name="summary_estimated_menstrual">割り出すの生理日は %1$s から %2$s までです。</string>
+    <string name="summary_estimated_ovulation">割り出すの排卵日は %1$s から %2$s までです。</string>
     <string name="setting_language">言語</string>
     <string name="notify_summary_not_set">生理日を指定して下さい</string>
     <string name="action_activity_enter_your_body_temperature">体温</string>
