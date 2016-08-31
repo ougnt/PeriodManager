@@ -26,6 +26,7 @@ import com.ougnt.period_manager.event.OnAdsRequestReturnEventListener;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import com.ougnt.period_manager.handler.ChartHandler;
 import com.ougnt.period_manager.repository.*;
+
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
@@ -51,13 +52,13 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion=  46;
+    final int ApplicationVersion = 46;
 
     // TODO : Change this to the real one
     // Live Env
-    public static final String StatServer = "27.254.81.190:5555";
+//    public static final String StatServer = "27.254.81.190:5555";
     // Dev env
-//    public static final String StatServer = "192.168.56.1:9000";
+    public static final String StatServer = "192.168.56.1:9000";
     public static final String StatUri = String.format("http://%s/usageStat", StatServer);
     public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
     public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
@@ -73,9 +74,9 @@ public class InitialActivity extends Activity {
     public static final String PMenuButtonUsageCounter = "period_manager_preference_menu_button_usage_counter";
     public static final String PCurrentVersion = "period_manager_preference_current_version";
 
-    public static final String PReviewNow =  "period_manager_preference_review_now";
-    public static final String PReviewLater =  "period_manager_preference_review_later";
-    public static final String PNoReview =  "period_manager_preference_review_non";
+    public static final String PReviewNow = "period_manager_preference_review_now";
+    public static final String PReviewLater = "period_manager_preference_review_later";
+    public static final String PNoReview = "period_manager_preference_review_non";
 
     public static final String PFetchNextMonthUsageCounter = "period_manager_preference_fetch_next_usage_counter";
     public static final String PFetchPreviousMonthUsageCounter = "period_manager_preference_fetch_previous_usage_counter";
@@ -103,6 +104,10 @@ public class InitialActivity extends Activity {
     // TODO: Submit this usage counter
     public static final String PMainDisplayMode = "period_manager_preference_display_mode";
 
+    // Available in version 47
+    // TODO: Submit this usage counter
+    public static final String PMenuLockScreenUsageCounter = "period_manager_preference_lock_screen_usage_counter";
+
     public static final int DisplayModeDateScroller = 0;
     public static final int DisplayModeMonthView = 1;
     public static final int DisplayModeChartView = 2;
@@ -110,7 +115,7 @@ public class InitialActivity extends Activity {
 
     SettingRepository setting;
 
-    public InitialActivity(){
+    public InitialActivity() {
         dateTouchListener = null;
     }
 
@@ -124,7 +129,7 @@ public class InitialActivity extends Activity {
 
         startTime = DateTime.now();
 
-        if(getIntent() != null ||
+        if (getIntent() != null ||
                 getIntent().getExtras().size() > 0 ||
                 getIntent().getExtras().get(BroadcastNotificationPublisher.ExtraOpenFromNotification) != null) {
 
@@ -154,7 +159,7 @@ public class InitialActivity extends Activity {
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         startTime = DateTime.now();
     }
@@ -166,7 +171,7 @@ public class InitialActivity extends Activity {
         AdRequest.Builder adBuilder = new AdRequest.Builder();
         adBuilder.setGender(AdRequest.GENDER_FEMALE);
         AdRequest adRequest = adBuilder.build();
-        final AdView adView = (AdView)findViewById(R.id.ad_view);
+        final AdView adView = (AdView) findViewById(R.id.ad_view);
         adView.loadAd(adRequest);
         final LinearLayout adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
         adMobLayout.setVisibility(View.GONE);
@@ -190,7 +195,7 @@ public class InitialActivity extends Activity {
 
     private void addDateMeterView() {
 
-        final LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        final LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
 
         setOnDateMeterTouchEventListener(new OnDateMeterTouchEventListener() {
             @Override
@@ -238,7 +243,7 @@ public class InitialActivity extends Activity {
 
     private void addMonthView() {
 
-        DateTime calendarDate = selectedDate == null? DateTime.now(): selectedDate;
+        DateTime calendarDate = selectedDate == null ? DateTime.now() : selectedDate;
 
         setupCalendar(calendarDate.getMonthOfYear(), calendarDate.getYear());
         loadDatesToView();
@@ -269,22 +274,22 @@ public class InitialActivity extends Activity {
                 calendarCurrentMonth,
                 calendarCurrentYear);
 
-        TextView monthText = (TextView)findViewById(R.id.calendar_view_month_text);
+        TextView monthText = (TextView) findViewById(R.id.calendar_view_month_text);
         monthText.setText(DateTime.parse(String.format("%s-%s-01", year, month)).toString("MMMM"));
     }
 
-    private void loadDatesToView(){
+    private void loadDatesToView() {
 
-        for(int row = 0; row < calendar.dateRepositories.length; row++) {
+        for (int row = 0; row < calendar.dateRepositories.length; row++) {
 
-            for(int col = 0; col < calendar.dateRepositories[row].length; col++) {
+            for (int col = 0; col < calendar.dateRepositories[row].length; col++) {
 
-                final TextView targetLayout = (TextView)findViewById(getResources().getIdentifier(
+                final TextView targetLayout = (TextView) findViewById(getResources().getIdentifier(
                         String.format("calendar_monthdate_%s%s", row + 1, col + 1),
                         "id",
                         getPackageName()));
 
-                if(calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
+                if (calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
 
                     Drawable bg = getResources().getDrawable(R.drawable.circle_ink);
                     int width = getResources().getDisplayMetrics().widthPixels / 8;
@@ -312,7 +317,7 @@ public class InitialActivity extends Activity {
                 targetLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        selectedDate = DateTime.parse(String.format("%s-%s-%s", calendarCurrentYear,calendarCurrentMonth, ((TextView)v).getText()));
+                        selectedDate = DateTime.parse(String.format("%s-%s-%s", calendarCurrentYear, calendarCurrentMonth, ((TextView) v).getText()));
 
                         EditText comment = (EditText) findViewById(R.id.notation_text);
                         DateRepository currentDate = DateRepository.getDateRepositories(context, calendar.dateRepositories[finalRow][finalCol].date, calendar.dateRepositories[finalRow][finalCol].date).get(0);
@@ -333,16 +338,21 @@ public class InitialActivity extends Activity {
 
         int color = 0;
 
-        if(date.date.getMonthOfYear() != calendarCurrentMonth) {
+        if (date.date.getMonthOfYear() != calendarCurrentMonth) {
 
             color = getResources().getColor(R.color.calendar_other_month_text);
         } else {
 
-            switch(date.dateType) {
+            switch (date.dateType) {
 
-                case DateMeter.Menstrual : color = getResources().getColor(R.color.calendar_period_text); break;
-                case DateMeter.Ovulation : color = getResources().getColor(R.color.calendar_ovulation_text); break;
-                default : color = getResources().getColor(R.color.calendar_text_color);
+                case DateMeter.Menstrual:
+                    color = getResources().getColor(R.color.calendar_period_text);
+                    break;
+                case DateMeter.Ovulation:
+                    color = getResources().getColor(R.color.calendar_ovulation_text);
+                    break;
+                default:
+                    color = getResources().getColor(R.color.calendar_text_color);
             }
         }
 
@@ -353,13 +363,16 @@ public class InitialActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        switch(requestCode) {
-            case EditComment : { saveComment(data); break; }
-            case DisplayHelp : {
-                HelpIndicatorRepository.setIndicator(this, data.getIntExtra("INDICATOR",1));
+        switch (requestCode) {
+            case EditComment: {
+                saveComment(data);
                 break;
             }
-            case DisplayMenu : {
+            case DisplayHelp: {
+                HelpIndicatorRepository.setIndicator(this, data.getIntExtra("INDICATOR", 1));
+                break;
+            }
+            case DisplayMenu: {
                 onDisplayMenuResult(data);
                 break;
             }
@@ -368,7 +381,7 @@ public class InitialActivity extends Activity {
                 onDisplaySettingResult(data);
                 break;
             }
-            case DisplaySummary : {
+            case DisplaySummary: {
 
                 SummaryRepository summary = new SummaryRepository();
 
@@ -380,9 +393,11 @@ public class InitialActivity extends Activity {
                 summary.save(this);
                 break;
             }
-            case DisplayLanguageSelector : {
+            case DisplayLanguageSelector: {
 
-                if(resultCode == RESULT_CANCELED) {break;}
+                if (resultCode == RESULT_CANCELED) {
+                    break;
+                }
 
                 String language = data.getExtras().getString(LanguageSelectorActivity.LanguageExtra);
                 Locale locale = new Locale(language);
@@ -397,9 +412,9 @@ public class InitialActivity extends Activity {
             case DisplayActionPanel: {
 
                 int action = data.getExtras().getInt(ActionActivity.ActionExtra);
-                switch(action){
+                switch (action) {
 
-                    case ActionActivity.ActionPeriodButton : {
+                    case ActionActivity.ActionPeriodButton: {
 
                         addPeriodAndOvulationFlagToDateMeters();
                         break;
@@ -432,13 +447,13 @@ public class InitialActivity extends Activity {
         final SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         final SharedPreferences.Editor edit = pref.edit();
 
-        if(getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview)) {
+        if (getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview)) {
 
             setContentView(R.layout.review);
 
-            Button reviewNowButton = (Button)findViewById(R.id.review_open);
-            Button laterButton = (Button)findViewById(R.id.review_later);
-            Button noShowButton = (Button)findViewById(R.id.review_no_show);
+            Button reviewNowButton = (Button) findViewById(R.id.review_open);
+            Button laterButton = (Button) findViewById(R.id.review_later);
+            Button noShowButton = (Button) findViewById(R.id.review_no_show);
 
             reviewNowButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -455,7 +470,7 @@ public class InitialActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     addUsageCounter(PReviewLater);
-                    edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview,0) + 2);
+                    edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 2);
                     edit.commit();
                     submitStat();
                     finish();
@@ -482,7 +497,7 @@ public class InitialActivity extends Activity {
 
     public void moveCalendarToPreviousMonth() {
 
-        if(calendarCurrentMonth == 1) {
+        if (calendarCurrentMonth == 1) {
 
             calendarCurrentMonth = 12;
             setupCalendar(calendarCurrentMonth, --calendarCurrentYear);
@@ -496,7 +511,7 @@ public class InitialActivity extends Activity {
 
     public void moveCalendarToNextMonth() {
 
-        if(calendarCurrentMonth == 12) {
+        if (calendarCurrentMonth == 12) {
 
             calendarCurrentMonth = 1;
             setupCalendar(calendarCurrentMonth, ++calendarCurrentYear);
@@ -524,15 +539,17 @@ public class InitialActivity extends Activity {
 
     public void commentSave(View view) {
         // save
-        if(selectedDate == null) {return;}
+        if (selectedDate == null) {
+            return;
+        }
 
-        if(view.getId() == R.id.comment_button) {
+        if (view.getId() == R.id.comment_button) {
             addUsageCounter(PCommentButtonUsageCounter);
-        } else if(view.getId() == R.id.notation_text) {
+        } else if (view.getId() == R.id.notation_text) {
             addUsageCounter(PCommentTextUsageCounter);
         }
 
-        EditText commentText = (EditText)findViewById(R.id.notation_text);
+        EditText commentText = (EditText) findViewById(R.id.notation_text);
         Intent commentIntent = new Intent(this, CommentActivity.class);
         commentIntent.putExtra("Date", selectedDate.toString("yyyy-MM-dd"));
         commentIntent.putExtra("Comment", commentText.getText().toString());
@@ -547,7 +564,7 @@ public class InitialActivity extends Activity {
 
         int newDisplayMode = 0;
 
-        switch(clickedButton.getId()) {
+        switch (clickedButton.getId()) {
 
             case R.id.date_view_toggle: {
 
@@ -564,7 +581,8 @@ public class InitialActivity extends Activity {
                 newDisplayMode = DisplayModeChartView;
                 break;
             }
-            default: newDisplayMode = DisplayModeDateScroller;
+            default:
+                newDisplayMode = DisplayModeDateScroller;
         }
 
         setSharedPreference(PMainDisplayMode, newDisplayMode);
@@ -578,7 +596,7 @@ public class InitialActivity extends Activity {
         LinearLayout monthView = (LinearLayout) findViewById(R.id.month_view_panel);
         LinearLayout chartView = (LinearLayout) findViewById(R.id.chart_view_panel);
 
-        switch(getUsageCounter(PMainDisplayMode)) {
+        switch (getUsageCounter(PMainDisplayMode)) {
 
             case DisplayModeMonthView: {
 
@@ -631,7 +649,7 @@ public class InitialActivity extends Activity {
 
         final JSONObject json = new JSONObject();
 
-        AsyncTask<Void,Void,Void> task = new AsyncTask<Void, Void, Void>() {
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
             @Override
             protected Void doInBackground(Void... params) {
@@ -676,7 +694,7 @@ public class InitialActivity extends Activity {
                     StringEntity entry = new StringEntity(json.toString());
 
                     httpPost.setEntity(entry);
-                    httpPost.setHeader("Content-Type","application/Json");
+                    httpPost.setHeader("Content-Type", "application/Json");
 
                     client.execute(httpPost);
 
@@ -719,11 +737,11 @@ public class InitialActivity extends Activity {
         return UUID.fromString(pref.getString(PUuid, ""));
     }
 
-    private void setApplicationVersion(){
+    private void setApplicationVersion() {
 
-        SharedPreferences pref = getSharedPreferences(PName,MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(PCurrentVersion,ApplicationVersion);
+        edit.putInt(PCurrentVersion, ApplicationVersion);
         edit.commit();
     }
 
@@ -766,7 +784,7 @@ public class InitialActivity extends Activity {
     private void onDisplayMenuResult(Intent data) {
         int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
         switch (selectedMenu) {
-            case MenuActivity.SelectDisplayHelp : {
+            case MenuActivity.SelectDisplayHelp: {
                 addUsageCounter(PMenuHelpClickCounter);
                 initialHelpActivity(null);
                 break;
@@ -774,7 +792,7 @@ public class InitialActivity extends Activity {
             case MenuActivity.SelectSummary: {
                 addUsageCounter(PMenuSummaryClickCounter);
                 SummaryRepository summary = SummaryRepository.getSummary(this);
-                if(summary != null) {
+                if (summary != null) {
                     Intent summaryIntent = new Intent(this, SummaryActivity.class);
                     summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, summary.expectedMenstrualDateFrom.toString("yyyy-MM-dd"));
                     summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, summary.expectedMenstrualDateTo.toString("yyyy-MM-dd"));
@@ -785,7 +803,7 @@ public class InitialActivity extends Activity {
                 }
                 break;
             }
-            case MenuActivity.SelectDisplaySetting : {
+            case MenuActivity.SelectDisplaySetting: {
                 addUsageCounter(PMenuSettingClickCounter);
                 Intent settingIntent = new Intent(this, SettingActivity.class);
                 settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
@@ -801,7 +819,7 @@ public class InitialActivity extends Activity {
                 startActivityForResult(settingIntent, DisplaySetting);
                 break;
             }
-            case MenuActivity.SelectMonthView : {
+            case MenuActivity.SelectMonthView: {
                 addUsageCounter(PMenuMonthViewClickCounter);
                 Intent monthViewIntent = new Intent(this, MonthViewActivity.class);
 
@@ -813,18 +831,23 @@ public class InitialActivity extends Activity {
                 startActivity(monthViewIntent);
                 break;
             }
-            case MenuActivity.SelectReview : {
+            case MenuActivity.SelectReview: {
 
                 addUsageCounter(PMenuReviewClickCounter);
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
                 break;
             }
-            case MenuActivity.SelectLanguageSelecter : {
+            case MenuActivity.SelectLanguageSelecter: {
 
                 addUsageCounter(PSettingDisplayedLanguageUsageCounter);
                 Intent intent = new Intent(this, LanguageSelectorActivity.class);
                 startActivityForResult(intent, DisplayLanguageSelector);
                 break;
+            }
+            case MenuActivity.SelectLockScreen: {
+                addUsageCounter(PMenuLockScreenUsageCounter);
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -832,7 +855,7 @@ public class InitialActivity extends Activity {
     private void onDisplaySettingResult(Intent data) {
         switch (data.getIntExtra(SettingActivity.ActionExtra, 0)) {
 
-            case SettingActivity.SaveAction : {
+            case SettingActivity.SaveAction: {
 
                 setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra, 0f);
                 setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
@@ -845,15 +868,15 @@ public class InitialActivity extends Activity {
                 int notifyPeriodDay = extras.getInt(SettingActivity.NotifyPeriodDaysExtra);
                 int notifyOvulationDay = extras.getInt(SettingActivity.NotifyOvulationDaysExtra);
 
-                setSharedPreference(PSettingIsNotifyPeriod, isNotifyPeriod?1:0);
-                setSharedPreference(PSettingIsNotifyOvulation, isNotifyOvulation?1:0);
+                setSharedPreference(PSettingIsNotifyPeriod, isNotifyPeriod ? 1 : 0);
+                setSharedPreference(PSettingIsNotifyOvulation, isNotifyOvulation ? 1 : 0);
                 setSharedPreference(PSettingNotifyPeriodDay, notifyPeriodDay);
                 setSharedPreference(PSettingNotifyOvulationDay, notifyOvulationDay);
 
-                if(isNotifyOvulation || isNotifyPeriod) {
+                if (isNotifyOvulation || isNotifyPeriod) {
 
                     SummaryRepository summary = SummaryRepository.getSummary(this);
-                    if(summary == null) {
+                    if (summary == null) {
 
                         Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG);
                         break;
@@ -861,7 +884,7 @@ public class InitialActivity extends Activity {
 
                     BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
 
-                    if(isNotifyPeriod) {
+                    if (isNotifyPeriod) {
 
                         notifier.setNotification(
                                 this,
@@ -872,7 +895,7 @@ public class InitialActivity extends Activity {
                         addUsageCounter(PSettingNotifyPeriodCounter);
                     }
 
-                    if(isNotifyOvulation) {
+                    if (isNotifyOvulation) {
 
                         notifier.setNotification(
                                 this,
@@ -886,7 +909,7 @@ public class InitialActivity extends Activity {
 
                 break;
             }
-            case SettingActivity.CancelAction : {
+            case SettingActivity.CancelAction: {
 
 
                 break;
@@ -896,43 +919,51 @@ public class InitialActivity extends Activity {
 
     private void saveComment(Intent intentResult) {
 
-        if(intentResult == null) {return;}
+        if (intentResult == null) {
+            return;
+        }
 
         String date = intentResult.getExtras().get("Date").toString();
         DateTime targetDate = DateTime.parse(date);
         String comment = intentResult.getExtras().get("Comment").toString();
         DatabaseRepositoryHelper helper = new DatabaseRepositoryHelper(this);
 
-        final LinearLayout dateLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
-        final EditText commentText = (EditText)findViewById(R.id.notation_text);
+        final LinearLayout dateLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
+        final EditText commentText = (EditText) findViewById(R.id.notation_text);
 
         DateRepository.updateDateRepositorySetComment(this, targetDate, comment);
 
         DateTime firstDate = ((DateMeter) dateLayout.getChildAt(1)).getDate();
-        int dateDiff = (int)((targetDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
-        DateMeter targetDateToSave = (DateMeter)dateLayout.getChildAt(1 + dateDiff);
+        int dateDiff = (int) ((targetDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
+        DateMeter targetDateToSave = (DateMeter) dateLayout.getChildAt(1 + dateDiff);
         targetDateToSave.comment = comment;
         commentText.setText(comment);
     }
 
     private void paintDateMeter(DateTime startDate, DateTime endDate, int type) {
 
-        LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
 
-        for(int i = 1; i < dateMeterLayout.getChildCount() -1 ; i++) {
+        for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
 
-            DateMeter targetDateMeter = ((DateMeter)dateMeterLayout.getChildAt(i));
-            if(targetDateMeter.getDate().compareTo(endDate) <= 0 && targetDateMeter.getDate().compareTo(startDate) >= 0) {
-                switch(type) {
-                    case DateMeter.Menstrual : ((DateMeter)dateMeterLayout.getChildAt(i)).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual); break;
-                    case DateMeter.Ovulation : ((DateMeter)dateMeterLayout.getChildAt(i)).changeColor(DateMeter.OvulationColor, DateMeter.Ovulation); break;
-                    case DateMeter.Nothing : ((DateMeter)dateMeterLayout.getChildAt(i)).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing); break;
+            DateMeter targetDateMeter = ((DateMeter) dateMeterLayout.getChildAt(i));
+            if (targetDateMeter.getDate().compareTo(endDate) <= 0 && targetDateMeter.getDate().compareTo(startDate) >= 0) {
+                switch (type) {
+                    case DateMeter.Menstrual:
+                        ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
+                        break;
+                    case DateMeter.Ovulation:
+                        ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(DateMeter.OvulationColor, DateMeter.Ovulation);
+                        break;
+                    case DateMeter.Nothing:
+                        ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
+                        break;
                 }
 
             }
         }
 
-        for(int i = 0; i <= (endDate.getMillis() - startDate.getMillis()) / 86400000 ; i++) {
+        for (int i = 0; i <= (endDate.getMillis() - startDate.getMillis()) / 86400000; i++) {
 
             DateRepository.updateDateRepositorySetDateType(this, startDate.plusDays(i), type);
         }
@@ -945,7 +976,7 @@ public class InitialActivity extends Activity {
 
     private void endLayoutAction(final LinearLayout callbackLayout, boolean isRightEnd) {
 
-        if(isRightEnd) {
+        if (isRightEnd) {
 
             addUsageCounter(PFetchNextMonthUsageCounter);
 
@@ -967,7 +998,7 @@ public class InitialActivity extends Activity {
 
                 @Override
                 public void run() {
-                    HorizontalScrollView parant = (HorizontalScrollView)callbackLayout.getParent();
+                    HorizontalScrollView parant = (HorizontalScrollView) callbackLayout.getParent();
                     parant.scrollTo(callbackLayout.getChildAt(1).getWidth() * 15, 0);
                 }
             }, 50);
@@ -1034,7 +1065,7 @@ public class InitialActivity extends Activity {
                 adsMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
                 adsMobLayout.setVisibility(View.GONE);
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             // Do nothing
         }
     }
@@ -1044,13 +1075,13 @@ public class InitialActivity extends Activity {
         List<DateRepository> dates = DateRepository.getDateRepositories(this, startDate, endDate);
 
 
-        Cursor c = new DatabaseRepositoryHelper(this).getReadableDatabase().rawQuery("SELECT * FROM DATE_REPOSITORY WHERE date = '2015-11-15'",  null);
+        Cursor c = new DatabaseRepositoryHelper(this).getReadableDatabase().rawQuery("SELECT * FROM DATE_REPOSITORY WHERE date = '2015-11-15'", null);
         c.moveToFirst();
 
         // to setting up the DateMeter's color
         new DateMeter(this, DateTime.now(), 0, null, null, 0, 0f);
 
-        if(isRight) {
+        if (isRight) {
             for (int i = 0; i < dates.size(); i++) {
 
                 int color = 0;
@@ -1069,14 +1100,20 @@ public class InitialActivity extends Activity {
                 targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature));
             }
         } else {
-            for(int i = dates.size() - 1; i >= 0; i--) {
+            for (int i = dates.size() - 1; i >= 0; i--) {
 
                 int color = 0;
                 switch (dates.get(i).dateType) {
-                    case DateMeter.Menstrual: color = DateMeter.MenstrualColor; break;
-                    case DateMeter.Ovulation: color = DateMeter.OvulationColor; break;
+                    case DateMeter.Menstrual:
+                        color = DateMeter.MenstrualColor;
+                        break;
+                    case DateMeter.Ovulation:
+                        color = DateMeter.OvulationColor;
+                        break;
                     case DateMeter.Nothing:
-                    default: color = DateMeter.SafeZoneColor; break;
+                    default:
+                        color = DateMeter.SafeZoneColor;
+                        break;
                 }
                 targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature), 0);
             }
@@ -1085,12 +1122,12 @@ public class InitialActivity extends Activity {
 
     private boolean selectedDateIsBeforeTheFirstDateMeter(LinearLayout dateMeterHolder) {
 
-        return ((DateMeter)(dateMeterHolder.getChildAt(1))).getDate().isAfter(selectedDate.getMillis());
+        return ((DateMeter) (dateMeterHolder.getChildAt(1))).getDate().isAfter(selectedDate.getMillis());
     }
 
     private boolean selectedDateIsAfterTheLastDateMeter(LinearLayout dateMeterHolder) {
 
-        return ((DateMeter)(dateMeterHolder.getChildAt(dateMeterHolder.getChildCount()-2))).getDate().isBefore(selectedDate.getMillis());
+        return ((DateMeter) (dateMeterHolder.getChildAt(dateMeterHolder.getChildCount() - 2))).getDate().isBefore(selectedDate.getMillis());
     }
 
     private void addPeriodAndOvulationFlagToDateMeters() {
@@ -1100,12 +1137,12 @@ public class InitialActivity extends Activity {
         LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
         int counter = 50;
 
-        while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
+        while (selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
 
             endLayoutAction(v, false);
         }
         counter = 50;
-        while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
+        while (selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0) {
 
             endLayoutAction(v, true);
         }
@@ -1113,21 +1150,21 @@ public class InitialActivity extends Activity {
         int index = getSelectedDateMeterIndex();
         int newType = 0;
 
-        ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
-        DateTime dateToBePainted = ((DateMeter)(v.getChildAt(index))).getDate();
-        paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int)setting.periodLength - 1), DateMeter.Menstrual);
-        paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int)setting.periodCycle - 7), DateMeter.Ovulation);
-        paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 7), dateToBePainted.plusDays((int)setting.periodCycle - 1), DateMeter.Nothing);
-        paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 1), dateToBePainted.plusDays((int)setting.periodCycle + 1), DateMeter.Menstrual);
+        ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
+        DateTime dateToBePainted = ((DateMeter) (v.getChildAt(index))).getDate();
+        paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int) setting.periodLength - 1), DateMeter.Menstrual);
+        paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int) setting.periodCycle - 7), DateMeter.Ovulation);
+        paintDateMeter(dateToBePainted.plusDays((int) setting.periodCycle - 7), dateToBePainted.plusDays((int) setting.periodCycle - 1), DateMeter.Nothing);
+        paintDateMeter(dateToBePainted.plusDays((int) setting.periodCycle - 1), dateToBePainted.plusDays((int) setting.periodCycle + 1), DateMeter.Menstrual);
         newType = DateMeter.Menstrual;
 
         Intent summaryIntent = new Intent(this, SummaryActivity.class);
-        summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int)setting.periodCycle - 1).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int)setting.periodCycle + 1).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int) setting.periodCycle - 1).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int) setting.periodCycle + 1).toString("yyyy-MM-dd"));
         summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int)setting.periodCycle - 8).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int) setting.periodCycle - 8).toString("yyyy-MM-dd"));
 
-        if(getUsageCounter(PSettingIsNotifyPeriod) == 1) {
+        if (getUsageCounter(PSettingIsNotifyPeriod) == 1) {
 
             DateTime dateToBeNotified = DateTime.parse(summaryIntent.getExtras()
                     .getString(SummaryActivity.NextMenstrualFromExtra))
@@ -1139,7 +1176,7 @@ public class InitialActivity extends Activity {
                     getResources().getString(R.string.notify_period_message));
         }
 
-        if(getUsageCounter(PSettingIsNotifyOvulation) == 1) {
+        if (getUsageCounter(PSettingIsNotifyOvulation) == 1) {
 
             DateTime dateTimeToBeNotified = DateTime.parse(summaryIntent.getExtras()
                     .getString(SummaryActivity.NextOvulationFromExtra))
@@ -1158,12 +1195,12 @@ public class InitialActivity extends Activity {
         LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
         int counter = 50;
 
-        while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0 ) {
+        while (selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
 
             endLayoutAction(v, false);
         }
         counter = 50;
-        while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
+        while (selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0) {
 
             endLayoutAction(v, true);
         }
@@ -1171,17 +1208,17 @@ public class InitialActivity extends Activity {
         int index = getSelectedDateMeterIndex();
 
         addUsageCounter(PNonPeriodButtonUsageCounter);
-        paintDateMeter(((DateMeter)(v.getChildAt(index))).getDate(), ((DateMeter)(v.getChildAt(index))).getDate(), DateMeter.SafeZoneColor);
-        ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
+        paintDateMeter(((DateMeter) (v.getChildAt(index))).getDate(), ((DateMeter) (v.getChildAt(index))).getDate(), DateMeter.SafeZoneColor);
+        ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
     }
 
     private int getSelectedDateMeterIndex() {
 
         int index = 0;
 
-        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
 
-        DateTime firstDate = ((DateMeter)v.getChildAt(1)).getDate();
+        DateTime firstDate = ((DateMeter) v.getChildAt(1)).getDate();
         int dateDiff = (int) ((selectedDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
 
         index = dateDiff + 1;
@@ -1201,13 +1238,13 @@ public class InitialActivity extends Activity {
             @Override
             public void run() {
 
-                final LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
-                final HorizontalScrollView scrollView = (HorizontalScrollView)findViewById(R.id.dateScroller);
+                final LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
+                final HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
 
                 scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
 
-                if(setting.isFirstTime) {
+                if (setting.isFirstTime) {
                     setting.isFirstTime = false;
                     setting.saveSetting(getBaseContext());
                     Intent settingIntent = new Intent(getBaseContext(), SettingActivity.class);
@@ -1222,7 +1259,7 @@ public class InitialActivity extends Activity {
 
                 int indicatorValue = HelpIndicatorRepository.getIndicator(getBaseContext());
 
-                if((indicatorValue & 1) == 1) {
+                if ((indicatorValue & 1) == 1) {
 
                     Intent helpIntent = new Intent(getBaseContext(), HelpActivity.class);
                     helpIntent.putExtra("INDICATOR", indicatorValue);

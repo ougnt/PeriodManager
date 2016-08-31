@@ -20,11 +20,11 @@
     <activity android:name=".activity.MenuActivity" android:theme="@style/Theme.Transparent"/>
     <activity android:name=".activity.SummaryActivity" android:theme="@style/Theme.Transparent"/>
     <activity android:name=".activity.SettingActivity"/>
-        <activity android:name=".activity.LanguageSelectorActivity"/>
+    <activity android:name=".activity.LanguageSelectorActivity"/>
     <activity android:name=".activity.ActionActivity" android:theme="@style/Theme.Transparent"/>
     <activity android:name=".activity.MonthViewActivity" android:theme="@style/Theme.Transparent"/>
-        <activity android:name=".activity.TemperatureHelpActivity" />
-
+    <activity android:name=".activity.TemperatureHelpActivity" />
+    <activity android:name=".activity.LoginActivity"/>
     <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />

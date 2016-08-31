@@ -62,4 +62,5 @@
     <string name="action_activity_enter_your_body_temperature">体温</string>
     <string name="action_activity_save">保存</string>
     <string name="action_activity_temperature_hint">体温</string>
+    <string name="menu_lock_screen">画面をロック</string>
 </resources>

@@ -11,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.ougnt.period_manager.*;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -25,50 +27,45 @@ public class MenuActivity extends Activity {
     public static final int SelectMonthView = 8;
     public static final int SelectReview = 16;
     public static final int SelectLanguageSelecter = 32;
+    public static final int SelectLockScreen = 64;
     public static final String SelectedMenuExtra = "SELECTED_MENU";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        List menuClickAbles = new LinkedList();
+
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.menu);
 
         TextView helpItem = (TextView)findViewById(R.id.help_menu);
-        helpItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent retIntent = new Intent();
-                retIntent.putExtra(SelectedMenuExtra, SelectDisplayHelp);
-                setResult(RESULT_OK, retIntent);
-                finish();
-            }
-        });
+        menuClickAbles.add(helpItem);
 
         TextView settingItem = (TextView)findViewById(R.id.setting_menu);
-        settingItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent retIntent = new Intent();
-                retIntent.putExtra(SelectedMenuExtra, SelectDisplaySetting);
-                setResult(RESULT_OK, retIntent);
-                finish();
-            }
-        });
+        menuClickAbles.add(settingItem);
 
         TextView reviewItem = (TextView)findViewById(R.id.submit_review_menu);
-        reviewItem.setOnClickListener(new OpenReview());
+        menuClickAbles.add(reviewItem);
 
         TextView summary = (TextView)findViewById(R.id.summary_menu);
-        summary.setOnClickListener(new ShowSummary());
+        menuClickAbles.add(summary);
 
         TextView monthView = (TextView)findViewById(R.id.month_view_menu);
-        monthView.setOnClickListener(new ShowMonthView());
+        menuClickAbles.add(monthView);
 
         LinearLayout languageLayout = (LinearLayout)findViewById(R.id.setting_language_selecter);
-        languageLayout.setOnClickListener(new ShowLanguageSelecter());
+        menuClickAbles.add(languageLayout);
 
+        TextView lockLayout = (TextView)findViewById(R.id.lock_screen_menu);
+        lockLayout.setVisibility(View.GONE);
+        menuClickAbles.add(lockLayout);
+
+        for(int i = 0 ; i < menuClickAbles.size(); i++) {
+
+            ((View)menuClickAbles.get(i)).setOnClickListener(new MenuOnClickActionListener());
+        }
 
         LinearLayout close1 = (LinearLayout)findViewById(R.id.close1);
         LinearLayout close2 = (LinearLayout)findViewById(R.id.close2);
@@ -77,22 +74,31 @@ public class MenuActivity extends Activity {
 
         SharedPreferences pref = getSharedPreferences(InitialActivity.PName, MODE_PRIVATE);
         String language = pref.getString(InitialActivity.PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
-        if(language.equals("en")) {
+        switch (language) {
+            case "en": {
 
-            LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
-            flagLayout.setBackgroundResource(R.drawable.flag_english);
-        } else if (language.equals("ja")) {
+                LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
+                flagLayout.setBackgroundResource(R.drawable.flag_english);
+                break;
+            }
+            case "ja": {
 
-            LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
-            flagLayout.setBackgroundResource(R.drawable.flag_japanese);
-        } else if (language.equals("th")) {
+                LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
+                flagLayout.setBackgroundResource(R.drawable.flag_japanese);
+                break;
+            }
+            case "th": {
 
-            LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
-            flagLayout.setBackgroundResource(R.drawable.flag_thai);
-        } else if (language.equals("vi")) {
+                LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
+                flagLayout.setBackgroundResource(R.drawable.flag_thai);
+                break;
+            }
+            case "vi": {
 
-            LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
-            flagLayout.setBackgroundResource(R.drawable.flag_vietnamese);
+                LinearLayout flagLayout = (LinearLayout) findViewById(R.id.flag_layout);
+                flagLayout.setBackgroundResource(R.drawable.flag_vietnamese);
+                break;
+            }
         }
     }
 
@@ -116,46 +122,23 @@ public class MenuActivity extends Activity {
         }
     }
 
-    private class ShowSummary implements View.OnClickListener {
+    private class MenuOnClickActionListener implements View.OnClickListener {
 
         @Override
-        public void onClick(View v) {
-            Intent retIntent = new Intent();
-            retIntent.putExtra(SelectedMenuExtra, SelectSummary);
-            setResult(RESULT_OK, retIntent);
-            finish();
-        }
-    }
-
-    private class ShowLanguageSelecter implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            Intent retIntent = new Intent();
-            retIntent.putExtra(SelectedMenuExtra, SelectLanguageSelecter);
-            setResult(RESULT_OK, retIntent);
-            finish();
-        }
-    }
-
-    private class ShowMonthView implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            Intent retIntent = new Intent();
-            retIntent.putExtra(SelectedMenuExtra, SelectMonthView);
-            setResult(RESULT_OK, retIntent);
-            finish();
-        }
-    }
-
-    private class OpenReview implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
+        public void onClick(View clickedMenu) {
 
             Intent retIntent = new Intent();
-            retIntent.putExtra(SelectedMenuExtra, SelectReview);
+
+            switch(clickedMenu.getId()) {
+                case R.id.lock_screen_menu: retIntent.putExtra(SelectedMenuExtra, SelectLockScreen); break;
+                case R.id.submit_review_menu: retIntent.putExtra(SelectedMenuExtra, SelectReview); break;
+                case R.id.month_view_menu: retIntent.putExtra(SelectedMenuExtra, SelectMonthView); break;
+                case R.id.setting_language_selecter: retIntent.putExtra(SelectedMenuExtra, SelectLanguageSelecter); break;
+                case R.id.summary_menu: retIntent.putExtra(SelectedMenuExtra, SelectSummary); break;
+                case R.id.help_menu: retIntent.putExtra(SelectedMenuExtra, SelectDisplayHelp); break;
+                case R.id.setting_menu: retIntent.putExtra(SelectedMenuExtra, SelectDisplaySetting); break;
+            }
+
             setResult(RESULT_OK, retIntent);
             finish();
         }

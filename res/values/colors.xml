@@ -36,4 +36,8 @@
     <color name="chart_view_button_color_lite">#FDD8FF</color>
     <color name="chart_view_button_color_dark">#CCAECE</color>
     <color name="chart_fetch_button_color">#AE99B3</color>
+    <color name="login_background">#FFF0FF</color>
+    <color name="login_text_edit_background">#FFF8E8</color>
+    <color name="login_forgot_password_text">#2E99F0</color>
+    <color name="text_color_light">#C0C0C0</color>
 </resources>
