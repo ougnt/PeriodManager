@@ -12,7 +12,10 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.ougnt.period_manager.*;
+import com.ougnt.period_manager.handler.ActionActivityHelper;
+
 import org.joda.time.Period;
 
 import java.util.Locale;
@@ -25,9 +28,12 @@ public class ActionActivity extends Activity {
     public static final int ActionNothing = 0;
     public static final int ActionPeriodButton = 2;
     public static final int ActionNonPeriodButton = 4;
-    public static final int ActionAddTemperature = 8;
+    public static final int ActionSaveButton = 8;
     public static final String ActionExtra = "ActionExtra";
     public static final String ActionTemperatureExtra = "ActionTemperatureExtra";
+    public static final String ActionCommentExtra = "ActionCommentExtra";
+
+    private ActionActivityHelper helper = new ActionActivityHelper(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,89 +43,25 @@ public class ActionActivity extends Activity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.action);
 
-        LinearLayout emptyLayout = (LinearLayout) findViewById(R.id.empty_action);
-        ImageButton periodButton = (ImageButton) findViewById(R.id.period_button);
-        ImageButton nonPeriodButton = (ImageButton) findViewById(R.id.non_period_button);
-        Button temperatureSubmissionButton = (Button) findViewById(R.id.temperature_submit_button);
-        final EditText temperatureEditText = (EditText) ActionActivity.this.findViewById(R.id.temperature_edittext);
+        populateContent();
 
-        float temperature = getIntent().getExtras().getFloat(ActionTemperatureExtra);
-        temperatureEditText.setText(temperature + "");
-
-        emptyLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
-        periodButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResultAndFinish(ActionPeriodButton);
-            }
-        });
-
-        nonPeriodButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setResultAndFinish(ActionNonPeriodButton);
-            }
-        });
-
-        temperatureSubmissionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                float temperature = 0f;
-                try {
-                    temperature = Float.parseFloat(temperatureEditText.getText().toString());
-                } catch (NumberFormatException e) {
-                    temperature = 0f;
-                }
-                ActionActivity.this.setTemperature(temperature);
-            }
-        });
-
-        TextView help = (TextView) findViewById(R.id.temperature_help);
-        help.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openUsage();
-            }
-        });
+        findViewById(R.id.empty_action).setOnClickListener(helper);
+        findViewById(R.id.period_button).setOnClickListener(helper);
+        findViewById(R.id.non_period_button).setOnClickListener(helper);
+        findViewById(R.id.temperature_help).setOnClickListener(helper);
+        findViewById(R.id.action_save_button).setOnClickListener(helper);
     }
 
     @Override
     public void onBackPressed() {
 
-        setResultAndFinish(ActionNothing);
+        helper.onBackPressed();
     }
 
-    private void setResultAndFinish(int resultCode) {
+    private void populateContent() {
 
-        Intent retIntent = new Intent();
-        retIntent.putExtra(ActionExtra, resultCode);
-        setResult(RESULT_OK, retIntent);
-        finish();
-    }
-
-    private void setTemperature(float temperature) {
-
-        Intent retIntent = new Intent();
-        retIntent.putExtra(ActionExtra, ActionAddTemperature);
-        retIntent.putExtra(ActionTemperatureExtra, temperature);
-        setResult(RESULT_OK, retIntent);
-        finish();
-    }
-
-    public void noAction(View view) {
-
-        onBackPressed();
-    }
-
-    public void openUsage() {
-
-        Intent intent = new Intent(this, TemperatureHelpActivity.class);
-        startActivity(intent);
+        ((EditText)findViewById(R.id.action_comment)).setText(getIntent().getExtras().getString(ActionCommentExtra));
+        ((EditText)findViewById(R.id.temperature_edittext)).setText(getIntent().getExtras().getFloat(ActionTemperatureExtra) + "");
     }
 }
+

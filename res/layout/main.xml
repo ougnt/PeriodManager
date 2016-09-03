@@ -765,38 +765,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
-                      android:layout_height="0dip" android:layout_weight="0.3" android:id="@+id/comment_panel"
-                      android:weightSum="1.0" android:visibility="gone">
-            <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" android:layout_weight="0.8">
-                <EditText
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:id="@+id/notation_text" android:layout_weight="1" android:textColor="@color/text_color"
-                        android:gravity="top|left"
-                        android:background="#609e85ec"
-                        android:hint="@string/comment_edit_text_hint"
-                        android:textAppearance="@android:style/TextAppearance.Holo.Large" android:editable="false"
-                        android:onClick="commentSave"
-                        android:layout_margin="20dp"/>
-            </LinearLayout>
-            <LinearLayout android:orientation="horizontal" android:layout_width="0dp" android:layout_height="match_parent"
-                          android:layout_weight="0.2"
-                          android:layout_marginLeft="0dp"
-                          android:layout_marginTop="20dp" android:layout_marginRight="20dp"
-                          android:layout_marginBottom="20dp">
-                <Button
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="@string/edit_comment_button_caption"
-                        android:id="@+id/comment_button" android:textColor="@color/text_color"
-                        android:onClick="commentSave" style="@android:style/DeviceDefault.ButtonBar.AlertDialog"
-                        android:background="@drawable/save_button"/>
-            </LinearLayout>
-        </LinearLayout>
     </LinearLayout>
     <LinearLayout
             android:orientation="vertical"

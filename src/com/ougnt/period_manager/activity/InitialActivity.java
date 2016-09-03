@@ -52,13 +52,13 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion = 46;
+    final int ApplicationVersion = 47;
 
     // TODO : Change this to the real one
     // Live Env
-//    public static final String StatServer = "27.254.81.190:5555";
+    public static final String StatServer = "27.254.81.190:5555";
     // Dev env
-    public static final String StatServer = "192.168.56.1:9000";
+//    public static final String StatServer = "192.168.56.1:9000";
     public static final String StatUri = String.format("http://%s/usageStat", StatServer);
     public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
     public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
@@ -210,10 +210,6 @@ public class InitialActivity extends Activity {
                         dateMeter.resetFormat();
 
                     } else {
-
-                        EditText comment = (EditText) findViewById(R.id.notation_text);
-
-                        comment.setText(dateMeter.comment);
                         if (i > 1) {
                             currentDate = (DateMeter) dateMeterLayout.getChildAt(i);
                         }
@@ -227,6 +223,7 @@ public class InitialActivity extends Activity {
 
                 Intent intent = new Intent(getBaseContext(), ActionActivity.class);
                 intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
+                intent.putExtra(ActionActivity.ActionCommentExtra, date.comment);
                 startActivityForResult(intent, DisplayActionPanel);
             }
         });
@@ -311,22 +308,16 @@ public class InitialActivity extends Activity {
                                 getPackageName()
                         )));
 
-                final int finalRow = row;
-                final int finalCol = col;
-                final Context context = this.getBaseContext();
+                final DateTime tempDate = calendar.dateRepositories[row][col].date;
                 targetLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        selectedDate = DateTime.parse(String.format("%s-%s-%s", calendarCurrentYear, calendarCurrentMonth, ((TextView) v).getText()));
-
-                        EditText comment = (EditText) findViewById(R.id.notation_text);
-                        DateRepository currentDate = DateRepository.getDateRepositories(context, calendar.dateRepositories[finalRow][finalCol].date, calendar.dateRepositories[finalRow][finalCol].date).get(0);
-                        comment.setText(currentDate.comment);
-
+                        selectedDate = tempDate;
                         DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
 
                         Intent intent = new Intent(getBaseContext(), ActionActivity.class);
                         intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
+                        intent.putExtra(ActionActivity.ActionCommentExtra, date.comment);
                         startActivityForResult(intent, DisplayActionPanel);
                     }
                 });
@@ -364,10 +355,6 @@ public class InitialActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
-            case EditComment: {
-                saveComment(data);
-                break;
-            }
             case DisplayHelp: {
                 HelpIndicatorRepository.setIndicator(this, data.getIntExtra("INDICATOR", 1));
                 break;
@@ -424,10 +411,12 @@ public class InitialActivity extends Activity {
                         removePeriodAndOvulationFlagToDateMeter();
                         break;
                     }
-                    case ActionActivity.ActionAddTemperature: {
+                    case ActionActivity.ActionSaveButton: {
 
                         float temperature = data.getExtras().getFloat(ActionActivity.ActionTemperatureExtra);
+                        String comment = data.getExtras().getString(ActionActivity.ActionCommentExtra);
                         setTemperatureToDateMeter(selectedDate, temperature);
+                        DateRepository.updateDateRepositorySetComment(this, selectedDate, comment);
                         break;
                     }
                     case ActionActivity.ActionNothing: {
@@ -535,25 +524,6 @@ public class InitialActivity extends Activity {
         addUsageCounter(PMenuButtonUsageCounter);
         Intent intent = new Intent(this, MenuActivity.class);
         startActivityForResult(intent, DisplayMenu);
-    }
-
-    public void commentSave(View view) {
-        // save
-        if (selectedDate == null) {
-            return;
-        }
-
-        if (view.getId() == R.id.comment_button) {
-            addUsageCounter(PCommentButtonUsageCounter);
-        } else if (view.getId() == R.id.notation_text) {
-            addUsageCounter(PCommentTextUsageCounter);
-        }
-
-        EditText commentText = (EditText) findViewById(R.id.notation_text);
-        Intent commentIntent = new Intent(this, CommentActivity.class);
-        commentIntent.putExtra("Date", selectedDate.toString("yyyy-MM-dd"));
-        commentIntent.putExtra("Comment", commentText.getText().toString());
-        startActivityForResult(commentIntent, EditComment);
     }
 
     public void setOnDateMeterTouchEventListener(OnDateMeterTouchEventListener listener) {
@@ -915,29 +885,6 @@ public class InitialActivity extends Activity {
                 break;
             }
         }
-    }
-
-    private void saveComment(Intent intentResult) {
-
-        if (intentResult == null) {
-            return;
-        }
-
-        String date = intentResult.getExtras().get("Date").toString();
-        DateTime targetDate = DateTime.parse(date);
-        String comment = intentResult.getExtras().get("Comment").toString();
-        DatabaseRepositoryHelper helper = new DatabaseRepositoryHelper(this);
-
-        final LinearLayout dateLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
-        final EditText commentText = (EditText) findViewById(R.id.notation_text);
-
-        DateRepository.updateDateRepositorySetComment(this, targetDate, comment);
-
-        DateTime firstDate = ((DateMeter) dateLayout.getChildAt(1)).getDate();
-        int dateDiff = (int) ((targetDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
-        DateMeter targetDateToSave = (DateMeter) dateLayout.getChildAt(1 + dateDiff);
-        targetDateToSave.comment = comment;
-        commentText.setText(comment);
     }
 
     private void paintDateMeter(DateTime startDate, DateTime endDate, int type) {
