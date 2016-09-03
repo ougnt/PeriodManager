@@ -789,18 +789,6 @@ public class InitialActivity extends Activity {
                 startActivityForResult(settingIntent, DisplaySetting);
                 break;
             }
-            case MenuActivity.SelectMonthView: {
-                addUsageCounter(PMenuMonthViewClickCounter);
-                Intent monthViewIntent = new Intent(this, MonthViewActivity.class);
-
-                DateTime targetDate = selectedDate == null ? DateTime.now() : selectedDate;
-
-                monthViewIntent.putExtra(MonthViewActivity.MonthExtra, targetDate.getMonthOfYear());
-                monthViewIntent.putExtra(MonthViewActivity.YearExtra, targetDate.getYear());
-
-                startActivity(monthViewIntent);
-                break;
-            }
             case MenuActivity.SelectReview: {
 
                 addUsageCounter(PMenuReviewClickCounter);

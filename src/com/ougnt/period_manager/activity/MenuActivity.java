@@ -24,7 +24,7 @@ public class MenuActivity extends Activity {
     public static final int SelectDisplayHelp = 1;
     public static final int SelectDisplaySetting = 2;
     public static final int SelectSummary = 4;
-    public static final int SelectMonthView = 8;
+//    public static final int SelectMonthView = 8;
     public static final int SelectReview = 16;
     public static final int SelectLanguageSelecter = 32;
     public static final int SelectLockScreen = 64;
@@ -51,9 +51,6 @@ public class MenuActivity extends Activity {
 
         TextView summary = (TextView)findViewById(R.id.summary_menu);
         menuClickAbles.add(summary);
-
-        TextView monthView = (TextView)findViewById(R.id.month_view_menu);
-        menuClickAbles.add(monthView);
 
         LinearLayout languageLayout = (LinearLayout)findViewById(R.id.setting_language_selecter);
         menuClickAbles.add(languageLayout);
@@ -132,7 +129,6 @@ public class MenuActivity extends Activity {
             switch(clickedMenu.getId()) {
                 case R.id.lock_screen_menu: retIntent.putExtra(SelectedMenuExtra, SelectLockScreen); break;
                 case R.id.submit_review_menu: retIntent.putExtra(SelectedMenuExtra, SelectReview); break;
-                case R.id.month_view_menu: retIntent.putExtra(SelectedMenuExtra, SelectMonthView); break;
                 case R.id.setting_language_selecter: retIntent.putExtra(SelectedMenuExtra, SelectLanguageSelecter); break;
                 case R.id.summary_menu: retIntent.putExtra(SelectedMenuExtra, SelectSummary); break;
                 case R.id.help_menu: retIntent.putExtra(SelectedMenuExtra, SelectDisplayHelp); break;
