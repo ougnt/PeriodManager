@@ -52,7 +52,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion = 1047;
+    final int ApplicationVersion = 48;
 
     // TODO : Change this to the real one
     // Live Env
@@ -459,7 +459,7 @@ public class InitialActivity extends Activity {
                 @Override
                 public void onClick(View v) {
                     addUsageCounter(PReviewLater);
-                    edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 2);
+                    edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
                     edit.commit();
                     submitStat();
                     finish();
@@ -689,7 +689,7 @@ public class InitialActivity extends Activity {
 
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 2));
+        edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 10));
         edit.commit();
     }
 
