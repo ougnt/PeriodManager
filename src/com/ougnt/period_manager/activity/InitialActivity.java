@@ -1,6 +1,7 @@
 package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -26,6 +27,7 @@ import com.ougnt.period_manager.event.OnAdsRequestReturnEventListener;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
 import com.ougnt.period_manager.handler.ChartHandler;
 import com.ougnt.period_manager.repository.*;
+import com.ougnt.period_manager.tests.MockDateRepository;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -44,7 +46,7 @@ import java.util.UUID;
 
 public class InitialActivity extends Activity {
 
-    final int EditComment = 0x01;
+//    final int EditComment = 0x01;
     final int DisplayHelp = 0x02;
     final int DisplayMenu = 0x04;
     final int DisplaySetting = 0x08;
@@ -1013,44 +1015,13 @@ public class InitialActivity extends Activity {
         Cursor c = new DatabaseRepositoryHelper(this).getReadableDatabase().rawQuery("SELECT * FROM DATE_REPOSITORY WHERE date = '2015-11-15'", null);
         c.moveToFirst();
 
-        // to setting up the DateMeter's color
-        new DateMeter(this, DateTime.now(), 0, null, null, 0, 0f);
-
         if (isRight) {
             for (int i = 0; i < dates.size(); i++) {
-
-                int color = 0;
-                switch (dates.get(i).dateType) {
-                    case DateMeter.Menstrual:
-                        color = DateMeter.MenstrualColor;
-                        break;
-                    case DateMeter.Ovulation:
-                        color = DateMeter.OvulationColor;
-                        break;
-                    case DateMeter.Nothing:
-                    default:
-                        color = DateMeter.SafeZoneColor;
-                        break;
-                }
-                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature));
+                targetLayout.addView(new DateMeter(this, dates.get(i), dateTouchListener));
             }
         } else {
             for (int i = dates.size() - 1; i >= 0; i--) {
-
-                int color = 0;
-                switch (dates.get(i).dateType) {
-                    case DateMeter.Menstrual:
-                        color = DateMeter.MenstrualColor;
-                        break;
-                    case DateMeter.Ovulation:
-                        color = DateMeter.OvulationColor;
-                        break;
-                    case DateMeter.Nothing:
-                    default:
-                        color = DateMeter.SafeZoneColor;
-                        break;
-                }
-                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature), 0);
+                targetLayout.addView(new DateMeter(this, dates.get(i), dateTouchListener), 0);
             }
         }
     }
@@ -1213,5 +1184,4 @@ public class InitialActivity extends Activity {
     private DateTime selectedDate = null;
     private ChartHandler _chartHandler = null;
     private ChartFetchingOnclickHandler _chartButtonHandler = null;
-    private Context _thisContext = this;
 }

@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * * # Created by wacharint on 11/1/15.
  */
-public class DateRepository {
+public class DateRepository extends IDateRepository {
 
     private DateRepository(Context context, DateTime date, int dateType, String comment, float temperature) {
 
@@ -20,17 +20,6 @@ public class DateRepository {
         this.comment = comment;
         this.temperature = temperature;
     }
-
-    public DateTime date;
-
-    // 1 = Period
-    // 2 = Ovulation
-    // 0 = SafeZone
-    public int dateType;
-
-    public String comment;
-
-    public float temperature;
 
     public static List<DateRepository> getDateRepositories(Context context, DateTime startDate, DateTime endDate) {
 

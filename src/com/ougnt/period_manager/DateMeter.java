@@ -1,20 +1,31 @@
 package com.ougnt.period_manager;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
-import android.text.Layout;
-import android.view.*;
+import android.support.v4.content.ContextCompat;
+import android.util.AttributeSet;
+import android.view.Display;
+import android.view.Gravity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.ougnt.period_manager.activity.InitialActivity;
+
+import com.ougnt.period_manager.activity.AppForStatic;
 import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
+import com.ougnt.period_manager.exception.NotImplementException;
+import com.ougnt.period_manager.repository.IDateRepository;
+import com.ougnt.period_manager.tests.MockDateRepository;
+
 import org.joda.time.DateTime;
-import org.w3c.dom.Text;
+
+import java.util.HashMap;
 
 /**
  * * # Created by wacharint on 10/26/15.
@@ -25,60 +36,77 @@ public class DateMeter extends LinearLayout {
     public static final int Ovulation = 0x02;
     public static final int Nothing = 0x00;
 
-    public static int MenstrualColor = Color.RED;
-    public static int OvulationColor = Color.GREEN;
-    public static int SafeZoneColor = Color.CYAN;
-    public static int OnSelectColor = Color.BLUE;
-    public static int TextColor = Color.BLACK;
+    public static final int MenstrualColor;
+    public static final int OvulationColor;
+    public static final int SafeZoneColor;
+    public static final int OnSelectColor;
+    public static final int TextColor;
+    public static final int TodayTextColor;
+
+    public static final HashMap<Integer, Integer> ColorForDateType = new HashMap<Integer, Integer>();
+
+    static {
+        if(AppForStatic.getContext() == null)
+        {
+            MenstrualColor = 0xF3CDFF;
+            OvulationColor = 0xA1FF97;
+            SafeZoneColor = 0xBEFCF0;
+            OnSelectColor = 0x8989FF;
+            TextColor = 0x7F7F7F;
+            TodayTextColor = 0xEF7A54;
+        } else {
+            MenstrualColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.menstrual_zone_bg);
+            OvulationColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.ovulation_zone_bg);
+            SafeZoneColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.safe_zone_bg);
+            OnSelectColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.on_select_zone_bg);
+            TextColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.text_color);
+            TodayTextColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.today_text_color);
+        }
+        ColorForDateType.put(Menstrual, MenstrualColor);
+        ColorForDateType.put(Ovulation, OvulationColor);
+        ColorForDateType.put(Nothing, SafeZoneColor);
+    }
 
     static int IconWidth = 0;
 
-    public DateMeter(Context context, DateTime initialDate, int color, OnDateMeterTouchEventListener listener, String comment, int dateType, float temperature ) {
+    // Only for the visualize tool don't use.
+    public DateMeter(Context context, AttributeSet attrib) throws NotImplementException {
+
+        this(context, new MockDateRepository(), null);
+
+        if (!isInEditMode()) {
+            throw new NotImplementException();
+        }
+    }
+
+    public DateMeter(Context context, IDateRepository initialDate, OnDateMeterTouchEventListener listener) {
         super(context);
 
+        this.comment = initialDate.comment;
+        this.dateType = initialDate.dateType;
+        this.temperature = initialDate.temperature;
+        this.date = initialDate.date;
 
-        SafeZoneColor = getResources().getColor(R.color.safe_zone_bg);
-        MenstrualColor = getResources().getColor(R.color.menstrual_zone_bg);
-        OvulationColor = getResources().getColor(R.color.ovulation_zone_bg);
-        OnSelectColor = getResources().getColor(R.color.on_select_zone_bg);
-        TextColor = getResources().getColor(R.color.text_color);
+        _mainColor = ColorForDateType.get(dateType);
 
-        if(initialDate.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
-            TextColor = getResources().getColor(R.color.today_text_color);
-        }
-
-        this.comment = comment;
-        this.dateType = dateType;
-        this.temperature = temperature;
-
-        _mainColor = color;
-        setBackgroundColor(getResources().getColor(R.color.main_bg));
         this.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams params =  new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         this.setLayoutParams(params);
         this.setGravity(Gravity.CENTER);
 
-        this.setBackgroundColor(_mainColor);
-
         _leftHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
-        _contentHorizontalLayout = generateContentLayout(initialDate);
+        _contentHorizontalLayout = generateContentLayout(date);
         _rightHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
 
         this.addView(_leftHorizontalLayout);
         this.addView(_contentHorizontalLayout);
         this.addView(_rightHorizontalLayout);
         this._listener = listener;
-        this.date = initialDate;
 
         setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) { onTouchFormat(); }
-        });
-
-        setOnLongClickListener(new OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return true;
+            public void onClick(View v) {
+                onTouchFormat();
             }
         });
     }
@@ -87,11 +115,13 @@ public class DateMeter extends LinearLayout {
 
     public float temperature = 0f;
 
-    public DateTime getDate() {return date;}
+    public DateTime getDate() {
+        return date;
+    }
 
     public boolean isMenstrual() {
 
-            return (dateType & Menstrual) == Menstrual;
+        return (dateType & Menstrual) == Menstrual;
     }
 
     public boolean isOvulation() {
@@ -132,7 +162,7 @@ public class DateMeter extends LinearLayout {
         LayoutParams visibleParams = new LayoutParams(IconWidth, LayoutParams.MATCH_PARENT);
         LayoutParams invisibleParams = new LayoutParams(0, LayoutParams.MATCH_PARENT);
 
-        if((newDateType & Menstrual) == Menstrual) {
+        if ((newDateType & Menstrual) == Menstrual) {
 
             _menstrualIcon.setVisibility(VISIBLE);
             _menstrualIcon.setLayoutParams(visibleParams);
@@ -142,7 +172,7 @@ public class DateMeter extends LinearLayout {
             _menstrualIcon.setLayoutParams(invisibleParams);
         }
 
-        if((newDateType & Ovulation) == Ovulation) {
+        if ((newDateType & Ovulation) == Ovulation) {
 
             _ovulationIcon.setVisibility(VISIBLE);
             _nonOvulationIcon.setVisibility(INVISIBLE);
@@ -220,7 +250,7 @@ public class DateMeter extends LinearLayout {
         iconPart.addView(_ovulationIcon);
         iconPart.addView(_nonOvulationIcon);
 
-        checkboxPart.setGravity(Gravity.BOTTOM| Gravity.RIGHT);
+        checkboxPart.setGravity(Gravity.BOTTOM | Gravity.RIGHT);
         _editCheckBox = new CheckBox(layout.getContext());
 
         _editCheckBox.setVisibility(GONE);
@@ -257,7 +287,7 @@ public class DateMeter extends LinearLayout {
 
         _contentTopLayout = formatVerticalMarginLayout(new LinearLayout(retLayout.getContext()));
         _centralLayout = new LinearLayout(retLayout.getContext());
-        _contentBottomLayout =  formatVerticalMarginLayout(new LinearLayout(retLayout.getContext()));
+        _contentBottomLayout = formatVerticalMarginLayout(new LinearLayout(retLayout.getContext()));
 
         _leftSideLayout = generateSideLayout();
         _dayTextLayout = generateDayText(initialDate);
@@ -281,23 +311,29 @@ public class DateMeter extends LinearLayout {
     private LinearLayout generateSideLayout() {
 
         LinearLayout retLayout = new LinearLayout(getContext());
-        LayoutParams params = new LayoutParams(10,LayoutParams.MATCH_PARENT);
+        LayoutParams params = new LayoutParams(10, LayoutParams.MATCH_PARENT);
         retLayout.setLayoutParams(params);
         retLayout.setBackgroundColor(_mainColor);
 
         return retLayout;
     }
 
-    private TextView generateDayText(DateTime date)     {
+    private TextView generateDayText(DateTime date) {
 
         TextView returnText = new TextView(this.getContext());
         String day = date.getDayOfMonth() + "";
-        if(day.length() == 1) { day = "0" + day;}
+        if (day.length() == 1) {
+            day = "0" + day;
+        }
 
         LayoutParams params = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 
         returnText.setTextSize(getProperFontSize());
-        returnText.setTextColor(TextColor);
+        if (date.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
+            returnText.setTextColor(TodayTextColor);
+        } else {
+            returnText.setTextColor(TextColor);
+        }
         returnText.setLayoutParams(params);
         returnText.setText(day);
         returnText.setBackgroundColor(_mainColor);
@@ -305,7 +341,7 @@ public class DateMeter extends LinearLayout {
         return returnText;
     }
 
-    private LinearLayout generateMonthLayout(DateTime date){
+    private LinearLayout generateMonthLayout(DateTime date) {
 
         LinearLayout retLayout = new LinearLayout(getContext());
         LinearLayout.LayoutParams retParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -315,14 +351,14 @@ public class DateMeter extends LinearLayout {
         _lowerMonthLayout = new LinearLayout(retLayout.getContext());
         _monthText = new TextView(_monthTextLayout.getContext());
         _dayOfWeekText = new TextView(_monthTextLayout.getContext());
-        LinearLayout.LayoutParams upperParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,0,0.65f);
-        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,0,0.3f);
-        LinearLayout.LayoutParams lowerParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT,0,0.05f);
+        LinearLayout.LayoutParams upperParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0, 0.65f);
+        LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0, 0.3f);
+        LinearLayout.LayoutParams lowerParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0, 0.05f);
 
         retLayout.setOrientation(LinearLayout.VERTICAL);
         retLayout.setWeightSum(1);
         retLayout.setBackgroundColor(_mainColor);
-        retLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
+        retLayout.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         _upperMonthLayout.setLayoutParams(upperParams);
         _upperMonthLayout.setBackgroundColor(_mainColor);
@@ -352,23 +388,31 @@ public class DateMeter extends LinearLayout {
 
         int day = targetDate.getDayOfWeek();
 
-        switch(day) {
-            case 1: return getResources().getString(R.string.monday);
-            case 2: return getResources().getString(R.string.tuesday);
-            case 3: return getResources().getString(R.string.wednesday);
-            case 4: return getResources().getString(R.string.thursday);
-            case 5: return getResources().getString(R.string.friday);
-            case 6: return getResources().getString(R.string.saturday);
-            case 7: return getResources().getString(R.string.sunday);
-            default: return "";
+        switch (day) {
+            case 1:
+                return getResources().getString(R.string.monday);
+            case 2:
+                return getResources().getString(R.string.tuesday);
+            case 3:
+                return getResources().getString(R.string.wednesday);
+            case 4:
+                return getResources().getString(R.string.thursday);
+            case 5:
+                return getResources().getString(R.string.friday);
+            case 6:
+                return getResources().getString(R.string.saturday);
+            case 7:
+                return getResources().getString(R.string.sunday);
+            default:
+                return "";
         }
     }
 
-    private int getProperMonthFontSize(){
-        return (int)(getProperFontSize() / 3);
+    private int getProperMonthFontSize() {
+        return (int) (getProperFontSize() / 3);
     }
 
-    private int getProperFontSize(){
+    private int getProperFontSize() {
 
         WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -377,12 +421,16 @@ public class DateMeter extends LinearLayout {
         int width = size.x;
         int height = size.y;
 
-        switch(getContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
+        switch (getContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
 
-            case Configuration.SCREENLAYOUT_SIZE_XLARGE : return 120;
-            case Configuration.SCREENLAYOUT_SIZE_LARGE : return 90;
-            case Configuration.SCREENLAYOUT_SIZE_NORMAL : return 60;
-            case Configuration.SCREENLAYOUT_SIZE_SMALL : return 30;
+            case Configuration.SCREENLAYOUT_SIZE_XLARGE:
+                return 120;
+            case Configuration.SCREENLAYOUT_SIZE_LARGE:
+                return 90;
+            case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+                return 60;
+            case Configuration.SCREENLAYOUT_SIZE_SMALL:
+                return 30;
         }
 
         return height / 40;
