@@ -12,7 +12,7 @@ public class MockDateRepository extends IDateRepository {
 
     public MockDateRepository() {
         date = DateTime.now();
-        dateType = 2;
+        dateType = 1;
         comment = "";
         temperature = 0f;
     }

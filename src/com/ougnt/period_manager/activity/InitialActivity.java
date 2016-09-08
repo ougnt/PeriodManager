@@ -54,7 +54,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion = 48;
+    final int ApplicationVersion = 49;
 
     // TODO : Change this to the real one
     // Live Env
@@ -885,18 +885,7 @@ public class InitialActivity extends Activity {
 
             DateMeter targetDateMeter = ((DateMeter) dateMeterLayout.getChildAt(i));
             if (targetDateMeter.getDate().compareTo(endDate) <= 0 && targetDateMeter.getDate().compareTo(startDate) >= 0) {
-                switch (type) {
-                    case DateMeter.Menstrual:
-                        ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
-                        break;
-                    case DateMeter.Ovulation:
-                        ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(DateMeter.OvulationColor, DateMeter.Ovulation);
-                        break;
-                    case DateMeter.Nothing:
-                        ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
-                        break;
-                }
-
+                ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(type);
             }
         }
 
@@ -1056,7 +1045,7 @@ public class InitialActivity extends Activity {
         int index = getSelectedDateMeterIndex();
         int newType = 0;
 
-        ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
+        ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.Menstrual);
         DateTime dateToBePainted = ((DateMeter) (v.getChildAt(index))).getDate();
         paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int) setting.periodLength - 1), DateMeter.Menstrual);
         paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int) setting.periodCycle - 7), DateMeter.Ovulation);
@@ -1114,8 +1103,11 @@ public class InitialActivity extends Activity {
         int index = getSelectedDateMeterIndex();
 
         addUsageCounter(PNonPeriodButtonUsageCounter);
-        paintDateMeter(((DateMeter) (v.getChildAt(index))).getDate(), ((DateMeter) (v.getChildAt(index))).getDate(), DateMeter.SafeZoneColor);
-        ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
+        DateMeter dateMeterToBeChange = ((DateMeter) (v.getChildAt(index)));
+        DateTime dateToBeChange = dateMeterToBeChange.getDate();
+
+        paintDateMeter(dateToBeChange, dateToBeChange, DateMeter.Nothing);
+        dateMeterToBeChange.changeColor(DateMeter.Nothing);
     }
 
     private int getSelectedDateMeterIndex() {
