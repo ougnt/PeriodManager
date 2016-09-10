@@ -46,7 +46,7 @@ import java.util.UUID;
 
 public class InitialActivity extends Activity {
 
-//    final int EditComment = 0x01;
+    //    final int EditComment = 0x01;
     final int DisplayHelp = 0x02;
     final int DisplayMenu = 0x04;
     final int DisplaySetting = 0x08;
@@ -187,12 +187,53 @@ public class InitialActivity extends Activity {
             }
         });
 
-//        manageAds(getDeviceId());
-
         addDateMeterView();
         addMonthView();
 
         adjustLayoutForDisplayModeAccordingToPDisplayMode();
+
+        View view = findViewById(R.id.dateScroller);
+        view.setOnTouchListener(new View.OnTouchListener() {
+
+            private ViewTreeObserver observer;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
+                observer = observer == null? scrollView.getViewTreeObserver() : observer;
+
+                observer.addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+
+                    @Override
+                    public void onScrollChanged() {
+
+                        int[] fingerIndexLocator = new int[2];
+                        int[] dateMeterLocator = new int[2];
+
+                        ImageView fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
+                        LinearLayout scrollContent = (LinearLayout) findViewById(R.id.dateScrollerContent);
+                        fingerIndex.getLocationOnScreen(fingerIndexLocator);
+
+                        for(int i = 1 ; i < scrollContent.getChildCount() - 2; i ++) {
+                            DateMeter targetDateMeter = (DateMeter) scrollContent.getChildAt(i);
+                            targetDateMeter.getLocationOnScreen(dateMeterLocator);
+                            int fingerIndexPointerX = fingerIndexLocator[0] + fingerIndex.getWidth() / 3;
+
+                            if (fingerIndexPointerX > dateMeterLocator[0] && fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
+                                selectedDate = targetDateMeter.getDate();
+                                targetDateMeter.onTouchFormat();
+                                targetDateMeter.setSelected(true);
+                            } else {
+                                targetDateMeter.resetFormat();
+                                targetDateMeter.setSelected(false);
+                            }
+                        }
+                    }
+                });
+                return false;
+            }
+        });
     }
 
     private void addDateMeterView() {
@@ -203,30 +244,32 @@ public class InitialActivity extends Activity {
             @Override
             public void onNewTouch(DateTime touchDate) {
 
-                DateMeter currentDate = (DateMeter) dateMeterLayout.getChildAt(1);
-
-                for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
-                    DateMeter dateMeter = (DateMeter) dateMeterLayout.getChildAt(i);
-                    if (dateMeter.getDate() != touchDate) {
-
-                        dateMeter.resetFormat();
-
-                    } else {
-                        if (i > 1) {
-                            currentDate = (DateMeter) dateMeterLayout.getChildAt(i);
-                        }
-
-                    }
-
-                }
-
-                selectedDate = touchDate;
-                DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
-
-                Intent intent = new Intent(getBaseContext(), ActionActivity.class);
-                intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
-                intent.putExtra(ActionActivity.ActionCommentExtra, date.comment);
-                startActivityForResult(intent, DisplayActionPanel);
+                // TODO : change to onClick, dateMeter.onClick = () => set the select date to this date
+                return;
+//                DateMeter currentDate = (DateMeter) dateMeterLayout.getChildAt(1);
+//
+//                for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
+//                    DateMeter dateMeter = (DateMeter) dateMeterLayout.getChildAt(i);
+//                    if (dateMeter.getDate() != touchDate) {
+//
+//                        dateMeter.resetFormat();
+//
+//                    } else {
+//                        if (i > 1) {
+//                            currentDate = (DateMeter) dateMeterLayout.getChildAt(i);
+//                        }
+//
+//                    }
+//
+//                }
+//
+//                selectedDate = touchDate;
+//                DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
+//
+//                Intent intent = new Intent(getBaseContext(), ActionActivity.class);
+//                intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
+//                intent.putExtra(ActionActivity.ActionCommentExtra, date.comment);
+//                startActivityForResult(intent, DisplayActionPanel);
             }
         });
 
@@ -541,6 +584,7 @@ public class InitialActivity extends Activity {
             case R.id.date_view_toggle: {
 
                 newDisplayMode = DisplayModeDateScroller;
+                isAdjusted = false;
                 break;
             }
             case R.id.month_view_toggle: {
@@ -946,56 +990,6 @@ public class InitialActivity extends Activity {
         return retLayout;
     }
 
-    private void manageAds(UUID deviceId) {
-
-        adsManager = adsManager == null ? new AdsManagerImpl(deviceId) : adsManager;
-
-        adsManager.requestAds(new OnAdsRequestReturnEventListener() {
-            @Override
-            public void onAdsInfoReturn(AdsInfo adsInfo) {
-
-                adsText = adsInfo.AdsText;
-                adsUrl = adsInfo.AdsUrl;
-
-                adjustLayoutForAds();
-            }
-        }, getStringPreference(PSettingDisplayedLanguage));
-    }
-
-    private void adjustLayoutForAds() {
-
-        LinearLayout appLayout = (LinearLayout) findViewById(R.id.day_view);
-        LinearLayout adsLayout = (LinearLayout) findViewById(R.id.ads_view);
-        LinearLayout adsMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
-
-        try {
-
-            if (adsManager.shouldDisplayAds()) {
-
-                appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
-                adsLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
-
-                TextView adsTextView = (TextView) findViewById(R.id.ads_text);
-                adsTextView.setText(adsText);
-                adsTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        adsManager.addCounter();
-                        adsManager.submitAndResetAdsClick();
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(adsUrl)));
-                    }
-                });
-            } else {
-
-                appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
-                adsMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
-                adsMobLayout.setVisibility(View.GONE);
-            }
-        } catch (Exception e) {
-            // Do nothing
-        }
-    }
-
     private void addDateMeter(LinearLayout targetLayout, DateTime startDate, DateTime endDate, boolean isRight) {
 
         List<DateRepository> dates = DateRepository.getDateRepositories(this, startDate, endDate);
@@ -1128,13 +1122,23 @@ public class InitialActivity extends Activity {
         DateRepository.updateDateRepositorySetTemperature(this, toDate, temperature);
     }
 
+    static boolean isAdjusted = false;
+
     private void moveDateMeterToCurrentDate() {
 
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
+        ViewTreeObserver obs = findViewById(R.id.dateScrollerContent).getViewTreeObserver();
 
+        obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
-            public void run() {
+            public void onGlobalLayout() {
+
+                if (isAdjusted) {
+                    return;
+                } else if (findViewById(R.id.dateScrollerContent).getWidth() == 0) {
+                    return;
+                }
+
+                isAdjusted = true;
 
                 final LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
                 final HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
@@ -1163,8 +1167,14 @@ public class InitialActivity extends Activity {
                     helpIntent.putExtra("INDICATOR", indicatorValue);
                     startActivityForResult(helpIntent, DisplayHelp);
                 }
+
+                int targetHeight = (int) (scrollView.getHeight() * 0.5);
+                ImageView finger = (ImageView) findViewById(R.id.finger_pointer);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetHeight, targetHeight);
+                params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+                finger.setLayoutParams(params);
             }
-        }, 250);
+        });
     }
 
     private int calendarCurrentMonth, calendarCurrentYear;

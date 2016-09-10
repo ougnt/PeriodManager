@@ -33,42 +33,71 @@
             android:layout_width="match_parent"
             android:layout_height="0dp" android:layout_weight="0.9" android:id="@+id/day_view">
         <LinearLayout
-                android:orientation="horizontal"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="0.5"
                 android:id="@+id/date_scroller" android:weightSum="1"
-                android:background="#ff00b3" android:layout_marginBottom="10dp" android:visibility="gone">
-            <LinearLayout android:orientation="horizontal" android:layout_width="0dp" android:layout_height="match_parent"
-                          android:layout_weight="0.1" android:background="@drawable/left_edge">
-            </LinearLayout>
+                android:background="#ff00b3" android:layout_marginBottom="10dp" android:visibility="visible">
+
             <LinearLayout
-                    android:orientation="vertical"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" android:layout_weight="0.8">
-                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
-                              android:layout_height="0dp" android:layout_weight="0.1" android:background="@drawable/side_bar"/>
-                <HorizontalScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:id="@+id/dateScroller" android:layout_weight="0.8" android:background="@android:color/darker_gray">
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:weightSum="1"
+                android:layout_weight="0.3">
+
+                <LinearLayout android:orientation="horizontal" android:layout_width="0dp" android:layout_height="match_parent"
+                              android:layout_weight="0.1" android:background="@drawable/left_edge">
+                </LinearLayout>
+
+
+                <FrameLayout
+                        android:orientation="vertical"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" android:layout_weight="0.8"
+                    >
+                    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent"
+                                  android:layout_height="wrap_content" android:layout_weight="0.1" android:background="@drawable/side_bar"
+                        android:layout_gravity="top" />
+
                     <LinearLayout
                             android:orientation="horizontal"
-                            android:layout_height="match_parent"
-                            android:layout_width="wrap_content"
-                            android:id="@+id/dateScrollerContent"/>
-                </HorizontalScrollView>
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" android:layout_weight="0.1" android:background="@drawable/side_bar"
+                        android:gravity="center"
+                        android:layout_gravity="bottom">
+
+                    </LinearLayout>
+
+                    <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/dateScroller" android:layout_weight="0.8" android:background="@android:color/darker_gray"
+                        android:layout_gravity="center">
+                        <LinearLayout
+                                android:orientation="horizontal"
+                                android:layout_height="match_parent"
+                                android:layout_width="wrap_content"
+                                android:id="@+id/dateScrollerContent"/>
+                    </HorizontalScrollView>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/finger_pointer"
+                        android:layout_gravity="bottom|center_horizontal"
+                        android:src="@drawable/finger_pointer"
+                        android:visibility="visible" />
+
+                </FrameLayout>
+
                 <LinearLayout
                         android:orientation="horizontal"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp" android:layout_weight="0.1" android:background="@drawable/side_bar">
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent" android:layout_weight="0.1"
+                        android:background="@drawable/right_edge">
                 </LinearLayout>
-            </LinearLayout>
-            <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent" android:layout_weight="0.1"
-                    android:background="@drawable/right_edge">
             </LinearLayout>
         </LinearLayout>
 
@@ -545,7 +574,7 @@
             android:orientation="horizontal"
             android:layout_weight="0.5"
             android:id="@+id/chart_view_panel"
-            android:visibility="visible" >
+            android:visibility="gone" >
 
             <LinearLayout
                 android:orientation="horizontal"

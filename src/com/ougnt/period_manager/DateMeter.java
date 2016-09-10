@@ -179,7 +179,7 @@ public class DateMeter extends LinearLayout {
         display.getSize(size);
         int width = size.x == 0 ? 2400 : size.x;
 
-        IconWidth = width / 12;
+        IconWidth = width / 20;
 
         LinearLayout.LayoutParams iconParam = new LinearLayout.LayoutParams(IconWidth, IconWidth);
 
@@ -392,16 +392,16 @@ public class DateMeter extends LinearLayout {
         switch (getContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
 
             case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-                return 120;
+                return 84;
             case Configuration.SCREENLAYOUT_SIZE_LARGE:
-                return 90;
+                return 63;
             case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-                return 60;
+                return 42;
             case Configuration.SCREENLAYOUT_SIZE_SMALL:
-                return 30;
+                return 21;
         }
 
-        return height / 40;
+        return height / 28;
     }
 
     private LinearLayout _leftHorizontalLayout;
