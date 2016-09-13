@@ -5,6 +5,7 @@
     <color name="safe_zone_bg">#BEFCF0</color>
     <color name="menstrual_zone_bg">#F3CDFF</color>
     <color name="ovulation_zone_bg">#A1FF97</color>
+    <color name="ovulation_date_bg">#01FF01</color>
     <color name="on_select_zone_bg">#8989FF</color>
     <color name="text_color">#7F7F7F</color>
     <color name="calendar_other_month_text">#CDCDCD</color>

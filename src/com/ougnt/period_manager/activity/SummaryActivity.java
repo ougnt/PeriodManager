@@ -20,11 +20,13 @@ public class SummaryActivity extends Activity {
     public static final String NextMenstrualToExtra = "NextMenstrualToExtra";
     public static final String NextOvulationFromExtra = "NextOvulationFromExtra";
     public static final String NextOvulationToExtra = "NextOvulationToExtra";
+    public static final String NextOvulationExtra = "NextOvulationExtra";
 
     public DateTime menstrualFrom;
     public DateTime menstrualTo;
     public DateTime ovulationFrom;
     public DateTime ovulationTo;
+    public DateTime ovulationDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +42,7 @@ public class SummaryActivity extends Activity {
         menstrualTo   = DateTime.parse(intent.getExtras().getString(NextMenstrualToExtra));
         ovulationFrom = DateTime.parse(intent.getExtras().getString(NextOvulationFromExtra));
         ovulationTo   = DateTime.parse(intent.getExtras().getString(NextOvulationToExtra));
+        ovulationDate = ovulationFrom.plusMillis((int) (ovulationTo.getMillis() - ovulationFrom.getMillis()) / 2);
 
         String menstrualFromText = DateUtils.formatDateTime(this, menstrualFrom.getMillis(), dateFormatFlag);
         String menstrualToText = DateUtils.formatDateTime(this, menstrualTo.getMillis(), dateFormatFlag);
@@ -59,6 +62,7 @@ public class SummaryActivity extends Activity {
         retIntent.putExtra(NextMenstrualToExtra,   menstrualTo.toString("yyyy-MM-dd"));
         retIntent.putExtra(NextOvulationFromExtra, ovulationFrom.toString("yyyy-MM-dd"));
         retIntent.putExtra(NextOvulationToExtra,   ovulationTo.toString("yyyy-MM-dd"));
+        retIntent.putExtra(NextOvulationExtra, ovulationDate.toString("yyyy-MM-dd"));
         setResult(RESULT_OK, retIntent);
         finish();
     }

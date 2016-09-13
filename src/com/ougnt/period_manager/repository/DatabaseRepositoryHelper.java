@@ -15,7 +15,8 @@ import java.util.LinkedList;
 public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
 
     // Version 3 add temperature
-    static final int CurrentVersion = 4;
+    // Version 5 add exect ovulation date to summary repo
+    static final int CurrentVersion = 5;
 
     public DatabaseRepositoryHelper(Context context) {
         super(context, "period_manager_core.db", null, CurrentVersion);
@@ -54,7 +55,7 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
 
         db.execSQL(insertString);
 
-        String summaryQuery = "CREATE TABLE summary (exp_menstrual_from DATE, exp_menstrual_to DATE, exp_ovulation_from DATE, exp_ovulation_to DATE)";
+        String summaryQuery = "CREATE TABLE summary (exp_menstrual_from DATE, exp_menstrual_to DATE, exp_ovulation_from DATE, exp_ovulation_to DATE, exp_ovulation_date DATE)";
         db.execSQL(summaryQuery);
     }
 
@@ -70,6 +71,13 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
         if(oldVersion <= 3) {
 
             String alterQuery = "ALTER TABLE DATE_REPOSITORY ADD COLUMN temperature_value FLOAT DEFAULT 0";
+            try {
+                db.execSQL(alterQuery);
+            } catch (SQLiteException e) {}
+        }
+
+        if(oldVersion <= 4) {
+            String alterQuery = "ALTER TABLE summary ADD COLUMN exp_ovulation_date DATE DEFAULT NULL";
             try {
                 db.execSQL(alterQuery);
             } catch (SQLiteException e) {}

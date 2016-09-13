@@ -1,7 +1,6 @@
 package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,11 +22,9 @@ import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.*;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
-import com.ougnt.period_manager.event.OnAdsRequestReturnEventListener;
-import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
+import com.ougnt.period_manager.event.OnDateMeterFocusListener;
 import com.ougnt.period_manager.handler.ChartHandler;
 import com.ougnt.period_manager.repository.*;
-import com.ougnt.period_manager.tests.MockDateRepository;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -163,7 +160,14 @@ public class InitialActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        isAdjusted = false;
         startTime = DateTime.now();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        isAdjusted = false;
     }
 
     private void initialApplication() {
@@ -192,6 +196,10 @@ public class InitialActivity extends Activity {
 
         adjustLayoutForDisplayModeAccordingToPDisplayMode();
 
+        LinearLayout newActionPanel = (LinearLayout) findViewById(R.id.new_action_panel);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.date_detail, newActionPanel);
+
         View view = findViewById(R.id.dateScroller);
         view.setOnTouchListener(new View.OnTouchListener() {
 
@@ -201,7 +209,7 @@ public class InitialActivity extends Activity {
             public boolean onTouch(View v, MotionEvent event) {
 
                 HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
-                observer = observer == null? scrollView.getViewTreeObserver() : observer;
+                observer = observer == null ? scrollView.getViewTreeObserver() : observer;
 
                 observer.addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
 
@@ -215,18 +223,23 @@ public class InitialActivity extends Activity {
                         LinearLayout scrollContent = (LinearLayout) findViewById(R.id.dateScrollerContent);
                         fingerIndex.getLocationOnScreen(fingerIndexLocator);
 
-                        for(int i = 1 ; i < scrollContent.getChildCount() - 2; i ++) {
+                        for (int i = 1; i < scrollContent.getChildCount() - 2; i++) {
                             DateMeter targetDateMeter = (DateMeter) scrollContent.getChildAt(i);
                             targetDateMeter.getLocationOnScreen(dateMeterLocator);
                             int fingerIndexPointerX = fingerIndexLocator[0] + fingerIndex.getWidth() / 3;
 
                             if (fingerIndexPointerX > dateMeterLocator[0] && fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
+
+                                if (selectedDate == targetDateMeter.getDate()) return;
+
                                 selectedDate = targetDateMeter.getDate();
-                                targetDateMeter.onTouchFormat();
+                                targetDateMeter.makeSelectedFormat();
                                 targetDateMeter.setSelected(true);
                             } else {
-                                targetDateMeter.resetFormat();
-                                targetDateMeter.setSelected(false);
+                                if(targetDateMeter.isSelected()) {
+                                    targetDateMeter.resetFormat();
+                                    targetDateMeter.setSelected(false);
+                                }
                             }
                         }
                     }
@@ -240,36 +253,40 @@ public class InitialActivity extends Activity {
 
         final LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
 
-        setOnDateMeterTouchEventListener(new OnDateMeterTouchEventListener() {
+        setOnDateMeterTouchEventListener(new OnDateMeterFocusListener() {
             @Override
-            public void onNewTouch(DateTime touchDate) {
+            public void onFocusMoveIn(DateMeter touchDate) {
 
-                // TODO : change to onClick, dateMeter.onClick = () => set the select date to this date
-                return;
-//                DateMeter currentDate = (DateMeter) dateMeterLayout.getChildAt(1);
-//
-//                for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
-//                    DateMeter dateMeter = (DateMeter) dateMeterLayout.getChildAt(i);
-//                    if (dateMeter.getDate() != touchDate) {
-//
-//                        dateMeter.resetFormat();
-//
-//                    } else {
-//                        if (i > 1) {
-//                            currentDate = (DateMeter) dateMeterLayout.getChildAt(i);
-//                        }
-//
-//                    }
-//
-//                }
-//
-//                selectedDate = touchDate;
-//                DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
-//
-//                Intent intent = new Intent(getBaseContext(), ActionActivity.class);
-//                intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
-//                intent.putExtra(ActionActivity.ActionCommentExtra, date.comment);
-//                startActivityForResult(intent, DisplayActionPanel);
+                ImageView fireImage = (ImageView) findViewById(R.id.fire_image);
+                ImageView grassImage = (ImageView) findViewById(R.id.grass_image);
+                ImageView sunImage = (ImageView) findViewById(R.id.sun_image);
+                ImageView beachImage = (ImageView) findViewById(R.id.beach_image);
+
+                switch (touchDate.dateType) {
+                    case DateMeter.Menstrual: {
+                        fireImage.setVisibility(View.VISIBLE);
+                        grassImage.setVisibility(View.GONE);
+                        sunImage.setVisibility(View.GONE);
+                        beachImage.setVisibility(View.GONE);
+                        break;
+                    }
+                    case DateMeter.PossiblyOvulation: {
+                        fireImage.setVisibility(View.GONE);
+                        grassImage.setVisibility(View.GONE);
+                        sunImage.setVisibility(View.VISIBLE);
+                        beachImage.setVisibility(View.VISIBLE);
+                        break;
+                    }
+                    case DateMeter.Nothing: {
+                        fireImage.setVisibility(View.GONE);
+                        grassImage.setVisibility(View.VISIBLE);
+                        sunImage.setVisibility(View.VISIBLE);
+                        beachImage.setVisibility(View.GONE);
+                        break;
+                    }
+                }
+
+                setDateDetailText(touchDate);
             }
         });
 
@@ -281,6 +298,31 @@ public class InitialActivity extends Activity {
         setting = SettingRepository.getSettingRepository(this);
 
         moveDateMeterToCurrentDate();
+    }
+
+    private void setDateDetailText(DateMeter touchDate) {
+
+        TextView todayText = (TextView) findViewById(R.id.date_detail_text);
+        SummaryRepository summary = SummaryRepository.getSummary(getBaseContext());
+        int nextOvulationIn = (int) ((summary.expectedOvulationDate.getMillis() - touchDate.getDate().getMillis()) / 1000 / 60 / 60 / 24);
+        int nextPeriodIn = (int) ((summary.expectedMenstrualDateFrom.getMillis() - touchDate.getDate().getMillis()) / 1000 / 60 / 60 / 24);
+        String explainationText =
+                touchDate.dateType == DateMeter.Menstrual ?
+                        "Small chance to get pregnant today\n" :
+                        touchDate.dateType == DateMeter.PossiblyOvulation ?
+                                "Have some chances to get pregnant today\n" :
+                                touchDate.dateType == DateMeter.OvulationDate ?
+                                        "Today is the Ovulation Date\n" :
+                                        "";
+
+        String estNextOvu = nextOvulationIn > 0 ?
+                "Estimated next ovulation in " + nextOvulationIn + " days\n" :
+                "";
+        String estNextMens = nextPeriodIn > 0 ?
+                "Estimated Next Period date in " + nextPeriodIn + " days" :
+                "";
+
+        todayText.setText(explainationText + estNextOvu + estNextMens);
     }
 
     private void addMonthView() {
@@ -384,7 +426,7 @@ public class InitialActivity extends Activity {
                 case DateMeter.Menstrual:
                     color = getResources().getColor(R.color.calendar_period_text);
                     break;
-                case DateMeter.Ovulation:
+                case DateMeter.PossiblyOvulation:
                     color = getResources().getColor(R.color.calendar_ovulation_text);
                     break;
                 default:
@@ -416,11 +458,11 @@ public class InitialActivity extends Activity {
             case DisplaySummary: {
 
                 SummaryRepository summary = new SummaryRepository();
-
-                summary.expectedMenstrualDateFrom = (DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualFromExtra).toString()));
-                summary.expectedMenstrualDateTo = (DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualToExtra).toString()));
-                summary.expectedOvulationDateFrom = (DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationFromExtra).toString()));
-                summary.expectedOvulationDateTo = (DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationToExtra).toString()));
+                summary.expectedMenstrualDateFrom = DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualFromExtra).toString());
+                summary.expectedMenstrualDateTo = DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualToExtra).toString());
+                summary.expectedOvulationDateFrom = DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationFromExtra).toString());
+                summary.expectedOvulationDateTo = DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationToExtra).toString());
+                summary.expectedOvulationDate = DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationExtra).toString());
 
                 summary.save(this);
                 break;
@@ -571,7 +613,7 @@ public class InitialActivity extends Activity {
         startActivityForResult(intent, DisplayMenu);
     }
 
-    public void setOnDateMeterTouchEventListener(OnDateMeterTouchEventListener listener) {
+    public void setOnDateMeterTouchEventListener(OnDateMeterFocusListener listener) {
         dateTouchListener = listener;
     }
 
@@ -1041,10 +1083,22 @@ public class InitialActivity extends Activity {
 
         ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.Menstrual);
         DateTime dateToBePainted = ((DateMeter) (v.getChildAt(index))).getDate();
-        paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int) setting.periodLength - 1), DateMeter.Menstrual);
-        paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int) setting.periodCycle - 7), DateMeter.Ovulation);
-        paintDateMeter(dateToBePainted.plusDays((int) setting.periodCycle - 7), dateToBePainted.plusDays((int) setting.periodCycle - 1), DateMeter.Nothing);
-        paintDateMeter(dateToBePainted.plusDays((int) setting.periodCycle - 1), dateToBePainted.plusDays((int) setting.periodCycle + 1), DateMeter.Menstrual);
+
+        DateTime startOfMenstrualPeriod = dateToBePainted;
+        DateTime endOfMenstrualPeriod = dateToBePainted.plusDays((int) setting.periodLength - 1);
+        DateTime startOfOvulationPeriod = dateToBePainted.plusDays(7);
+        DateTime endOfOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 8);
+        DateTime ovulationDate = startOfOvulationPeriod.plusMillis((int) (endOfOvulationPeriod.getMillis() - startOfOvulationPeriod.getMillis()) / 2);
+        DateTime startNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 7);
+        DateTime endNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle);
+        DateTime estimatedNextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1 );
+        DateTime estimatedNextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 2);
+
+        paintDateMeter(startOfMenstrualPeriod, endOfMenstrualPeriod, DateMeter.Menstrual);
+        paintDateMeter(startOfOvulationPeriod, endOfOvulationPeriod, DateMeter.PossiblyOvulation);
+        paintDateMeter(ovulationDate, ovulationDate, DateMeter.OvulationDate);
+        paintDateMeter(startNonOvulationPeriod, endNonOvulationPeriod, DateMeter.Nothing);
+        paintDateMeter(estimatedNextMenstrualFrom, estimatedNextMenstrualTo, DateMeter.Menstrual);
         newType = DateMeter.Menstrual;
 
         Intent summaryIntent = new Intent(this, SummaryActivity.class);
@@ -1173,12 +1227,14 @@ public class InitialActivity extends Activity {
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetHeight, targetHeight);
                 params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
                 finger.setLayoutParams(params);
+
+                setDateDetailText((DateMeter) ((LinearLayout) findViewById(R.id.dateScrollerContent)).getChildAt(17));
             }
         });
     }
 
     private int calendarCurrentMonth, calendarCurrentYear;
-    private OnDateMeterTouchEventListener dateTouchListener;
+    private OnDateMeterFocusListener dateTouchListener;
     private PeriodCalendar calendar;
     private String adsUrl;
     private String adsText;

@@ -99,6 +99,14 @@
                         android:background="@drawable/right_edge">
                 </LinearLayout>
             </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.7"
+                android:id="@+id/new_action_panel"
+                android:background="@color/main_bg"></LinearLayout>
         </LinearLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"

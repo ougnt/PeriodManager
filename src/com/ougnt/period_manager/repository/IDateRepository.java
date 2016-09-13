@@ -9,7 +9,8 @@ public abstract class IDateRepository {
 
     public DateTime date;
     // 1 = Period
-    // 2 = Ovulation
+    // 2 = PossiblyOvulation
+    // 4 = OvulationDate
     // 0 = SafeZone
     public int dateType;
     public String comment;

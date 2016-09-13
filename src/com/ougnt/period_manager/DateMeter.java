@@ -16,7 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ougnt.period_manager.activity.AppForStatic;
-import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
+import com.ougnt.period_manager.event.OnDateMeterFocusListener;
 import com.ougnt.period_manager.exception.NotImplementException;
 import com.ougnt.period_manager.repository.IDateRepository;
 import com.ougnt.period_manager.tests.MockDateRepository;
@@ -24,7 +24,6 @@ import com.ougnt.period_manager.tests.MockDateRepository;
 import org.joda.time.DateTime;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 
 /**
  * * # Created by wacharint on 10/26/15.
@@ -32,11 +31,13 @@ import java.util.LinkedList;
 public class DateMeter extends LinearLayout {
 
     public static final int Menstrual = 0x01;
-    public static final int Ovulation = 0x02;
+    public static final int PossiblyOvulation = 0x02;
+    public static final int OvulationDate = 0x04;
     public static final int Nothing = 0x00;
 
     public static final int MenstrualColor;
-    public static final int OvulationColor;
+    public static final int PossiblyOvulationColor;
+    public static final int OvulationDateColor;
     public static final int SafeZoneColor;
     public static final int OnSelectColor;
     public static final int TextColor;
@@ -49,24 +50,26 @@ public class DateMeter extends LinearLayout {
     public int dateType = 0;
 
     static {
-        if(AppForStatic.getContext() == null)
-        {
+        if (AppForStatic.getContext() == null) {
             MenstrualColor = 0xFFF3CDFF;
-            OvulationColor = 0xFFA1FF97;
+            PossiblyOvulationColor = 0xFFA1FF97;
+            OvulationDateColor = 0xFF01FF01;
             SafeZoneColor = 0xFFBEFCF0;
             OnSelectColor = 0xFF8989FF;
             TextColor = 0xFF7F7F7F;
             TodayTextColor = 0xFFEF7A54;
         } else {
             MenstrualColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.menstrual_zone_bg);
-            OvulationColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.ovulation_zone_bg);
+            PossiblyOvulationColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.ovulation_zone_bg);
+            OvulationDateColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.ovulation_date_bg);
             SafeZoneColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.safe_zone_bg);
             OnSelectColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.on_select_zone_bg);
             TextColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.text_color);
             TodayTextColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.today_text_color);
         }
         ColorForDateType.put(Menstrual, MenstrualColor);
-        ColorForDateType.put(Ovulation, OvulationColor);
+        ColorForDateType.put(PossiblyOvulation, PossiblyOvulationColor);
+        ColorForDateType.put(OvulationDate, OvulationDateColor);
         ColorForDateType.put(Nothing, SafeZoneColor);
     }
 
@@ -82,7 +85,7 @@ public class DateMeter extends LinearLayout {
         }
     }
 
-    public DateMeter(Context context, IDateRepository initialDate, OnDateMeterTouchEventListener listener) {
+    public DateMeter(Context context, IDateRepository initialDate, OnDateMeterFocusListener listener) {
         super(context);
 
         comment = initialDate.comment;
@@ -109,7 +112,7 @@ public class DateMeter extends LinearLayout {
         setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                onTouchFormat();
+                makeSelectedFormat();
             }
         });
     }
@@ -122,12 +125,12 @@ public class DateMeter extends LinearLayout {
         return date;
     }
 
-    public void onTouchFormat() {
+    public void makeSelectedFormat() {
         _leftHorizontalLayout.setBackgroundColor(OnSelectColor);
         _rightHorizontalLayout.setBackgroundColor(OnSelectColor);
         _contentTopLayout.setBackgroundColor(OnSelectColor);
         _contentBottomLayout.setBackgroundColor(OnSelectColor);
-        _listener.onNewTouch(date);
+        _listener.onFocusMoveIn(this);
         this.setBackgroundColor(OnSelectColor);
     }
 
@@ -216,22 +219,27 @@ public class DateMeter extends LinearLayout {
     }
 
     private void formatIconVisibilityByDateType() {
-        if ((dateType & Menstrual) != Menstrual) {
 
-            _menstrualIcon.setVisibility(GONE);
-            _nonOvulationIcon.setVisibility(VISIBLE);
-            _ovulationIcon.setVisibility(VISIBLE);
-        }
-        if ((dateType & Ovulation) != Nothing) {
-
-            _nonOvulationIcon.setVisibility(GONE);
-            _ovulationIcon.setVisibility(VISIBLE);
-            _nonOvulationIcon.setVisibility(VISIBLE);
-        } else {
-
-            _nonOvulationIcon.setVisibility(VISIBLE);
-            _ovulationIcon.setVisibility(VISIBLE);
-            _ovulationIcon.setVisibility(GONE);
+        switch (dateType) {
+            case Menstrual: {
+                _menstrualIcon.setVisibility(VISIBLE);
+                _nonOvulationIcon.setVisibility(VISIBLE);
+                _ovulationIcon.setVisibility(GONE);
+                break;
+            }
+            case OvulationDate:
+            case PossiblyOvulation: {
+                _menstrualIcon.setVisibility(GONE);
+                _ovulationIcon.setVisibility(VISIBLE);
+                _nonOvulationIcon.setVisibility(GONE);
+                break;
+            }
+            case Nothing: {
+                _menstrualIcon.setVisibility(GONE);
+                _ovulationIcon.setVisibility(GONE);
+                _nonOvulationIcon.setVisibility(VISIBLE);
+                break;
+            }
         }
     }
 
@@ -424,5 +432,5 @@ public class DateMeter extends LinearLayout {
     private ImageView _ovulationIcon;
     private ImageView _nonOvulationIcon;
 
-    private OnDateMeterTouchEventListener _listener;
+    private OnDateMeterFocusListener _listener;
 }
