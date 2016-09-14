@@ -308,18 +308,18 @@ public class InitialActivity extends Activity {
         int nextPeriodIn = (int) ((summary.expectedMenstrualDateFrom.getMillis() - touchDate.getDate().getMillis()) / 1000 / 60 / 60 / 24);
         String explainationText =
                 touchDate.dateType == DateMeter.Menstrual ?
-                        "Small chance to get pregnant today\n" :
+                        getResources().getString(R.string.date_detail_small_chance) :
                         touchDate.dateType == DateMeter.PossiblyOvulation ?
-                                "Have some chances to get pregnant today\n" :
+                                getResources().getString(R.string.date_detail_have_some_change) :
                                 touchDate.dateType == DateMeter.OvulationDate ?
-                                        "Today is the Ovulation Date\n" :
+                                        getResources().getString(R.string.date_detail_ovulation_date) :
                                         "";
 
         String estNextOvu = nextOvulationIn > 0 ?
-                "Estimated next ovulation in " + nextOvulationIn + " days\n" :
+                String.format(getResources().getString(R.string.date_detail_est_next_ovulation), nextOvulationIn) :
                 "";
         String estNextMens = nextPeriodIn > 0 ?
-                "Estimated Next Period date in " + nextPeriodIn + " days" :
+                String.format(getResources().getString(R.string.date_detail_est_next_period), nextPeriodIn) :
                 "";
 
         todayText.setText(explainationText + estNextOvu + estNextMens);

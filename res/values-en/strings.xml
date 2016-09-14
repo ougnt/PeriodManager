@@ -60,4 +60,9 @@
     <string name="summary_estimated_menstrual">Estimated Menstrual Period From %1$s to %2$s</string>
     <string name="summary_estimated_ovulation">Estimated Ovulation Period From %1$s to %2$s</string>
     <string name="menu_lock_screen">Lock screen</string>
+    <string name="date_detail_est_next_ovulation">Estimated next ovulation in %1$s days\n</string>
+    <string name="date_detail_est_next_period">Estimated Next Period date in %1$s days</string>
+    <string name="date_detail_have_some_change">Have some chances to get pregnant today\n</string>
+    <string name="date_detail_ovulation_date">Today is the Ovulation Date\n</string>
+    <string name="date_detail_small_chance">Small chance to get pregnant today\n</string>
 </resources>

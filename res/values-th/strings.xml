@@ -58,4 +58,9 @@
     <string name="summary_estimated_menstrual">คาดการณ์ประจำเดือน ครั้งหน้าประมาณวันที่ %1$s ถึงวันที่ %2$s</string>
     <string name="summary_estimated_ovulation">คาดการณ์วันตกไข่ ครั้งหน้าประมาณวันที่ %1$s ถึงวันที่ %2$s</string>
     <string name="menu_lock_screen">ล๊อกหน้าจอ</string>
+    <string name="date_detail_est_next_ovulation">จะตกไข่ในอีก %1$s วัน\n</string>
+    <string name="date_detail_est_next_period">จะเป็นเมนส์ในอีก %1$s วัน</string>
+    <string name="date_detail_have_some_change">วันนี้มีโอกาศตั้งครรภ์\n</string>
+    <string name="date_detail_ovulation_date">วันนี้วันตกไข่\n</string>
+    <string name="date_detail_small_chance">วันนี้มีโอกาสตั้งครรภ์น้อยมาก\n</string>
 </resources>
