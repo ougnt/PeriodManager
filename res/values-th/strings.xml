@@ -63,4 +63,6 @@
     <string name="date_detail_have_some_change">วันนี้มีโอกาศตั้งครรภ์\n</string>
     <string name="date_detail_ovulation_date">วันนี้วันตกไข่\n</string>
     <string name="date_detail_small_chance">วันนี้มีโอกาสตั้งครรภ์น้อยมาก\n</string>
+    <string name="date_detail_add_detail">เพิ่มข้อมูล</string>
+    <string name="date_detail_no_detail_yet">โปรดระบุวันที่เป็นเมนส์ ครั้งก่อนเพื่อเริ่มต้นใช้งาน</string>
 </resources>

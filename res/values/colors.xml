@@ -44,4 +44,5 @@
     <color name="action_text_edit_bg">#EFEAE0</color>
     <color name="action_text_edit_bg_light">#FFFBF1</color>
     <color name="action_text_edit_bg_dark">#DDDAD1</color>
+    <color name="date_detail_text_color">#0080FF</color>
 </resources>

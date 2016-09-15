@@ -1,6 +1,7 @@
 package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
+import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,7 +52,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
 
-    final int ApplicationVersion = 49;
+    final int ApplicationVersion = 50;
 
     // TODO : Change this to the real one
     // Live Env
@@ -200,6 +201,17 @@ public class InitialActivity extends Activity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.date_detail, newActionPanel);
 
+        findViewById(R.id.date_detail_action_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getBaseContext(), ActionActivity.class);
+                intent.putExtra(ActionActivity.ActionTemperatureExtra, selectedDate.temperature);
+                intent.putExtra(ActionActivity.ActionCommentExtra, selectedDate.comment);
+                startActivityForResult(intent, DisplayActionPanel);
+            }
+        });
+
         View view = findViewById(R.id.dateScroller);
         view.setOnTouchListener(new View.OnTouchListener() {
 
@@ -230,9 +242,10 @@ public class InitialActivity extends Activity {
 
                             if (fingerIndexPointerX > dateMeterLocator[0] && fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
 
-                                if (selectedDate == targetDateMeter.getDate()) return;
+                                if (selectedDate == null ) selectedDate = targetDateMeter;
+                                if (selectedDate.getDate() == targetDateMeter.getDate()) return;
 
-                                selectedDate = targetDateMeter.getDate();
+                                selectedDate = targetDateMeter;
                                 targetDateMeter.makeSelectedFormat();
                                 targetDateMeter.setSelected(true);
                             } else {
@@ -304,6 +317,10 @@ public class InitialActivity extends Activity {
 
         TextView todayText = (TextView) findViewById(R.id.date_detail_text);
         SummaryRepository summary = SummaryRepository.getSummary(getBaseContext());
+        if(summary == null) {
+            todayText.setText(getResources().getString(R.string.date_detail_no_detail_yet));
+            return;
+        }
         int nextOvulationIn = (int) ((summary.expectedOvulationDate.getMillis() - touchDate.getDate().getMillis()) / 1000 / 60 / 60 / 24);
         int nextPeriodIn = (int) ((summary.expectedMenstrualDateFrom.getMillis() - touchDate.getDate().getMillis()) / 1000 / 60 / 60 / 24);
         String explainationText =
@@ -327,7 +344,7 @@ public class InitialActivity extends Activity {
 
     private void addMonthView() {
 
-        DateTime calendarDate = selectedDate == null ? DateTime.now() : selectedDate;
+        DateTime calendarDate = selectedDate == null ? DateTime.now() : selectedDate.getDate();
 
         setupCalendar(calendarDate.getMonthOfYear(), calendarDate.getYear());
         loadDatesToView();
@@ -399,8 +416,8 @@ public class InitialActivity extends Activity {
                 targetLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        selectedDate = tempDate;
-                        DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
+//                        selectedDate = tempDate;
+                        DateRepository date = DateRepository.getDateRepositories(getBaseContext(), tempDate, tempDate).get(0);
 
                         Intent intent = new Intent(getBaseContext(), ActionActivity.class);
                         intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
@@ -502,8 +519,8 @@ public class InitialActivity extends Activity {
 
                         float temperature = data.getExtras().getFloat(ActionActivity.ActionTemperatureExtra);
                         String comment = data.getExtras().getString(ActionActivity.ActionCommentExtra);
-                        setTemperatureToDateMeter(selectedDate, temperature);
-                        DateRepository.updateDateRepositorySetComment(this, selectedDate, comment);
+                        setTemperatureToDateMeter(selectedDate.getDate(), temperature);
+                        DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), comment);
                         break;
                     }
                     case ActionActivity.ActionNothing: {
@@ -1053,12 +1070,12 @@ public class InitialActivity extends Activity {
 
     private boolean selectedDateIsBeforeTheFirstDateMeter(LinearLayout dateMeterHolder) {
 
-        return ((DateMeter) (dateMeterHolder.getChildAt(1))).getDate().isAfter(selectedDate.getMillis());
+        return ((DateMeter) (dateMeterHolder.getChildAt(1))).getDate().isAfter(selectedDate.getDate().getMillis());
     }
 
     private boolean selectedDateIsAfterTheLastDateMeter(LinearLayout dateMeterHolder) {
 
-        return ((DateMeter) (dateMeterHolder.getChildAt(dateMeterHolder.getChildCount() - 2))).getDate().isBefore(selectedDate.getMillis());
+        return ((DateMeter) (dateMeterHolder.getChildAt(dateMeterHolder.getChildCount() - 2))).getDate().isBefore(selectedDate.getDate().getMillis());
     }
 
     private void addPeriodAndOvulationFlagToDateMeters() {
@@ -1088,7 +1105,7 @@ public class InitialActivity extends Activity {
         DateTime endOfMenstrualPeriod = dateToBePainted.plusDays((int) setting.periodLength - 1);
         DateTime startOfOvulationPeriod = dateToBePainted.plusDays(7);
         DateTime endOfOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 8);
-        DateTime ovulationDate = startOfOvulationPeriod.plusMillis((int) (endOfOvulationPeriod.getMillis() - startOfOvulationPeriod.getMillis()) / 2);
+        DateTime ovulationDate = startOfOvulationPeriod.plusDays(((int) (endOfOvulationPeriod.getMillis() - startOfOvulationPeriod.getMillis()) / 2) / 1000 / 60 / 60 / 24);
         DateTime startNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 7);
         DateTime endNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle);
         DateTime estimatedNextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1 );
@@ -1165,7 +1182,7 @@ public class InitialActivity extends Activity {
         LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
 
         DateTime firstDate = ((DateMeter) v.getChildAt(1)).getDate();
-        int dateDiff = (int) ((selectedDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
+        int dateDiff = (int) ((selectedDate.getDate().getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
 
         index = dateDiff + 1;
         return index;
@@ -1197,7 +1214,15 @@ public class InitialActivity extends Activity {
                 final LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
                 final HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
 
-                scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
+                int[] firstChildLocal = new int[2];
+                int[] scrollViewLocal = new int[2];
+
+                scrollView.getChildAt(0).getLocationOnScreen(firstChildLocal);
+                scrollView.getLocationOnScreen(scrollViewLocal);
+
+                if(firstChildLocal[0] == scrollViewLocal[0]) {
+                    scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
+                }
                 DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
 
                 if (setting.isFirstTime) {
@@ -1239,7 +1264,7 @@ public class InitialActivity extends Activity {
     private String adsUrl;
     private String adsText;
     private IAdsManager adsManager;
-    private DateTime selectedDate = null;
+    private DateMeter selectedDate = null;
     private ChartHandler _chartHandler = null;
     private ChartFetchingOnclickHandler _chartButtonHandler = null;
 }

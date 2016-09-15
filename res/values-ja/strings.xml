@@ -63,4 +63,11 @@
     <string name="action_activity_save">保存</string>
     <string name="action_activity_temperature_hint">体温</string>
     <string name="menu_lock_screen">画面をロック</string>
+    <string name="date_detail_add_detail">インフォーが入る</string>
+    <string name="date_detail_est_next_ovulation">次の%1$s日間は、排卵日です\n</string>
+    <string name="date_detail_est_next_period">次の%1$s日間は、月経日です</string>
+    <string name="date_detail_have_some_change">妊娠する可能性\n</string>
+    <string name="date_detail_ovulation_date">排卵日です\n</string>
+    <string name="date_detail_small_chance">妊娠する少し可能性\n</string>
+    <string name="date_detail_no_detail_yet">スクロールして、期間を入ってくと、下のボタン「この日に情報を追加」をクリックします。</string>
 </resources>
