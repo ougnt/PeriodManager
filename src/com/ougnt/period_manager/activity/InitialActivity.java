@@ -426,7 +426,7 @@ public class InitialActivity extends Activity {
 //                        selectedDate = tempDate;
                         DateRepository date = DateRepository.getDateRepositories(getBaseContext(), tempDate, tempDate).get(0);
 
-                        selectedDate = new DateMeter(getBaseContext(),date, dateTouchListener);
+                        selectedDate = new DateMeter(getBaseContext(), date, dateTouchListener);
 
                         ActionActivityExtra extra = new ActionActivityExtra();
                         extra.date = selectedDate.getDate();
@@ -515,11 +515,11 @@ public class InitialActivity extends Activity {
             }
             case DisplayNewActionPanel: {
 
-                if(data == null) return;
+                if (data == null) return;
                 ActionActivityExtra extra = ActionActivityExtra.fromJsonString(data.getExtras().getString(NewActionActivity.ExtraKey));
 
-                if(extra.isButtonPush) {
-                    if(extra.dateType == DateMeter.Menstrual) {
+                if (extra.isButtonPush) {
+                    if (extra.dateType == DateMeter.Menstrual) {
                         removePeriodAndOvulationFlagToDateMeter();
                     } else {
                         addPeriodAndOvulationFlagToDateMeters();
@@ -527,38 +527,9 @@ public class InitialActivity extends Activity {
                 }
                 selectedDate.comment = extra.comment;
                 selectedDate.temperature = (float) extra.temperature;
+                DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), selectedDate.comment);
+                DateRepository.updateDateRepositorySetTemperature(this, selectedDate.getDate(), selectedDate.temperature);
                 addMonthView();
-            }
-            case DisplayActionPanel: {
-
-                int action = data.getExtras().getInt(ActionActivity.ActionExtra);
-                switch (action) {
-
-                    case ActionActivity.ActionPeriodButton: {
-
-                        addPeriodAndOvulationFlagToDateMeters();
-                        break;
-                    }
-                    case ActionActivity.ActionNonPeriodButton: {
-
-                        removePeriodAndOvulationFlagToDateMeter();
-                        break;
-                    }
-                    case ActionActivity.ActionSaveButton: {
-
-                        float temperature = data.getExtras().getFloat(ActionActivity.ActionTemperatureExtra);
-                        String comment = data.getExtras().getString(ActionActivity.ActionCommentExtra);
-                        setTemperatureToDateMeter(selectedDate.getDate(), temperature);
-                        DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), comment);
-                        break;
-                    }
-                    case ActionActivity.ActionNothing: {
-                        // Nothing
-                    }
-                }
-
-                addMonthView();
-                break;
             }
         }
     }
