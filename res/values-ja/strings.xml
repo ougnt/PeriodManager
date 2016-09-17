@@ -70,4 +70,5 @@
     <string name="date_detail_ovulation_date">排卵日です\n</string>
     <string name="date_detail_small_chance">妊娠する少し可能性\n</string>
     <string name="date_detail_no_detail_yet">スクロールして、期間を入ってくと、下のボタン「この日に情報を追加」をクリックします。</string>
+    <string name="short_date_format">yyyy年 MMM dd日</string>
 </resources>

@@ -67,4 +67,5 @@
     <string name="date_detail_small_chance">Small chance to get pregnant today\n</string>
     <string name="date_detail_add_detail">Add information to this day</string>
     <string name="date_detail_no_detail_yet">Please add your previous period by scrolling to the day and click "Add information to this day" button below.</string>
+    <string name="short_date_format">MMM dd yyyy</string>
 </resources>

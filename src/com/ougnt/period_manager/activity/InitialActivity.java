@@ -21,6 +21,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.*;
+import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
@@ -51,6 +52,7 @@ public class InitialActivity extends Activity {
     final int DisplaySummary = 0x10;
     final int DisplayLanguageSelector = 0x20;
     final int DisplayActionPanel = 0x40;
+    final int DisplayNewActionPanel = 0x80;
 
     final int ApplicationVersion = 50;
 
@@ -130,6 +132,7 @@ public class InitialActivity extends Activity {
         startTime = DateTime.now();
 
         if (getIntent() != null ||
+                getIntent().getExtras() == null ||
                 getIntent().getExtras().size() > 0 ||
                 getIntent().getExtras().get(BroadcastNotificationPublisher.ExtraOpenFromNotification) != null) {
 
@@ -205,10 +208,14 @@ public class InitialActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(getBaseContext(), ActionActivity.class);
-                intent.putExtra(ActionActivity.ActionTemperatureExtra, selectedDate.temperature);
-                intent.putExtra(ActionActivity.ActionCommentExtra, selectedDate.comment);
-                startActivityForResult(intent, DisplayActionPanel);
+                ActionActivityExtra extra = new ActionActivityExtra();
+                extra.date = selectedDate.getDate();
+                extra.dateType = selectedDate.dateType;
+                extra.temperature = selectedDate.temperature;
+                extra.comment = selectedDate.comment;
+                Intent intent = new Intent(getBaseContext(), NewActionActivity.class);
+                intent.putExtra(NewActionActivity.ExtraKey, extra.toJson());
+                startActivityForResult(intent, DisplayNewActionPanel);
             }
         });
 
@@ -242,14 +249,14 @@ public class InitialActivity extends Activity {
 
                             if (fingerIndexPointerX > dateMeterLocator[0] && fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
 
-                                if (selectedDate == null ) selectedDate = targetDateMeter;
+                                if (selectedDate == null) selectedDate = targetDateMeter;
                                 if (selectedDate.getDate() == targetDateMeter.getDate()) return;
 
                                 selectedDate = targetDateMeter;
                                 targetDateMeter.makeSelectedFormat();
                                 targetDateMeter.setSelected(true);
                             } else {
-                                if(targetDateMeter.isSelected()) {
+                                if (targetDateMeter.isSelected()) {
                                     targetDateMeter.resetFormat();
                                     targetDateMeter.setSelected(false);
                                 }
@@ -317,7 +324,7 @@ public class InitialActivity extends Activity {
 
         TextView todayText = (TextView) findViewById(R.id.date_detail_text);
         SummaryRepository summary = SummaryRepository.getSummary(getBaseContext());
-        if(summary == null) {
+        if (summary == null) {
             todayText.setText(getResources().getString(R.string.date_detail_no_detail_yet));
             return;
         }
@@ -499,6 +506,21 @@ public class InitialActivity extends Activity {
                 initialApplication();
                 setSharedPreference(PSettingDisplayedLanguage, language);
                 break;
+            }
+            case DisplayNewActionPanel: {
+
+                if(data == null) return;
+                ActionActivityExtra extra = ActionActivityExtra.fromJsonString(data.getExtras().getString(NewActionActivity.ExtraKey));
+
+                if(extra.isButtonPush) {
+                    if(extra.dateType == DateMeter.Menstrual) {
+                        removePeriodAndOvulationFlagToDateMeter();
+                    } else {
+                        addPeriodAndOvulationFlagToDateMeters();
+                    }
+                }
+                selectedDate.comment = extra.comment;
+                selectedDate.temperature = (float) extra.temperature;
             }
             case DisplayActionPanel: {
 
@@ -1108,7 +1130,7 @@ public class InitialActivity extends Activity {
         DateTime ovulationDate = startOfOvulationPeriod.plusDays(((int) (endOfOvulationPeriod.getMillis() - startOfOvulationPeriod.getMillis()) / 2) / 1000 / 60 / 60 / 24);
         DateTime startNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 7);
         DateTime endNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle);
-        DateTime estimatedNextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1 );
+        DateTime estimatedNextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
         DateTime estimatedNextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 2);
 
         paintDateMeter(startOfMenstrualPeriod, endOfMenstrualPeriod, DateMeter.Menstrual);
@@ -1220,7 +1242,7 @@ public class InitialActivity extends Activity {
                 scrollView.getChildAt(0).getLocationOnScreen(firstChildLocal);
                 scrollView.getLocationOnScreen(scrollViewLocal);
 
-                if(firstChildLocal[0] == scrollViewLocal[0]) {
+                if (firstChildLocal[0] == scrollViewLocal[0]) {
                     scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 }
                 DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
@@ -1253,7 +1275,9 @@ public class InitialActivity extends Activity {
                 params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
                 finger.setLayoutParams(params);
 
-                setDateDetailText((DateMeter) ((LinearLayout) findViewById(R.id.dateScrollerContent)).getChildAt(17));
+                DateMeter todayDateMeter = (DateMeter) ((LinearLayout) findViewById(R.id.dateScrollerContent)).getChildAt(17);
+                setDateDetailText(todayDateMeter);
+                selectedDate = todayDateMeter;
             }
         });
     }
