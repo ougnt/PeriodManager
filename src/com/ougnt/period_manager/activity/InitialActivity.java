@@ -426,10 +426,16 @@ public class InitialActivity extends Activity {
 //                        selectedDate = tempDate;
                         DateRepository date = DateRepository.getDateRepositories(getBaseContext(), tempDate, tempDate).get(0);
 
-                        Intent intent = new Intent(getBaseContext(), ActionActivity.class);
-                        intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
-                        intent.putExtra(ActionActivity.ActionCommentExtra, date.comment);
-                        startActivityForResult(intent, DisplayActionPanel);
+                        selectedDate = new DateMeter(getBaseContext(),date, dateTouchListener);
+
+                        ActionActivityExtra extra = new ActionActivityExtra();
+                        extra.date = selectedDate.getDate();
+                        extra.dateType = selectedDate.dateType;
+                        extra.temperature = selectedDate.temperature;
+                        extra.comment = selectedDate.comment;
+                        Intent intent = new Intent(getBaseContext(), NewActionActivity.class);
+                        intent.putExtra(NewActionActivity.ExtraKey, extra.toJson());
+                        startActivityForResult(intent, DisplayNewActionPanel);
                     }
                 });
             }
@@ -521,6 +527,7 @@ public class InitialActivity extends Activity {
                 }
                 selectedDate.comment = extra.comment;
                 selectedDate.temperature = (float) extra.temperature;
+                addMonthView();
             }
             case DisplayActionPanel: {
 
