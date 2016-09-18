@@ -9,15 +9,12 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.ougnt.period_manager.*;
+
+import com.ougnt.period_manager.R;
 
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 
-/**
- * * # Created by wacharint on 12/13/15.
- */
 public class MenuActivity extends Activity {
 
     public static final int SelectNothing = 0;
@@ -34,7 +31,7 @@ public class MenuActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        LinkedList menuClickAbles = new LinkedList();
+        LinkedList<View> menuClickAbles = new LinkedList<>();
 
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -61,7 +58,7 @@ public class MenuActivity extends Activity {
 
         for(int i = 0 ; i < menuClickAbles.size(); i++) {
 
-            ((View)menuClickAbles.get(i)).setOnClickListener(new MenuOnClickActionListener());
+            menuClickAbles.get(i).setOnClickListener(new MenuOnClickActionListener());
         }
 
         LinearLayout close1 = (LinearLayout)findViewById(R.id.close1);

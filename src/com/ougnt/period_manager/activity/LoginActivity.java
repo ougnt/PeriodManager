@@ -13,9 +13,6 @@ import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.handler.LoginHandler;
 
 
-/**
- * Created by wacharint on 7/17/2016 AD.
- */
 public class LoginActivity extends Activity {
 
     public static final String LoginActivityResultExtra = "LoginActivityResultExtra";

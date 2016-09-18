@@ -2,14 +2,11 @@ package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
-import com.ougnt.period_manager.*;
 
-/**
- * * # Created by wacharint on 4/11/16.
- */
+import com.ougnt.period_manager.R;
+
 public class LanguageSelectorActivity extends Activity {
 
     public static final String LanguageExtra = "LanguageExtra";

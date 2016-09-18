@@ -15,9 +15,6 @@ public class SettingRepository {
     public boolean isFirstTime;
     public int flag;
 
-    public static final int MaxIndicator = 0xFFFF;
-    public static final int FlagCalendarMonthView = 0x01;
-
     private SettingRepository() {}
 
     public static SettingRepository getSettingRepository(Context context) {
@@ -33,7 +30,7 @@ public class SettingRepository {
         setting.count = cursor.getInt(4);
         setting.isFirstTime = cursor.getInt(5) == 1;
         setting.flag = cursor.getInt(6);
-
+        cursor.close();
         return setting;
     }
 

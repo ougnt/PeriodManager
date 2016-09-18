@@ -36,6 +36,7 @@ public class SummaryRepository {
             } else {
                 ret.expectedOvulationDate = ret.expectedOvulationDateTo.plusMillis((int)(ret.expectedOvulationDateTo.getMillis() - ret.expectedOvulationDateFrom.getMillis())/2);
             }
+            cursor.close();
 
             return ret;
         }

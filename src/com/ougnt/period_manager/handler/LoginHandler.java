@@ -12,9 +12,6 @@ import org.json.JSONObject;
 
 import java.math.BigInteger;
 
-/**
- * Created by wacharint on 8/28/2016 AD.
- */
 public class LoginHandler {
 
     public static final String PRsaId = "period_manager_preference_rsa_id";
@@ -50,7 +47,7 @@ public class LoginHandler {
                 edit.putString(PRsaId, rsaRepo.id);
                 edit.putString(PRsaE, rsaRepo.e.toString(36));
                 edit.putString(PRsaN, rsaRepo.n.toString(36));
-                edit.commit();
+                edit.apply();
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -69,13 +66,13 @@ public class LoginHandler {
         SharedPreferences sp = context.getSharedPreferences(InitialActivity.PName, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = sp.edit();
         edit.putString(PUserToken, userToken);
-        edit.commit();
+        edit.apply();
     }
 
-    public void logout(Context context) {
-        SharedPreferences sp = context.getSharedPreferences(InitialActivity.PName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = sp.edit();
-        edit.putString(PUserToken, "");
-        edit.commit();
-    }
+//    public void logout(Context context) {
+//        SharedPreferences sp = context.getSharedPreferences(InitialActivity.PName, Context.MODE_PRIVATE);
+//        SharedPreferences.Editor edit = sp.edit();
+//        edit.putString(PUserToken, "");
+//        edit.apply();
+//    }
 }

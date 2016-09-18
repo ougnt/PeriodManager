@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class DateRepository extends IDateRepository {
 
-    private DateRepository(Context context, DateTime date, int dateType, String comment, float temperature) {
+    private DateRepository(DateTime date, int dateType, String comment, float temperature) {
 
         this.date = date;
         this.dateType = dateType;
@@ -40,15 +40,16 @@ public class DateRepository extends IDateRepository {
                 null,
                 null);
 
-        LinkedList<DateRepository> dates = new LinkedList<DateRepository>();
+        LinkedList<DateRepository> dates = new LinkedList<>();
 
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
 
-            dates.add(new DateRepository(context, DateTime.parse(cursor.getString(0)), cursor.getInt(1), cursor.getString(2), cursor.getFloat(3)));
+            dates.add(new DateRepository(DateTime.parse(cursor.getString(0)), cursor.getInt(1), cursor.getString(2), cursor.getFloat(3)));
             cursor.moveToNext();
         }
 
+        cursor.close();
         return dates;
     }
 

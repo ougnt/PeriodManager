@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
 
-import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
 

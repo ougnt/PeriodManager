@@ -2,9 +2,6 @@ package com.ougnt.period_manager.data;
 
 import java.math.BigInteger;
 
-/**
- * Created by wacharint on 8/29/2016 AD.
- */
 public class RsaEncoder {
 
     private BigInteger e;

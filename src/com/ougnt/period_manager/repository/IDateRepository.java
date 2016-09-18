@@ -2,9 +2,6 @@ package com.ougnt.period_manager.repository;
 
 import org.joda.time.DateTime;
 
-/**
- * Created by wacharint on 9/3/2016 AD.
- */
 public abstract class IDateRepository {
 
     public DateTime date;

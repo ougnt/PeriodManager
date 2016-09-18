@@ -9,14 +9,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.concurrent.ExecutionException;
 
-/**
- * Created by wacharint on 8/28/2016 AD.
- */
 public class HttpHelper {
 
     public static String get(final String url) {
@@ -36,7 +31,7 @@ public class HttpHelper {
                     DataInputStream is = new DataInputStream(connection.getInputStream());
                     BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-                    String temp = "";
+                    String temp;
                     String ret = "";
 
                     while( (temp = br.readLine()) != null){
@@ -52,11 +47,8 @@ public class HttpHelper {
         };
 
         try {
-            String  ret = task.execute().get();
-            return ret;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            return task.execute().get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
@@ -83,7 +75,7 @@ public class HttpHelper {
                     InputStream is = connection.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-                    String temp = "";
+                    String temp;
                     String ret = "";
 
                     while( (temp = br.readLine()) != null){
@@ -99,11 +91,8 @@ public class HttpHelper {
         };
 
         try {
-            String  ret = task.execute().get();
-            return ret;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+            return task.execute().get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 

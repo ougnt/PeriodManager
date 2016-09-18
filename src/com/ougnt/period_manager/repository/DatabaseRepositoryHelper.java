@@ -1,10 +1,10 @@
 package com.ougnt.period_manager.repository;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import org.joda.time.DateTime;
 
 import java.util.LinkedList;
@@ -73,14 +73,14 @@ public class DatabaseRepositoryHelper extends SQLiteOpenHelper {
             String alterQuery = "ALTER TABLE DATE_REPOSITORY ADD COLUMN temperature_value FLOAT DEFAULT 0";
             try {
                 db.execSQL(alterQuery);
-            } catch (SQLiteException e) {}
+            } catch (SQLiteException ignored) {}
         }
 
         if(oldVersion <= 4) {
             String alterQuery = "ALTER TABLE summary ADD COLUMN exp_ovulation_date DATE DEFAULT NULL";
             try {
                 db.execSQL(alterQuery);
-            } catch (SQLiteException e) {}
+            } catch (SQLiteException ignored) {}
         }
 
     }

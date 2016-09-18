@@ -35,7 +35,7 @@ public class BroadcastNotificationPublisher extends BroadcastReceiver {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, openApplicationIntent, 0);
         builder.setContentIntent(pendingIntent);
 
-        Notification notification = builder.getNotification();
+        Notification notification = builder.build();
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify(0, notification);
     }
