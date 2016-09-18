@@ -619,9 +619,6 @@ public class InitialActivity extends Activity {
 
     public void initialHelpActivity(View view) {
 
-//        Intent intent = new Intent(this, HelpActivity.class);
-//        intent.putExtra("INDICATOR", HelpIndicatorRepository.getIndicator(getBaseContext()));
-//        startActivityForResult(intent, DisplayHelp);
     }
 
     public void hamburgerMenuClick(View view) {
@@ -1238,15 +1235,6 @@ public class InitialActivity extends Activity {
                     settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
                     startActivityForResult(settingIntent, DisplaySetting);
                 }
-
-                int indicatorValue = HelpIndicatorRepository.getIndicator(getBaseContext());
-
-//                if ((indicatorValue & 1) == 1) {
-//
-//                    Intent helpIntent = new Intent(getBaseContext(), HelpActivity.class);
-//                    helpIntent.putExtra("INDICATOR", indicatorValue);
-//                    startActivityForResult(helpIntent, DisplayHelp);
-//                }
 
                 int targetHeight = (int) (scrollView.getHeight() * 0.5);
                 ImageView finger = (ImageView) findViewById(R.id.finger_pointer);
