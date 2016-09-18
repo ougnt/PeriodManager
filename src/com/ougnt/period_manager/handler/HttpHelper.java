@@ -72,7 +72,7 @@ public class HttpHelper {
                     URL targetUrl = new URL(url);
                     HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
                     connection.setRequestMethod("GET");
-                    connection.setRequestProperty("Content-Type", "text/plain");
+                    connection.setRequestProperty("Content-Type", "Application/Json");
                     connection.setUseCaches(false);
                     connection.setDoOutput(true);
 

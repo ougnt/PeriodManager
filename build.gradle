@@ -4,9 +4,11 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:1.3.0'
+        classpath 'com.google.gms:google-services:3.0.0'
     }
 }
 apply plugin: 'android'
+apply plugin: 'com.google.gms.google-services'
 
 dependencies {
     repositories {
@@ -14,10 +16,11 @@ dependencies {
         maven { url "https://jitpack.io" }
     }
     compile fileTree(include: '*.jar', dir: 'libs')
-    compile 'com.google.android.gms:play-services-ads:8.1.0'
+    compile 'com.google.android.gms:play-services-ads:9.0.0'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.5'
     compile 'com.android.support:support-v4:23.0.1'
+    compile 'com.google.android.gms:play-services-analytics:9.0.0'
 }
 
 android {
@@ -25,6 +28,10 @@ android {
     buildToolsVersion '23.0.3'
 
     useLibrary 'org.apache.http.legacy'
+
+    defaultConfig {
+        applicationId "com.ougnt.period_manager"
+    }
 
     sourceSets {
         main {

@@ -1,7 +1,6 @@
 package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,39 +8,59 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.*;
-import android.widget.*;
+import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.DateMeter;
-import com.ougnt.period_manager.*;
+import com.ougnt.period_manager.PeriodCalendar;
+import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
 import com.ougnt.period_manager.handler.ChartHandler;
-import com.ougnt.period_manager.repository.*;
+import com.ougnt.period_manager.handler.HttpHelper;
+import com.ougnt.period_manager.repository.DatabaseRepositoryHelper;
+import com.ougnt.period_manager.repository.DateRepository;
+import com.ougnt.period_manager.repository.FetchingButton;
+import com.ougnt.period_manager.repository.HelpIndicatorRepository;
+import com.ougnt.period_manager.repository.SettingRepository;
+import com.ougnt.period_manager.repository.SummaryRepository;
 
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
+
+import static com.ougnt.period_manager.activity.SummaryActivity.NextMenstrualFromExtra;
+import static com.ougnt.period_manager.activity.SummaryActivity.NextMenstrualToExtra;
+import static com.ougnt.period_manager.activity.SummaryActivity.NextOvulationExtra;
+import static com.ougnt.period_manager.activity.SummaryActivity.NextOvulationFromExtra;
+import static com.ougnt.period_manager.activity.SummaryActivity.NextOvulationToExtra;
+import static org.joda.time.DateTime.now;
 
 public class InitialActivity extends Activity {
 
@@ -51,7 +70,6 @@ public class InitialActivity extends Activity {
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
     final int DisplayLanguageSelector = 0x20;
-    final int DisplayActionPanel = 0x40;
     final int DisplayNewActionPanel = 0x80;
 
     final int ApplicationVersion = 51;
@@ -60,7 +78,7 @@ public class InitialActivity extends Activity {
     // Live Env
     public static final String StatServer = "27.254.81.190:5555";
     // Dev env
-//    public static final String StatServer = "192.168.56.1:9000";
+//    public static final String StatServer = "192.168.1.101:9000";
     public static final String StatUri = String.format("http://%s/usageStat", StatServer);
     public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
     public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
@@ -113,7 +131,7 @@ public class InitialActivity extends Activity {
     public static final int DisplayModeDateScroller = 0;
     public static final int DisplayModeMonthView = 1;
     public static final int DisplayModeChartView = 2;
-    public static DateTime startTime = DateTime.now();
+    public static DateTime startTime = now();
 
     SettingRepository setting;
 
@@ -129,10 +147,9 @@ public class InitialActivity extends Activity {
 
         super.onCreate(savedInstanceState);
 
-        startTime = DateTime.now();
+        startTime = now();
 
-        if (getIntent() != null ||
-                getIntent().getExtras() == null ||
+        if (getIntent().getExtras() == null ||
                 getIntent().getExtras().size() > 0 ||
                 getIntent().getExtras().get(BroadcastNotificationPublisher.ExtraOpenFromNotification) != null) {
 
@@ -165,7 +182,7 @@ public class InitialActivity extends Activity {
     protected void onResume() {
         super.onResume();
         isAdjusted = false;
-        startTime = DateTime.now();
+        startTime = now();
     }
 
     @Override
@@ -310,7 +327,7 @@ public class InitialActivity extends Activity {
             }
         });
 
-        addDateMeter(dateMeterLayout, DateTime.now().minusDays(15), DateTime.now().plusDays(15), true);
+        addDateMeter(dateMeterLayout, now().minusDays(15), now().plusDays(15), true);
 
         dateMeterLayout.addView(generateEndLayout(dateMeterLayout, true));
         dateMeterLayout.addView(generateEndLayout(dateMeterLayout, false), 0);
@@ -346,12 +363,13 @@ public class InitialActivity extends Activity {
                 String.format(getResources().getString(R.string.date_detail_est_next_period), nextPeriodIn) :
                 "";
 
-        todayText.setText(explainationText + estNextOvu + estNextMens);
+        String displayText = explainationText + estNextOvu + estNextMens;
+        todayText.setText(displayText);
     }
 
     private void addMonthView() {
 
-        DateTime calendarDate = selectedDate == null ? DateTime.now() : selectedDate.getDate();
+        DateTime calendarDate = selectedDate == null ? now() : selectedDate.getDate();
 
         setupCalendar(calendarDate.getMonthOfYear(), calendarDate.getYear());
         loadDatesToView();
@@ -397,13 +415,12 @@ public class InitialActivity extends Activity {
                         "id",
                         getPackageName()));
 
-                if (calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
+                if (calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(now().toString("yyyy-MM-dd"))) {
 
-                    Drawable bg = getResources().getDrawable(R.drawable.circle_ink);
-                    int width = getResources().getDisplayMetrics().widthPixels / 8;
+                    Drawable bg = ContextCompat.getDrawable(this, R.drawable.circle_ink);
                     targetLayout.setBackground(bg);
 
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width);
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDisplayMetrics().widthPixels / 8);
                     targetLayout.setLayoutParams(params);
 
                 } else {
@@ -444,28 +461,29 @@ public class InitialActivity extends Activity {
 
     private void loadDateToView(DateRepository date, TextView view) {
 
-        int color = 0;
+        int color;
 
         if (date.date.getMonthOfYear() != calendarCurrentMonth) {
 
-            color = getResources().getColor(R.color.calendar_other_month_text);
+            color = ContextCompat.getColor(this, R.color.calendar_other_month_text);
         } else {
 
             switch (date.dateType) {
 
                 case DateMeter.Menstrual:
-                    color = getResources().getColor(R.color.calendar_period_text);
+                    color = ContextCompat.getColor(this, R.color.calendar_period_text);
                     break;
                 case DateMeter.PossiblyOvulation:
-                    color = getResources().getColor(R.color.calendar_ovulation_text);
+                    color = ContextCompat.getColor(this, R.color.calendar_ovulation_text);
                     break;
                 default:
-                    color = getResources().getColor(R.color.calendar_text_color);
+                    color = ContextCompat.getColor(this, R.color.calendar_text_color);
             }
         }
 
         view.setTextColor(color);
-        view.setText(date.date.getDayOfMonth() + "");
+        String displayText = date.date.getDayOfMonth() + "";
+        view.setText(displayText);
     }
 
     @Override
@@ -488,11 +506,12 @@ public class InitialActivity extends Activity {
             case DisplaySummary: {
 
                 SummaryRepository summary = new SummaryRepository();
-                summary.expectedMenstrualDateFrom = DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualFromExtra).toString());
-                summary.expectedMenstrualDateTo = DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualToExtra).toString());
-                summary.expectedOvulationDateFrom = DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationFromExtra).toString());
-                summary.expectedOvulationDateTo = DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationToExtra).toString());
-                summary.expectedOvulationDate = DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationExtra).toString());
+
+                summary.expectedMenstrualDateFrom = DateTime.parse(data.getExtras().getString(NextMenstrualFromExtra));
+                summary.expectedMenstrualDateTo = DateTime.parse(data.getExtras().getString(NextMenstrualToExtra));
+                summary.expectedOvulationDateFrom = DateTime.parse(data.getExtras().getString(NextOvulationFromExtra));
+                summary.expectedOvulationDateTo = DateTime.parse(data.getExtras().getString(NextOvulationToExtra));
+                summary.expectedOvulationDate = DateTime.parse(data.getExtras().getString(NextOvulationExtra));
 
                 summary.save(this);
                 break;
@@ -564,7 +583,7 @@ public class InitialActivity extends Activity {
                 public void onClick(View v) {
                     addUsageCounter(PReviewLater);
                     edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
-                    edit.commit();
+                    edit.apply();
                     submitStat();
                     finish();
                 }
@@ -576,7 +595,7 @@ public class InitialActivity extends Activity {
 
                     addUsageCounter(PNoReview);
                     edit.putInt(PTimeOfUsageBeforeReview, -1);
-                    edit.commit();
+                    edit.apply();
                     submitStat();
                     finish();
                 }
@@ -634,7 +653,7 @@ public class InitialActivity extends Activity {
 
     public void toggleView(View clickedButton) {
 
-        int newDisplayMode = 0;
+        int newDisplayMode;
 
         switch (clickedButton.getId()) {
 
@@ -703,89 +722,65 @@ public class InitialActivity extends Activity {
 
         LineChart temperatureChart = (LineChart) findViewById(R.id.temperature_chart);
         final int initialDaysOffset = 20;
-        _chartHandler = new ChartHandler(this, temperatureChart);
+        ChartHandler _chartHandler = new ChartHandler(this, temperatureChart);
 
         _chartHandler.initialChart(initialDaysOffset);
 
         Button fetchPreviousButton = (Button) findViewById(R.id.chart_fetch_previous_data_button);
         Button fetchNextButton = (Button) findViewById(R.id.chart_fetch_next_data_button);
 
-        _chartButtonHandler = new ChartFetchingOnclickHandler(_chartHandler);
+        ChartFetchingOnclickHandler _chartButtonHandler = new ChartFetchingOnclickHandler(_chartHandler);
 
         fetchNextButton.setOnClickListener(_chartButtonHandler);
         fetchPreviousButton.setOnClickListener(_chartButtonHandler);
     }
 
     private void submitStat() {
-        final HttpClient client = new DefaultHttpClient();
-        final HttpPost httpPost = new HttpPost(StatUri);
 
         final JSONObject json = new JSONObject();
 
-        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+        try {
+            json.put("deviceId", getDeviceId());
+            json.put("applicationVersion", getUsageCounter(PCurrentVersion));
+            json.put("usageCounter", getUsageCounter(PUsageCounter));
+            json.put("periodButtonUsageCounter", getUsageCounter(PPeriodButtonUsageCounter));
+            json.put("nonPeriodButtonUsageCounter", getUsageCounter(PNonPeriodButtonUsageCounter));
+            json.put("comment_button_usage_counter", getUsageCounter(PCommentButtonUsageCounter));
+            json.put("comment_text_usage_counter", getUsageCounter(PCommentTextUsageCounter));
+            json.put("menu_button_usage_counter", getUsageCounter(PMenuButtonUsageCounter));
+            json.put("review_now", getUsageCounter(PReviewNow));
+            json.put("review_later", getUsageCounter(PReviewLater));
+            json.put("review_non", getUsageCounter(PNoReview));
+            json.put("fetch_next_usage_counter", getUsageCounter(PFetchNextMonthUsageCounter));
+            json.put("fetch_previous_usage_counter", getUsageCounter(PFetchPreviousMonthUsageCounter));
+            json.put("menu_setting_click_counter", getUsageCounter(PMenuSettingClickCounter));
+            json.put("menu_summary_click_counter", getUsageCounter(PMenuSummaryClickCounter));
+            json.put("menu_month_view_click_counter", getUsageCounter(PMenuMonthViewClickCounter));
+            json.put("menu_help_click_counter", getUsageCounter(PMenuHelpClickCounter));
+            json.put("menu_review_click_counter", getUsageCounter(PMenuReviewClickCounter));
 
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
+            // Available in version 26 or above
+            json.put("setting_notify_period_usage_counter", getUsageCounter(PSettingNotifyPeriodCounter));
+            json.put("setting_notify_ovulation_usage_counter", getUsageCounter(PSettingNotifyOvulationCounter));
+            json.put("setting_notify_period_days", getUsageCounter(PSettingNotifyPeriodDay));
+            json.put("setting_notify_ovulation_days", getUsageCounter(PSettingNotifyOvulationDay));
+            json.put("setting_notify_notification_click_counter", getUsageCounter(PSettingNotificationClickCounter));
 
-                    json.put("deviceId", getDeviceId());
-                    json.put("applicationVersion", getUsageCounter(PCurrentVersion));
-                    json.put("usageCounter", getUsageCounter(PUsageCounter));
-                    json.put("periodButtonUsageCounter", getUsageCounter(PPeriodButtonUsageCounter));
-                    json.put("nonPeriodButtonUsageCounter", getUsageCounter(PNonPeriodButtonUsageCounter));
-                    json.put("comment_button_usage_counter", getUsageCounter(PCommentButtonUsageCounter));
-                    json.put("comment_text_usage_counter", getUsageCounter(PCommentTextUsageCounter));
-                    json.put("menu_button_usage_counter", getUsageCounter(PMenuButtonUsageCounter));
-                    json.put("review_now", getUsageCounter(PReviewNow));
-                    json.put("review_later", getUsageCounter(PReviewLater));
-                    json.put("review_non", getUsageCounter(PNoReview));
-                    json.put("fetch_next_usage_counter", getUsageCounter(PFetchNextMonthUsageCounter));
-                    json.put("fetch_previous_usage_counter", getUsageCounter(PFetchPreviousMonthUsageCounter));
-                    json.put("menu_setting_click_counter", getUsageCounter(PMenuSettingClickCounter));
-                    json.put("menu_summary_click_counter", getUsageCounter(PMenuSummaryClickCounter));
-                    json.put("menu_month_view_click_counter", getUsageCounter(PMenuMonthViewClickCounter));
-                    json.put("menu_help_click_counter", getUsageCounter(PMenuHelpClickCounter));
-                    json.put("menu_review_click_counter", getUsageCounter(PMenuReviewClickCounter));
+            // Available in version 29 or above
+            json.put("setting_language_change_usage_counter", getUsageCounter(PSettingDisplayedLanguageUsageCounter));
+            json.put("setting_displayed_language", getStringPreference(PSettingDisplayedLanguage));
 
-                    // Available in version 26 or above
-                    json.put("setting_notify_period_usage_counter", getUsageCounter(PSettingNotifyPeriodCounter));
-                    json.put("setting_notify_ovulation_usage_counter", getUsageCounter(PSettingNotifyOvulationCounter));
-                    json.put("setting_notify_period_days", getUsageCounter(PSettingNotifyPeriodDay));
-                    json.put("setting_notify_ovulation_days", getUsageCounter(PSettingNotifyOvulationDay));
-                    json.put("setting_notify_notification_click_counter", getUsageCounter(PSettingNotificationClickCounter));
+            // Available in version 36 or above
+            json.put("setting_display_mode", getUsageCounter(PMainDisplayMode));
 
-                    // Available in version 29 or above
-                    json.put("setting_language_change_usage_counter", getUsageCounter(PSettingDisplayedLanguageUsageCounter));
-                    json.put("setting_displayed_language", getStringPreference(PSettingDisplayedLanguage));
+            // Available in version 38 or above
+            json.put("duration", now().getMillis() - startTime.getMillis());
 
-                    // Available in version 36 or above
-                    json.put("setting_display_mode", getUsageCounter(PMainDisplayMode));
+            HttpHelper.post(StatUri, json.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-                    // Available in version 38 or above
-                    json.put("duration", DateTime.now().getMillis() - startTime.getMillis());
-
-                    StringEntity entry = new StringEntity(json.toString());
-
-                    httpPost.setEntity(entry);
-                    httpPost.setHeader("Content-Type", "application/Json");
-
-                    client.execute(httpPost);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
-        task.execute();
     }
 
     private void initUsageToReview() {
@@ -793,7 +788,7 @@ public class InitialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 10));
-        edit.commit();
+        edit.apply();
     }
 
     private void setDeviceId() {
@@ -801,7 +796,7 @@ public class InitialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putString(PUuid, pref.getString(PUuid, UUID.randomUUID().toString()));
-        edit.commit();
+        edit.apply();
     }
 
     private UUID getDeviceId() {
@@ -815,7 +810,7 @@ public class InitialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putInt(PCurrentVersion, ApplicationVersion);
-        edit.commit();
+        edit.apply();
     }
 
     private void addUsageCounter(String key) {
@@ -823,7 +818,7 @@ public class InitialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putInt(key, pref.getInt(key, 0) + 1);
-        edit.commit();
+        edit.apply();
     }
 
     private String getStringPreference(String key) {
@@ -843,7 +838,7 @@ public class InitialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putInt(key, value);
-        edit.commit();
+        edit.apply();
     }
 
     private void setSharedPreference(String key, String value) {
@@ -851,7 +846,7 @@ public class InitialActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
         SharedPreferences.Editor edit = pref.edit();
         edit.putString(key, value);
-        edit.commit();
+        edit.apply();
     }
 
     private void onDisplayMenuResult(Intent data) {
@@ -867,10 +862,10 @@ public class InitialActivity extends Activity {
                 SummaryRepository summary = SummaryRepository.getSummary(this);
                 if (summary != null) {
                     Intent summaryIntent = new Intent(this, SummaryActivity.class);
-                    summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, summary.expectedMenstrualDateFrom.toString("yyyy-MM-dd"));
-                    summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, summary.expectedMenstrualDateTo.toString("yyyy-MM-dd"));
-                    summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, summary.expectedOvulationDateFrom.toString("yyyy-MM-dd"));
-                    summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, summary.expectedOvulationDateTo.toString("yyyy-MM-dd"));
+                    summaryIntent.putExtra(NextMenstrualFromExtra, summary.expectedMenstrualDateFrom.toString("yyyy-MM-dd"));
+                    summaryIntent.putExtra(NextMenstrualToExtra, summary.expectedMenstrualDateTo.toString("yyyy-MM-dd"));
+                    summaryIntent.putExtra(NextOvulationFromExtra, summary.expectedOvulationDateFrom.toString("yyyy-MM-dd"));
+                    summaryIntent.putExtra(NextOvulationToExtra, summary.expectedOvulationDateTo.toString("yyyy-MM-dd"));
 
                     startActivityForResult(summaryIntent, DisplaySummary);
                 }
@@ -939,7 +934,8 @@ public class InitialActivity extends Activity {
                     SummaryRepository summary = SummaryRepository.getSummary(this);
                     if (summary == null) {
 
-                        Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG);
+                        Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG).show();
+
                         break;
                     }
 
@@ -1064,6 +1060,7 @@ public class InitialActivity extends Activity {
                 targetLayout.addView(new DateMeter(this, dates.get(i), dateTouchListener), 0);
             }
         }
+        c.close();
     }
 
     private boolean selectedDateIsBeforeTheFirstDateMeter(LinearLayout dateMeterHolder) {
@@ -1094,12 +1091,10 @@ public class InitialActivity extends Activity {
         }
 
         int index = getSelectedDateMeterIndex();
-        int newType = 0;
 
         ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.Menstrual);
         DateTime dateToBePainted = ((DateMeter) (v.getChildAt(index))).getDate();
 
-        DateTime startOfMenstrualPeriod = dateToBePainted;
         DateTime endOfMenstrualPeriod = dateToBePainted.plusDays((int) setting.periodLength - 1);
         DateTime startOfOvulationPeriod = dateToBePainted.plusDays(7);
         DateTime endOfOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 8);
@@ -1109,23 +1104,22 @@ public class InitialActivity extends Activity {
         DateTime estimatedNextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
         DateTime estimatedNextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 2);
 
-        paintDateMeter(startOfMenstrualPeriod, endOfMenstrualPeriod, DateMeter.Menstrual);
+        paintDateMeter(dateToBePainted, endOfMenstrualPeriod, DateMeter.Menstrual);
         paintDateMeter(startOfOvulationPeriod, endOfOvulationPeriod, DateMeter.PossiblyOvulation);
         paintDateMeter(ovulationDate, ovulationDate, DateMeter.OvulationDate);
         paintDateMeter(startNonOvulationPeriod, endNonOvulationPeriod, DateMeter.Nothing);
         paintDateMeter(estimatedNextMenstrualFrom, estimatedNextMenstrualTo, DateMeter.Menstrual);
-        newType = DateMeter.Menstrual;
 
         Intent summaryIntent = new Intent(this, SummaryActivity.class);
-        summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int) setting.periodCycle - 1).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int) setting.periodCycle + 1).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int) setting.periodCycle - 8).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(NextMenstrualFromExtra, dateToBePainted.plusDays((int) setting.periodCycle - 1).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(NextMenstrualToExtra, dateToBePainted.plusDays((int) setting.periodCycle + 1).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
+        summaryIntent.putExtra(NextOvulationToExtra, dateToBePainted.plusDays((int) setting.periodCycle - 8).toString("yyyy-MM-dd"));
 
         if (getUsageCounter(PSettingIsNotifyPeriod) == 1) {
 
             DateTime dateToBeNotified = DateTime.parse(summaryIntent.getExtras()
-                    .getString(SummaryActivity.NextMenstrualFromExtra))
+                    .getString(NextMenstrualFromExtra))
                     .minusDays(getUsageCounter(PSettingNotifyPeriodDay));
 
             BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
@@ -1137,7 +1131,7 @@ public class InitialActivity extends Activity {
         if (getUsageCounter(PSettingIsNotifyOvulation) == 1) {
 
             DateTime dateTimeToBeNotified = DateTime.parse(summaryIntent.getExtras()
-                    .getString(SummaryActivity.NextOvulationFromExtra))
+                    .getString(NextOvulationFromExtra))
                     .minusDays(getUsageCounter(PSettingNotifyOvulationDay));
             BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
             notifier.setNotification(this, dateTimeToBeNotified,
@@ -1175,7 +1169,7 @@ public class InitialActivity extends Activity {
 
     private int getSelectedDateMeterIndex() {
 
-        int index = 0;
+        int index;
 
         LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
 
@@ -1184,11 +1178,6 @@ public class InitialActivity extends Activity {
 
         index = dateDiff + 1;
         return index;
-    }
-
-    private void setTemperatureToDateMeter(DateTime toDate, float temperature) {
-
-        DateRepository.updateDateRepositorySetTemperature(this, toDate, temperature);
     }
 
     static boolean isAdjusted = false;
@@ -1221,7 +1210,7 @@ public class InitialActivity extends Activity {
                 if (firstChildLocal[0] == scrollViewLocal[0]) {
                     scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 }
-                DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
+//                DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
 
                 if (setting.isFirstTime) {
                     setting.isFirstTime = false;
@@ -1236,9 +1225,9 @@ public class InitialActivity extends Activity {
                     startActivityForResult(settingIntent, DisplaySetting);
                 }
 
-                int targetHeight = (int) (scrollView.getHeight() * 0.5);
+                int targetLength = (int) (scrollView.getHeight() * 0.5);
                 ImageView finger = (ImageView) findViewById(R.id.finger_pointer);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetHeight, targetHeight);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetLength, targetLength);
                 params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
                 finger.setLayoutParams(params);
 
@@ -1252,10 +1241,5 @@ public class InitialActivity extends Activity {
     private int calendarCurrentMonth, calendarCurrentYear;
     private OnDateMeterFocusListener dateTouchListener;
     private PeriodCalendar calendar;
-    private String adsUrl;
-    private String adsText;
-    private IAdsManager adsManager;
     private DateMeter selectedDate = null;
-    private ChartHandler _chartHandler = null;
-    private ChartFetchingOnclickHandler _chartButtonHandler = null;
 }
