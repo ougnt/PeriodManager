@@ -54,7 +54,7 @@ public class InitialActivity extends Activity {
     final int DisplayActionPanel = 0x40;
     final int DisplayNewActionPanel = 0x80;
 
-    final int ApplicationVersion = 50;
+    final int ApplicationVersion = 51;
 
     // TODO : Change this to the real one
     // Live Env
@@ -618,9 +618,10 @@ public class InitialActivity extends Activity {
     }
 
     public void initialHelpActivity(View view) {
-        Intent intent = new Intent(this, HelpActivity.class);
-        intent.putExtra("INDICATOR", HelpIndicatorRepository.getIndicator(getBaseContext()));
-        startActivityForResult(intent, DisplayHelp);
+
+//        Intent intent = new Intent(this, HelpActivity.class);
+//        intent.putExtra("INDICATOR", HelpIndicatorRepository.getIndicator(getBaseContext()));
+//        startActivityForResult(intent, DisplayHelp);
     }
 
     public void hamburgerMenuClick(View view) {
@@ -1240,12 +1241,12 @@ public class InitialActivity extends Activity {
 
                 int indicatorValue = HelpIndicatorRepository.getIndicator(getBaseContext());
 
-                if ((indicatorValue & 1) == 1) {
-
-                    Intent helpIntent = new Intent(getBaseContext(), HelpActivity.class);
-                    helpIntent.putExtra("INDICATOR", indicatorValue);
-                    startActivityForResult(helpIntent, DisplayHelp);
-                }
+//                if ((indicatorValue & 1) == 1) {
+//
+//                    Intent helpIntent = new Intent(getBaseContext(), HelpActivity.class);
+//                    helpIntent.putExtra("INDICATOR", indicatorValue);
+//                    startActivityForResult(helpIntent, DisplayHelp);
+//                }
 
                 int targetHeight = (int) (scrollView.getHeight() * 0.5);
                 ImageView finger = (ImageView) findViewById(R.id.finger_pointer);
