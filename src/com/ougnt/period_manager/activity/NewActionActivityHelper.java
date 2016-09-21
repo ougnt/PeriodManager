@@ -7,6 +7,7 @@ import android.view.View;
 
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
+import com.ougnt.period_manager.google.Log;
 
 import static com.ougnt.period_manager.DateMeter.Menstrual;
 import static com.ougnt.period_manager.DateMeter.Nothing;
@@ -19,25 +20,34 @@ public class NewActionActivityHelper implements View.OnClickListener {
     public NewActionActivityHelper(NewActionActivity activity) {
         this.activity = activity;
         extra = parseExtras();
+        log = new Log(activity);
+        log.setScreenType(Log.Screen.ActionPanel);
         setUpDisplay();
     }
 
     @Override
     public void onClick(View v) {
+        log.setCategory(Log.Category.Button);
+
         switch (v.getId()) {
             case R.id.action_action_button_image: {
 
                 if (isActionButtonPushed) {
                     activity.actionButton.setBackground(ContextCompat.getDrawable(activity, R.drawable.blue_button));
                     isActionButtonPushed = false;
+
+                    log.setAction(Log.Action.ActionButtonUnClick);
                 } else {
                     activity.actionButton.setBackground(ContextCompat.getDrawable(activity, R.drawable.blue_button_push));
                     isActionButtonPushed = true;
+
+                    log.setAction(Log.Action.ActionButtonClick);
                 }
                 break;
             }
             case R.id.action_temperature_help: {
                 Intent intent = new Intent(activity, TemperatureHelpActivity.class);
+                log.setAction(Log.Action.ActionClickTemperatureHelp);
                 activity.startActivity(intent);
                 break;
             }
@@ -50,9 +60,14 @@ public class NewActionActivityHelper implements View.OnClickListener {
                 extra.isCancel = false;
                 retIntent.putExtra(NewActionActivity.ExtraKey, extra.toJson());
                 activity.setResult(Activity.RESULT_OK, retIntent);
+
+                log.setAction(Log.Action.ActionClickSaveButton);
+
                 activity.finish();
             }
         }
+
+        InitialActivity.sendTrafficMessage(log);
     }
 
     public void setUpDisplay() {
@@ -63,6 +78,10 @@ public class NewActionActivityHelper implements View.OnClickListener {
         activity.temperatureInput.setText(temperatureDisplay);
         activity.commentInput.setText(extra.comment);
         isActionButtonPushed = false;
+
+        log.setCategory(Log.Category.Screen);
+        log.setAction(Log.Action.Land);
+        InitialActivity.sendTrafficMessage(log);
     }
 
     public String getButtonText(int dateType) {
@@ -85,4 +104,5 @@ public class NewActionActivityHelper implements View.OnClickListener {
     public NewActionActivity activity;
     public ActionActivityExtra extra;
     public boolean isActionButtonPushed;
+    public Log log;
 }

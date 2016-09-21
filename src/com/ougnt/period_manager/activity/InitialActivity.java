@@ -31,6 +31,8 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.PeriodCalendar;
 import com.ougnt.period_manager.R;
@@ -38,6 +40,7 @@ import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
+import com.ougnt.period_manager.google.Log;
 import com.ougnt.period_manager.handler.ChartHandler;
 import com.ougnt.period_manager.handler.HttpHelper;
 import com.ougnt.period_manager.repository.DatabaseRepositoryHelper;
@@ -72,7 +75,7 @@ public class InitialActivity extends Activity {
     final int DisplayLanguageSelector = 0x20;
     final int DisplayNewActionPanel = 0x80;
 
-    final int ApplicationVersion = 51;
+    public static final int ApplicationVersion = 52;
 
     // TODO : Change this to the real one
     // Live Env
@@ -148,6 +151,8 @@ public class InitialActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         startTime = now();
+        analyticsApplication = (AppForStatic) getApplication();
+        tracker = tracker == null ? analyticsApplication.getTracker() : tracker;
 
         if (getIntent().getExtras() == null ||
                 getIntent().getExtras().size() > 0 ||
@@ -174,6 +179,12 @@ public class InitialActivity extends Activity {
         getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
 
         setSharedPreference(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
+
+        log = new Log(this);
+        log.setAction(Log.Action.Land);
+        log.setCategory(Log.Category.Screen);
+        log.setScreenType(Log.Screen.MainScreenName);
+        sendTrafficMessage(log);
 
         initialApplication();
     }
@@ -209,6 +220,13 @@ public class InitialActivity extends Activity {
                 adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
                 adMobLayout.setVisibility(View.VISIBLE);
                 super.onAdLoaded();
+            }
+
+            @Override
+            public void onAdOpened() {
+                log.setAction(Log.Action.ClickAds);
+                log.setCategory(Log.Category.Ads);
+                sendTrafficMessage(log);
             }
         });
 
@@ -654,22 +672,74 @@ public class InitialActivity extends Activity {
     public void toggleView(View clickedButton) {
 
         int newDisplayMode;
+        Log log = new Log(this);
+        log.setScreenType(Log.Screen.MainScreenName);
+        log.setCategory(Log.Category.Button);
 
         switch (clickedButton.getId()) {
 
             case R.id.date_view_toggle: {
 
+                switch (getUsageCounter(PMainDisplayMode)) {
+                    case DisplayModeDateScroller:{
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToDateScroller);
+                        break;
+                    }
+                    case DisplayModeMonthView: {
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToDateScroller);
+                        break;
+                    }
+                    case DisplayModeChartView: {
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToDateScroller);
+                        break;
+                    }
+                    default: {
+                        log.setAction(Log.Action.ClickDisplayToggleFromUnknownToDateScroller);
+                    }
+                }
                 newDisplayMode = DisplayModeDateScroller;
                 isAdjusted = false;
                 break;
             }
             case R.id.month_view_toggle: {
-
+                switch (getUsageCounter(PMainDisplayMode)) {
+                    case DisplayModeDateScroller:{
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToMonthView);
+                        break;
+                    }
+                    case DisplayModeMonthView: {
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToMonthView);
+                        break;
+                    }
+                    case DisplayModeChartView: {
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToMonthView);
+                        break;
+                    }
+                    default: {
+                        log.setAction(Log.Action.ClickDisplayToggleFromUnknownToMonthView);
+                    }
+                }
                 newDisplayMode = DisplayModeMonthView;
                 break;
             }
             case R.id.chart_view_toggle: {
-
+                switch (getUsageCounter(PMainDisplayMode)) {
+                    case DisplayModeDateScroller:{
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToTemperature);
+                        break;
+                    }
+                    case DisplayModeMonthView: {
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToTemperature);
+                        break;
+                    }
+                    case DisplayModeChartView: {
+                        log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToTemperature);
+                        break;
+                    }
+                    default: {
+                        log.setAction(Log.Action.ClickDisplayToggleFromUnknownToTemperature);
+                    }
+                }
                 newDisplayMode = DisplayModeChartView;
                 break;
             }
@@ -680,6 +750,8 @@ public class InitialActivity extends Activity {
         setSharedPreference(PMainDisplayMode, newDisplayMode);
 
         adjustLayoutForDisplayModeAccordingToPDisplayMode();
+
+        sendTrafficMessage(log);
     }
 
     private void adjustLayoutForDisplayModeAccordingToPDisplayMode() {
@@ -797,12 +869,15 @@ public class InitialActivity extends Activity {
         SharedPreferences.Editor edit = pref.edit();
         edit.putString(PUuid, pref.getString(PUuid, UUID.randomUUID().toString()));
         edit.apply();
+        DeviceId = pref.getString(PUuid, UUID.randomUUID().toString());
     }
 
     private UUID getDeviceId() {
 
         SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
-        return UUID.fromString(pref.getString(PUuid, ""));
+        UUID id = UUID.fromString(pref.getString(PUuid, ""));
+        DeviceId = id.toString();
+        return id;
     }
 
     private void setApplicationVersion() {
@@ -1210,7 +1285,6 @@ public class InitialActivity extends Activity {
                 if (firstChildLocal[0] == scrollViewLocal[0]) {
                     scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 }
-//                DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
 
                 if (setting.isFirstTime) {
                     setting.isFirstTime = false;
@@ -1238,8 +1312,23 @@ public class InitialActivity extends Activity {
         });
     }
 
+    synchronized public static void sendTrafficMessage(Log log) {
+        tracker.setScreenName(log.getScreenType());
+        tracker.setClientId(log.getDeviceId());
+        tracker.setAppVersion(log.getApplicationVersion());
+        tracker.setLanguage(log.getLanguage());
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(log.getCategory())
+                .setAction(log.getAction())
+                .build());
+    }
+
     private int calendarCurrentMonth, calendarCurrentYear;
     private OnDateMeterFocusListener dateTouchListener;
     private PeriodCalendar calendar;
     private DateMeter selectedDate = null;
+    public static AppForStatic analyticsApplication;
+    public static String DeviceId;
+    public static Tracker tracker;
+    public Log log;
 }
