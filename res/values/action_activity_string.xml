@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_activity_enter_your_body_temperature">Enter your body temperature</string>
+    <string name="action_activity_save">Save</string>
+    <string name="action_activity_temperature_hint">Body temperature</string>
+</resources>
