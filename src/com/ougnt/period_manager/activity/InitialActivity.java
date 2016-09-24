@@ -243,6 +243,11 @@ public class InitialActivity extends Activity {
             @Override
             public void onClick(View v) {
 
+                log.setCategory(Log.Category.Button);
+                log.setAction(Log.Action.ClickAddDetailToDateMeter);
+                log.setScreenType(Log.Screen.MainScreenName);
+                sendTrafficMessage(log);
+
                 ActionActivityExtra extra = new ActionActivityExtra();
                 extra.date = selectedDate.getDate();
                 extra.dateType = selectedDate.dateType;
@@ -462,6 +467,11 @@ public class InitialActivity extends Activity {
                         DateRepository date = DateRepository.getDateRepositories(getBaseContext(), tempDate, tempDate).get(0);
 
                         selectedDate = new DateMeter(getBaseContext(), date, dateTouchListener);
+
+                        log.setCategory(Log.Category.Button);
+                        log.setScreenType(Log.Screen.MainScreenName);
+                        log.setAction(Log.Action.ClickAddDetailFromCalendar);
+                        sendTrafficMessage(log);
 
                         ActionActivityExtra extra = new ActionActivityExtra();
                         extra.date = selectedDate.getDate();
@@ -1286,6 +1296,7 @@ public class InitialActivity extends Activity {
                     scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 }
 
+                // TODO: Add the new user data wizard page
                 if (setting.isFirstTime) {
                     setting.isFirstTime = false;
                     setting.saveSetting(getBaseContext());

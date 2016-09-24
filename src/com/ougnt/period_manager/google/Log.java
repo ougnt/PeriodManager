@@ -87,5 +87,7 @@ public class Log {
         public static final String ActionClickTemperatureHelp = "ActionClickTemperatureHelp";
         public static final String ActionClickSaveButton = "ActionClickSaveButton";
         public static final String ClickAds = "ClickAds";
+        public static final String ClickAddDetailToDateMeter = "ClickAddDetailToDateMeter";
+        public static final String ClickAddDetailFromCalendar = "ClickAddDetailFromCalendar";
     }
 }
