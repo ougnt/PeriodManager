@@ -94,6 +94,13 @@ public class DateMeter extends LinearLayout {
         date = initialDate.date;
 
         // Wait until the static method fill in the ColorForDateType
+        while(ColorForDateType == null) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         while(ColorForDateType.size() <  4) {
             try {
                 Thread.sleep(10);
@@ -101,6 +108,7 @@ public class DateMeter extends LinearLayout {
                 e.printStackTrace();
             }
         }
+
         _mainColor = ColorForDateType.get(dateType);
 
         this.setOrientation(LinearLayout.HORIZONTAL);

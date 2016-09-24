@@ -3,4 +3,6 @@
     <string name="action_activity_enter_your_body_temperature">Enter your body temperature</string>
     <string name="action_activity_save">Save</string>
     <string name="action_activity_temperature_hint">Body temperature</string>
+    <string name="action_activity_click_me_if_this_day_is_not_your_period">Click me if this day is not in your period</string>
+    <string name="action_activity_click_me_if_your_period_start_this_day">Click me if your period start this day</string>
 </resources>

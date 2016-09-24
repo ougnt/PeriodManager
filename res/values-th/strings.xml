@@ -66,4 +66,6 @@
     <string name="date_detail_add_detail">เพิ่มข้อมูล</string>
     <string name="date_detail_no_detail_yet">โปรดระบุวันที่เป็นเมนส์ ครั้งก่อนเพื่อเริ่มต้นใช้งาน</string>
     <string name="short_date_format">dd MMM yyyy</string>
+    <string name="action_activity_click_me_if_this_day_is_not_your_period">คลิ๊กปุ่มนี้ถ้าวันที่เลือกไม่ได้เป็นเมนส์</string>
+    <string name="action_activity_click_me_if_your_period_start_this_day">คลิ๊กปุ่มนี้ถ้าวันที่เลือกเริ่มเป็นเมนส์</string>
 </resources>

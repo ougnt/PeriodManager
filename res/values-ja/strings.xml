@@ -71,4 +71,6 @@
     <string name="date_detail_small_chance">妊娠する少し可能性\n</string>
     <string name="date_detail_no_detail_yet">スクロールして、期間を入ってくと、下のボタン「この日に情報を追加」をクリックします。</string>
     <string name="short_date_format">yyyy年 MMM dd日</string>
+    <string name="action_activity_click_me_if_this_day_is_not_your_period">この日は月経されないとこのボタンを押す</string>
+    <string name="action_activity_click_me_if_your_period_start_this_day">この日は初め月経されるたら、このボタンを押す。</string>
 </resources>

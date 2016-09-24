@@ -87,12 +87,12 @@ public class NewActionActivityHelper implements View.OnClickListener {
     public String getButtonText(int dateType) {
         switch (dateType) {
             case Menstrual:
-                return "Click me if this day is not in your period";
+                return activity.getResources().getString(R.string.action_activity_click_me_if_this_day_is_not_your_period);
             case Nothing:
             case OvulationDate:
             case PossiblyOvulation:
             default:
-                return "Click me if your period start this day";
+                return activity.getResources().getString(R.string.action_activity_click_me_if_your_period_start_this_day);
         }
     }
 
