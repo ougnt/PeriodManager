@@ -93,6 +93,14 @@ public class DateMeter extends LinearLayout {
         temperature = initialDate.temperature;
         date = initialDate.date;
 
+        // Wait until the static method fill in the ColorForDateType
+        while(ColorForDateType.size() <  4) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         _mainColor = ColorForDateType.get(dateType);
 
         this.setOrientation(LinearLayout.HORIZONTAL);
