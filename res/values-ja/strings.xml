@@ -73,4 +73,11 @@
     <string name="short_date_format">yyyy年 MMM dd日</string>
     <string name="action_activity_click_me_if_this_day_is_not_your_period">この日は月経されないとこのボタンを押す</string>
     <string name="action_activity_click_me_if_your_period_start_this_day">この日は初め月経されるたら、このボタンを押す。</string>
+    <string name="setting_next">次</string>
+    <string name="setting_i_do_not_know">知りません</string>
+    <string name="setting_how_long_does_your_period_last">月経時には何日がいますか?</string>
+    <string name="setting_how_long_does_your_period_cycle">月経周期には何日ですか？</string>
+    <string name="setting_when_you_want_me_to_remind_you_before_your_next_period">生理日にはお知らせが何日ほうがいいですか?　</string>
+    <string name="setting_when_you_want_me_to_remind_you_before_your_ovulation_date">排卵日にはお知らせが何日ほうがいいですか?　 </string>
+    <string name="setting_do_not_notify_me">欲しいません</string>
 </resources>

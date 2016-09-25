@@ -15,8 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/textView4"
+            android:text="@string/setting_how_long_does_your_period_last"
+            android:id="@+id/setting_wizard_instruction_text"
             android:gravity="center"
             android:textColor="@color/text_color" />
     </LinearLayout>
@@ -31,7 +31,8 @@
         <NumberPicker
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/numberPicker" />
+            android:id="@+id/numberPicker"
+            android:background="@color/date_calendar_switcher_dark" />
     </LinearLayout>
 
     <LinearLayout
@@ -50,24 +51,39 @@
             <CheckBox
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="New CheckBox"
-                android:id="@+id/checkBox"
-                android:textColor="@color/text_color"
-                android:layout_marginLeft="20dp" />
+                android:text="@string/setting_i_do_not_know"
+                android:id="@+id/setting_wizard_i_dont_know_check_box"
+                android:textColor="@color/button_urgent"
+                android:layout_marginLeft="20dp"
+                android:focusable="false" />
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <FrameLayout
+            android:orientation="vertical"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginRight="20dp"
+            android:focusable="false">
 
-            <Button
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Button"
-                android:id="@+id/button2"
-                android:layout_gravity="center" />
-        </LinearLayout>
+                android:id="@+id/setting_wizard_next_button"
+                android:src="@drawable/green_button"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center"
+                android:background="@color/main_bg" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/setting_next"
+                android:id="@+id/setting_wizard_next_button_text"
+                android:layout_gravity="center"
+                android:textColor="@color/text_color" />
+        </FrameLayout>
     </LinearLayout>
 </LinearLayout>

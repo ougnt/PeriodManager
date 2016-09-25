@@ -6,9 +6,16 @@
     <string name="setting_calendar_type_month">Month</string>
     <string name="setting_calendar_type_day">Day</string>
     <string name="setting_cancel_button">Cancel</string>
-    <string name="setting_ok_button">Ok</string>
+    <string name="setting_ok_button">OK</string>
     <string name="setting_warn_before_period">Warn me before my period</string>
     <string name="setting_warn_before_ovulation">Warn me before my ovulation date</string>
     <string name="setting_day">Days</string>
     <string name="setting_language">Language</string>
+    <string name="setting_next">Next</string>
+    <string name="setting_i_do_not_know">I don\'t know</string>
+    <string name="setting_do_not_notify_me">Don\'t notify me</string>
+    <string name="setting_how_long_does_your_period_last">How long does your period last?</string>
+    <string name="setting_how_long_does_your_period_cycle">how long does your menstrual cycle last?</string>
+    <string name="setting_when_you_want_me_to_remind_you_before_your_ovulation_date">When do you want me to remind you before your next ovulation date?</string>
+    <string name="setting_when_you_want_me_to_remind_you_before_your_next_period">When do you want me to remind you before your next period?</string>
 </resources>

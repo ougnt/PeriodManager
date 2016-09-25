@@ -37,6 +37,7 @@ import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.PeriodCalendar;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
+import com.ougnt.period_manager.activity.extra.SetupWizardActivityExtra;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
@@ -74,8 +75,9 @@ public class InitialActivity extends Activity {
     final int DisplaySummary = 0x10;
     final int DisplayLanguageSelector = 0x20;
     final int DisplayNewActionPanel = 0x80;
+    final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 54 ;
+    public static final int ApplicationVersion = 56 ;
 
     // TODO : Change this to the real one
     // Live Env
@@ -531,6 +533,10 @@ public class InitialActivity extends Activity {
                 onDisplaySettingResult(data);
                 break;
             }
+            case DisplaySettingWizard: {
+                onDisplaySettingWizardResult(data);
+                break;
+            }
             case DisplaySummary: {
 
                 SummaryRepository summary = new SummaryRepository();
@@ -964,7 +970,6 @@ public class InitialActivity extends Activity {
                 settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
                 settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
                 settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
-                settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
                 settingIntent.putExtra(SettingActivity.IsNotifyPeriodCheckExtra, getUsageCounter(PSettingIsNotifyPeriod));
                 settingIntent.putExtra(SettingActivity.IsNotifyOvulationCheckExtra, getUsageCounter(PSettingIsNotifyOvulation));
                 settingIntent.putExtra(SettingActivity.NotifyPeriodDaysExtra, getUsageCounter(PSettingNotifyPeriodDay));
@@ -1000,7 +1005,6 @@ public class InitialActivity extends Activity {
 
                 setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra, 0f);
                 setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
-                setting.flag = data.getIntExtra(SettingActivity.FlagExtra, 0);
                 setting.saveSetting(this);
 
                 Bundle extras = data.getExtras();
@@ -1055,6 +1059,61 @@ public class InitialActivity extends Activity {
 
 
                 break;
+            }
+        }
+    }
+
+    private void onDisplaySettingWizardResult(Intent data) {
+
+        String json = data.getExtras().getString(SetupWizardActivity.ExtraKey);
+        SetupWizardActivityExtra extra = SetupWizardActivityExtra.fromJson(json);
+
+        setting.periodCycle = extra.cycleLength;
+        setting.periodLength = extra.periodLength;
+        setting.saveSetting(this);
+
+        boolean isNotifyPeriod = extra.notifyBeforeMenstrual != SetupWizardActivityExtra.NotNotifyMe;
+        boolean isNotifyOvulation = extra.notifyBeforeOvulation != SetupWizardActivityExtra.NotNotifyMe;
+        int notifyPeriodDay = extra.notifyBeforeMenstrual;
+        int notifyOvulationDay = extra.notifyBeforeOvulation;
+
+        setSharedPreference(PSettingIsNotifyPeriod, isNotifyPeriod ? 1 : 0);
+        setSharedPreference(PSettingIsNotifyOvulation, isNotifyOvulation ? 1 : 0);
+        setSharedPreference(PSettingNotifyPeriodDay, notifyPeriodDay);
+        setSharedPreference(PSettingNotifyOvulationDay, notifyOvulationDay);
+
+        if (isNotifyOvulation || isNotifyPeriod) {
+
+            SummaryRepository summary = SummaryRepository.getSummary(this);
+            if (summary == null) {
+
+                Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG).show();
+
+                return;
+            }
+
+            BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
+
+            if (isNotifyPeriod) {
+
+                notifier.setNotification(
+                        this,
+                        summary.expectedMenstrualDateFrom.minusDays(notifyPeriodDay),
+                        getResources().getString(R.string.notify_period_title),
+                        getResources().getString(R.string.notify_period_message)
+                );
+                addUsageCounter(PSettingNotifyPeriodCounter);
+            }
+
+            if (isNotifyOvulation) {
+
+                notifier.setNotification(
+                        this,
+                        summary.expectedOvulationDateFrom.minusDays(notifyOvulationDay),
+                        getResources().getString(R.string.notify_ovulation_title),
+                        getResources().getString(R.string.notify_ovulation_message)
+                );
+                addUsageCounter(PSettingNotifyOvulationCounter);
             }
         }
     }
@@ -1296,18 +1355,13 @@ public class InitialActivity extends Activity {
                     scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
                 }
 
-                // TODO: Add the new user data wizard page
                 if (setting.isFirstTime) {
                     setting.isFirstTime = false;
+
+                    Intent wizardIntent = new Intent(getBaseContext(), SetupWizardActivity.class);
+                    startActivityForResult(wizardIntent, DisplaySettingWizard);
+
                     setting.saveSetting(getBaseContext());
-                    Intent settingIntent = new Intent(getBaseContext(), SettingActivity.class);
-                    settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
-                    settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
-                    settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
-                    settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
-                    settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
-                    settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
-                    startActivityForResult(settingIntent, DisplaySetting);
                 }
 
                 int targetLength = (int) (scrollView.getHeight() * 0.5);
@@ -1324,6 +1378,11 @@ public class InitialActivity extends Activity {
     }
 
     synchronized public static void sendTrafficMessage(Log log) {
+
+        if(log == null) {
+            return;
+        }
+
         tracker.setScreenName(log.getScreenType());
         tracker.setClientId(log.getDeviceId());
         tracker.setAppVersion(log.getApplicationVersion());

@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.ougnt.period_manager.R;
+import com.ougnt.period_manager.activity.helper.NewActionActivityHelper;
 
 public class NewActionActivity extends Activity {
 

@@ -64,8 +64,15 @@
     <string name="date_detail_ovulation_date">วันนี้วันตกไข่\n</string>
     <string name="date_detail_small_chance">วันนี้มีโอกาสตั้งครรภ์น้อยมาก\n</string>
     <string name="date_detail_add_detail">เพิ่มข้อมูล</string>
-    <string name="date_detail_no_detail_yet">โปรดระบุวันที่เป็นเมนส์ ครั้งก่อนเพื่อเริ่มต้นใช้งาน</string>
+    <string name="date_detail_no_detail_yet">โปรดระบุวันที่เป็นเมนส์ ครั้งก่อนเพื่อเริ่มต้นใช้งาน โดยการเลื่อนวันไปวันที่ต้องการ และ กดใส่ข้อมูลข้างล่าง</string>
     <string name="short_date_format">dd MMM yyyy</string>
     <string name="action_activity_click_me_if_this_day_is_not_your_period">คลิ๊กปุ่มนี้ถ้าวันที่เลือกไม่ได้เป็นเมนส์</string>
     <string name="action_activity_click_me_if_your_period_start_this_day">คลิ๊กปุ่มนี้ถ้าวันที่เลือกเริ่มเป็นเมนส์</string>
+    <string name="setting_next">ต่อไป</string>
+    <string name="setting_i_do_not_know">ไม่รู้</string>
+    <string name="setting_how_long_does_your_period_last">ระยะเวลาที่เลือดประจำเดือนออกกี่วัน</string>
+    <string name="setting_how_long_does_your_period_cycle">รอบเดือนของคุณยาวนานแค่ไหน</string>
+    <string name="setting_when_you_want_me_to_remind_you_before_your_ovulation_date">ให้ส่งเตือนก่อนวันตกไข่กี่วัน</string>
+    <string name="setting_when_you_want_me_to_remind_you_before_your_next_period">ให้ส่งเตือนก่อนเป็นเมนส์ กี่วัน</string>
+    <string name="setting_do_not_notify_me">ไม่ต้องเตือน</string>
 </resources>

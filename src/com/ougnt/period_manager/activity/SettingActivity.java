@@ -23,13 +23,10 @@ public class SettingActivity extends Activity {
     public static final String AverageLengthExtra = "AversionLength";
     public static final String AverageCycleExtra = "AverageCycle";
     public static final String CountExtra = "Count";
-    public static final String FlagExtra = "Flag";
     public static final String IsNotifyPeriodCheckExtra = "IsNotifyPeriodCheckExtra";
     public static final String IsNotifyOvulationCheckExtra = "IsNotifyOvulationCheckExtra";
     public static final String NotifyPeriodDaysExtra = "NotifyPeriodDaysExtra";
     public static final String NotifyOvulationDaysExtra = "NotifyOvulationDaysExtra";
-
-    int flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +53,6 @@ public class SettingActivity extends Activity {
 
         periodCycle.setText(String.valueOf(intent.getExtras().getFloat(PeriodCycleExtra)));
         periodLength.setText(String.valueOf(intent.getExtras().getFloat(PeriodLengthExtra)));
-
-        flag = (getIntent().getExtras().getInt(FlagExtra));
     }
 
     public void onCancelButtonClick(View view){
@@ -96,7 +91,6 @@ public class SettingActivity extends Activity {
         retIntent.putExtra(ActionExtra, SaveAction);
         retIntent.putExtra(PeriodCycleExtra, Float.parseFloat(cycle));
         retIntent.putExtra(PeriodLengthExtra, Float.parseFloat(length));
-        retIntent.putExtra(FlagExtra, flag);
         retIntent.putExtra(IsNotifyPeriodCheckExtra,isPeriodNotify);
         retIntent.putExtra(IsNotifyOvulationCheckExtra, isOvulationNotify);
         retIntent.putExtra(NotifyPeriodDaysExtra, periodNotifyDays);
