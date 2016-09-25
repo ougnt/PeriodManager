@@ -84,4 +84,7 @@
     <string name="setting_when_you_want_me_to_remind_you_before_your_next_period">Khi nào bạn muốn tôi để nhắc nhở bạn trước khi giai đoạn tiếp theo của bạn?</string>
     <string name="setting_when_you_want_me_to_remind_you_before_your_ovulation_date">Khi nào bạn muốn tôi để nhắc nhở bạn trước ngày rụng trứng tiếp theo của bạn?</string>
     <string name="setting_do_not_notify_me">Tôi không muốn nó</string>
+    <string name="main_calendar_view">Lịch Xem</string>
+    <string name="main_date_view">ngày Xem</string>
+    <string name="main_temperature_view">nhiệt độ Xem</string>
 </resources>

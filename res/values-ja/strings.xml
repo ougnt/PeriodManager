@@ -80,4 +80,7 @@
     <string name="setting_when_you_want_me_to_remind_you_before_your_next_period">生理日にはお知らせが何日ほうがいいですか?　</string>
     <string name="setting_when_you_want_me_to_remind_you_before_your_ovulation_date">排卵日にはお知らせが何日ほうがいいですか?　 </string>
     <string name="setting_do_not_notify_me">欲しいません</string>
+    <string name="main_calendar_view">月ビュー</string>
+    <string name="main_date_view">日ビュー</string>
+    <string name="main_temperature_view">温ビュー</string>
 </resources>

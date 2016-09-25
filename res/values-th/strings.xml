@@ -75,4 +75,7 @@
     <string name="setting_when_you_want_me_to_remind_you_before_your_ovulation_date">ให้ส่งเตือนก่อนวันตกไข่กี่วัน</string>
     <string name="setting_when_you_want_me_to_remind_you_before_your_next_period">ให้ส่งเตือนก่อนเป็นเมนส์ กี่วัน</string>
     <string name="setting_do_not_notify_me">ไม่ต้องเตือน</string>
+    <string name="main_calendar_view">มุมมองปฏิทิน</string>
+    <string name="main_date_view">มุมมองรายวัน</string>
+    <string name="main_temperature_view">กราฟอุณหถูมิ</string>
 </resources>

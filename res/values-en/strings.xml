@@ -77,4 +77,7 @@
     <string name="setting_when_you_want_me_to_remind_you_before_your_next_period">When do you want me to remind you before your next period?</string>
     <string name="setting_when_you_want_me_to_remind_you_before_your_ovulation_date">When do you want me to remind you before your next ovulation date?</string>
     <string name="setting_do_not_notify_me">Don\'t notify me</string>
+    <string name="main_calendar_view">Calendar View</string>
+    <string name="main_date_view">Date View</string>
+    <string name="main_temperature_view">Temperature View</string>
 </resources>
