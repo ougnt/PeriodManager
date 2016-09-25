@@ -304,6 +304,8 @@ public class InitialActivity extends Activity {
                                 }
                             }
                         }
+                        TextView headerText = (TextView) findViewById(R.id.main_header_text);
+                        headerText.setText(selectedDate.getDate().toString(getResources().getText(R.string.short_date_format).toString()));
                     }
                 });
                 return false;

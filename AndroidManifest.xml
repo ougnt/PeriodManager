@@ -22,7 +22,7 @@
         <activity android:name=".activity.TemperatureHelpActivity" />
         <activity android:name=".activity.SetupWizardActivity" />
         <activity android:name=".activity.LoginActivity"/>
-        <activity android:name=".activity.NewActionActivity" android:theme="@style/Theme.Transparent"/>
+        <activity android:name=".activity.NewActionActivity" />
         <activity
                 android:name="com.google.android.gms.ads.AdActivity"
                 android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize" />
