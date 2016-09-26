@@ -46,16 +46,16 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:weightSum="1"
         android:background="@color/main_bg">
 
         <TextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="@string/action_activity_enter_your_body_temperature"
             android:id="@+id/textView2"
@@ -66,8 +66,8 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="0.1"
             android:weightSum="1"
             android:layout_margin="5dp">
@@ -81,7 +81,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="\?"
                 android:id="@+id/action_temperature_help"
@@ -110,8 +110,8 @@
         android:weightSum="1"
         android:background="@color/main_bg"
         android:visibility="visible"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -139,10 +139,12 @@
 
                 <EditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:id="@+id/action_temperature_edittext"
                     android:inputType="numberDecimal"
-                    android:hint="@string/action_activity_temperature_hint" />
+                    android:hint="@string/action_activity_temperature_hint"
+                    android:background="@color/action_text_edit_bg"
+                    android:textColor="@color/text_color" />
             </LinearLayout>
 
         </LinearLayout>
@@ -157,11 +159,11 @@
 
     <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="0dp"
                   android:layout_weight="3"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
         android:background="@color/main_bg"
-        android:weightSum="3" >
+        android:weightSum="3"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp">
 
         <LinearLayout
             android:orientation="vertical"
