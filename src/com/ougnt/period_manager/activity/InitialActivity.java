@@ -77,7 +77,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 56 ;
+    public static final int ApplicationVersion = 56;
 
     // TODO : Change this to the real one
     // Live Env
@@ -207,6 +207,7 @@ public class InitialActivity extends Activity {
     private void initialApplication() {
 
         setContentView(R.layout.main);
+        getAllViews();
 
         AdRequest.Builder adBuilder = new AdRequest.Builder();
         adBuilder.setGender(AdRequest.GENDER_FEMALE);
@@ -281,11 +282,10 @@ public class InitialActivity extends Activity {
                         int[] dateMeterLocator = new int[2];
 
                         ImageView fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
-                        LinearLayout scrollContent = (LinearLayout) findViewById(R.id.dateScrollerContent);
                         fingerIndex.getLocationOnScreen(fingerIndexLocator);
 
-                        for (int i = 1; i < scrollContent.getChildCount() - 2; i++) {
-                            DateMeter targetDateMeter = (DateMeter) scrollContent.getChildAt(i);
+                        for (int i = 1; i < dateMeterContainer.getChildCount() - 2; i++) {
+                            DateMeter targetDateMeter = (DateMeter) dateMeterContainer.getChildAt(i);
                             targetDateMeter.getLocationOnScreen(dateMeterLocator);
                             int fingerIndexPointerX = fingerIndexLocator[0] + fingerIndex.getWidth() / 3;
 
@@ -314,8 +314,6 @@ public class InitialActivity extends Activity {
     }
 
     private void addDateMeterView() {
-
-        final LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
 
         setOnDateMeterTouchEventListener(new OnDateMeterFocusListener() {
             @Override
@@ -354,10 +352,10 @@ public class InitialActivity extends Activity {
             }
         });
 
-        addDateMeter(dateMeterLayout, now().minusDays(15), now().plusDays(15), true);
+        addDateMeter(dateMeterContainer, now().minusDays(15), now().plusDays(15), true);
 
-        dateMeterLayout.addView(generateEndLayout(dateMeterLayout, true));
-        dateMeterLayout.addView(generateEndLayout(dateMeterLayout, false), 0);
+        dateMeterContainer.addView(generateEndLayout(dateMeterContainer, true));
+        dateMeterContainer.addView(generateEndLayout(dateMeterContainer, false), 0);
 
         setting = SettingRepository.getSettingRepository(this);
 
@@ -699,7 +697,7 @@ public class InitialActivity extends Activity {
             case R.id.date_view_toggle: {
 
                 switch (getUsageCounter(PMainDisplayMode)) {
-                    case DisplayModeDateScroller:{
+                    case DisplayModeDateScroller: {
                         log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToDateScroller);
                         break;
                     }
@@ -721,7 +719,7 @@ public class InitialActivity extends Activity {
             }
             case R.id.month_view_toggle: {
                 switch (getUsageCounter(PMainDisplayMode)) {
-                    case DisplayModeDateScroller:{
+                    case DisplayModeDateScroller: {
                         log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToMonthView);
                         break;
                     }
@@ -742,7 +740,7 @@ public class InitialActivity extends Activity {
             }
             case R.id.chart_view_toggle: {
                 switch (getUsageCounter(PMainDisplayMode)) {
-                    case DisplayModeDateScroller:{
+                    case DisplayModeDateScroller: {
                         log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToTemperature);
                         break;
                     }
@@ -1122,13 +1120,11 @@ public class InitialActivity extends Activity {
 
     private void paintDateMeter(DateTime startDate, DateTime endDate, int type) {
 
-        LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
+        for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
 
-        for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
-
-            DateMeter targetDateMeter = ((DateMeter) dateMeterLayout.getChildAt(i));
+            DateMeter targetDateMeter = ((DateMeter) dateMeterContainer.getChildAt(i));
             if (targetDateMeter.getDate().compareTo(endDate) <= 0 && targetDateMeter.getDate().compareTo(startDate) >= 0) {
-                ((DateMeter) dateMeterLayout.getChildAt(i)).changeColor(type);
+                ((DateMeter) dateMeterContainer.getChildAt(i)).changeColor(type);
             }
         }
 
@@ -1223,23 +1219,22 @@ public class InitialActivity extends Activity {
 
         addUsageCounter(PPeriodButtonUsageCounter);
 
-        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
         int counter = 50;
 
-        while (selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
+        while (selectedDateIsBeforeTheFirstDateMeter(dateMeterContainer) && counter-- > 0) {
 
-            endLayoutAction(v, false);
+            endLayoutAction(dateMeterContainer, false);
         }
         counter = 50;
-        while (selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0) {
+        while (selectedDateIsAfterTheLastDateMeter(dateMeterContainer) && counter-- > 0) {
 
-            endLayoutAction(v, true);
+            endLayoutAction(dateMeterContainer, true);
         }
 
         int index = getSelectedDateMeterIndex();
 
-        ((DateMeter) (v.getChildAt(index))).changeColor(DateMeter.Menstrual);
-        DateTime dateToBePainted = ((DateMeter) (v.getChildAt(index))).getDate();
+        ((DateMeter) (dateMeterContainer.getChildAt(index))).changeColor(DateMeter.Menstrual);
+        DateTime dateToBePainted = ((DateMeter) (dateMeterContainer.getChildAt(index))).getDate();
 
         DateTime endOfMenstrualPeriod = dateToBePainted.plusDays((int) setting.periodLength - 1);
         DateTime startOfOvulationPeriod = dateToBePainted.plusDays(7);
@@ -1290,23 +1285,22 @@ public class InitialActivity extends Activity {
 
     private void removePeriodAndOvulationFlagToDateMeter() {
 
-        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
         int counter = 50;
 
-        while (selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
+        while (selectedDateIsBeforeTheFirstDateMeter(dateMeterContainer) && counter-- > 0) {
 
-            endLayoutAction(v, false);
+            endLayoutAction(dateMeterContainer, false);
         }
         counter = 50;
-        while (selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0) {
+        while (selectedDateIsAfterTheLastDateMeter(dateMeterContainer) && counter-- > 0) {
 
-            endLayoutAction(v, true);
+            endLayoutAction(dateMeterContainer, true);
         }
 
         int index = getSelectedDateMeterIndex();
 
         addUsageCounter(PNonPeriodButtonUsageCounter);
-        DateMeter dateMeterToBeChange = ((DateMeter) (v.getChildAt(index)));
+        DateMeter dateMeterToBeChange = ((DateMeter) (dateMeterContainer.getChildAt(index)));
         DateTime dateToBeChange = dateMeterToBeChange.getDate();
 
         paintDateMeter(dateToBeChange, dateToBeChange, DateMeter.Nothing);
@@ -1317,9 +1311,7 @@ public class InitialActivity extends Activity {
 
         int index;
 
-        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
-
-        DateTime firstDate = ((DateMeter) v.getChildAt(1)).getDate();
+        DateTime firstDate = ((DateMeter) dateMeterContainer.getChildAt(1)).getDate();
         int dateDiff = (int) ((selectedDate.getDate().getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
 
         index = dateDiff + 1;
@@ -1330,7 +1322,7 @@ public class InitialActivity extends Activity {
 
     private void moveDateMeterToCurrentDate() {
 
-        ViewTreeObserver obs = findViewById(R.id.dateScrollerContent).getViewTreeObserver();
+        ViewTreeObserver obs = dateMeterContainer.getViewTreeObserver();
 
         obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -1338,13 +1330,12 @@ public class InitialActivity extends Activity {
 
                 if (isAdjusted) {
                     return;
-                } else if (findViewById(R.id.dateScrollerContent).getWidth() == 0) {
+                } else if (dateMeterContainer.getWidth() == 0) {
                     return;
                 }
 
                 isAdjusted = true;
 
-                final LinearLayout dateMeterLayout = (LinearLayout) findViewById(R.id.dateScrollerContent);
                 final HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
 
                 int[] firstChildLocal = new int[2];
@@ -1354,7 +1345,7 @@ public class InitialActivity extends Activity {
                 scrollView.getLocationOnScreen(scrollViewLocal);
 
                 if (firstChildLocal[0] == scrollViewLocal[0]) {
-                    scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
+                    scrollView.scrollTo(dateMeterContainer.getChildAt(1).getWidth() * 15, 0);
                 }
 
                 if (setting.isFirstTime) {
@@ -1372,7 +1363,7 @@ public class InitialActivity extends Activity {
                 params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
                 finger.setLayoutParams(params);
 
-                DateMeter todayDateMeter = (DateMeter) ((LinearLayout) findViewById(R.id.dateScrollerContent)).getChildAt(17);
+                DateMeter todayDateMeter = (DateMeter) dateMeterContainer.getChildAt(17);
                 setDateDetailText(todayDateMeter);
                 selectedDate = todayDateMeter;
             }
@@ -1381,7 +1372,7 @@ public class InitialActivity extends Activity {
 
     synchronized public static void sendTrafficMessage(Log log) {
 
-        if(log == null) {
+        if (log == null) {
             return;
         }
 
@@ -1394,6 +1385,12 @@ public class InitialActivity extends Activity {
                 .setAction(log.getAction())
                 .build());
     }
+
+    private void getAllViews() {
+        dateMeterContainer = (LinearLayout) findViewById(R.id.dateScrollerContent);
+    }
+
+    private LinearLayout dateMeterContainer;
 
     private int calendarCurrentMonth, calendarCurrentYear;
     private OnDateMeterFocusListener dateTouchListener;
