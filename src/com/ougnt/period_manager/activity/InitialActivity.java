@@ -209,12 +209,13 @@ public class InitialActivity extends Activity {
         setContentView(R.layout.main);
         getAllViews();
 
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.date_detail, newActionPanel);
+
         AdRequest.Builder adBuilder = new AdRequest.Builder();
         adBuilder.setGender(AdRequest.GENDER_FEMALE);
         AdRequest adRequest = adBuilder.build();
-        final AdView adView = (AdView) findViewById(R.id.ad_view);
         adView.loadAd(adRequest);
-        final LinearLayout adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
         adMobLayout.setVisibility(View.GONE);
 
         adView.setAdListener(new AdListener() {
@@ -238,11 +239,8 @@ public class InitialActivity extends Activity {
 
         adjustLayoutForDisplayModeAccordingToPDisplayMode();
 
-        LinearLayout newActionPanel = (LinearLayout) findViewById(R.id.new_action_panel);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.date_detail, newActionPanel);
-
-        findViewById(R.id.date_detail_action_button).setOnClickListener(new View.OnClickListener() {
+        getAllViews();
+        dateDetailActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -262,16 +260,14 @@ public class InitialActivity extends Activity {
             }
         });
 
-        View view = findViewById(R.id.dateScroller);
-        view.setOnTouchListener(new View.OnTouchListener() {
+        dateMeterScroller.setOnTouchListener(new View.OnTouchListener() {
 
             private ViewTreeObserver observer;
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
-                observer = observer == null ? scrollView.getViewTreeObserver() : observer;
+                observer = observer == null ? dateMeterScroller.getViewTreeObserver() : observer;
 
                 observer.addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
 
@@ -281,7 +277,6 @@ public class InitialActivity extends Activity {
                         int[] fingerIndexLocator = new int[2];
                         int[] dateMeterLocator = new int[2];
 
-                        ImageView fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
                         fingerIndex.getLocationOnScreen(fingerIndexLocator);
 
                         for (int i = 1; i < dateMeterContainer.getChildCount() - 2; i++) {
@@ -1336,16 +1331,14 @@ public class InitialActivity extends Activity {
 
                 isAdjusted = true;
 
-                final HorizontalScrollView scrollView = (HorizontalScrollView) findViewById(R.id.dateScroller);
-
                 int[] firstChildLocal = new int[2];
                 int[] scrollViewLocal = new int[2];
 
-                scrollView.getChildAt(0).getLocationOnScreen(firstChildLocal);
-                scrollView.getLocationOnScreen(scrollViewLocal);
+                dateMeterScroller.getChildAt(0).getLocationOnScreen(firstChildLocal);
+                dateMeterScroller.getLocationOnScreen(scrollViewLocal);
 
                 if (firstChildLocal[0] == scrollViewLocal[0]) {
-                    scrollView.scrollTo(dateMeterContainer.getChildAt(1).getWidth() * 15, 0);
+                    dateMeterScroller.scrollTo(dateMeterContainer.getChildAt(1).getWidth() * 15, 0);
                 }
 
                 if (setting.isFirstTime) {
@@ -1357,11 +1350,10 @@ public class InitialActivity extends Activity {
                     setting.saveSetting(getBaseContext());
                 }
 
-                int targetLength = (int) (scrollView.getHeight() * 0.5);
-                ImageView finger = (ImageView) findViewById(R.id.finger_pointer);
+                int targetLength = (int) (dateMeterScroller.getHeight() * 0.5);
                 FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetLength, targetLength);
                 params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-                finger.setLayoutParams(params);
+                fingerIndex.setLayoutParams(params);
 
                 DateMeter todayDateMeter = (DateMeter) dateMeterContainer.getChildAt(17);
                 setDateDetailText(todayDateMeter);
@@ -1388,9 +1380,21 @@ public class InitialActivity extends Activity {
 
     private void getAllViews() {
         dateMeterContainer = (LinearLayout) findViewById(R.id.dateScrollerContent);
+        newActionPanel = (LinearLayout) findViewById(R.id.new_action_panel);
+        adView = (AdView) findViewById(R.id.ad_view);
+        adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
+        dateMeterScroller = (HorizontalScrollView) findViewById(R.id.dateScroller);
+        fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
+        dateDetailActionButton = (Button) findViewById(R.id.date_detail_action_button);
     }
 
+    private Button dateDetailActionButton;
+    private ImageView fingerIndex;
     private LinearLayout dateMeterContainer;
+    private HorizontalScrollView dateMeterScroller;
+    private LinearLayout newActionPanel;
+    private AdView adView;
+    private LinearLayout adMobLayout;
 
     private int calendarCurrentMonth, calendarCurrentYear;
     private OnDateMeterFocusListener dateTouchListener;
