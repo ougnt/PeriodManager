@@ -66,6 +66,7 @@ public class Log {
     public class Screen {
         public static final String MainScreenName = "Screen.Main";
         public static final String ActionPanel = "Screen.ActionPanel";
+        public static final String MenuScreen = "Screen.Menu";
     }
 
     public class Action {
@@ -89,5 +90,12 @@ public class Log {
         public static final String ClickAds = "ClickAds";
         public static final String ClickAddDetailToDateMeter = "ClickAddDetailToDateMeter";
         public static final String ClickAddDetailFromCalendar = "ClickAddDetailFromCalendar";
+        public static final String LandToMenu = "LangToMenu";
+        public static final String ClickLockScreen = "ClickLockScreen";
+        public static final String ClickSubmitReview = "ClickSubmitReview";
+        public static final String ClickLanguageSelector = "ClickLanguageSelector";
+        public static final String ClickSummary = "ClickSummary";
+        public static final String ClickHelp = "ClickHelp";
+        public static final String ClickSetting = "ClickSetting";
     }
 }
