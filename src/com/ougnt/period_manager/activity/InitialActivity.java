@@ -274,38 +274,47 @@ public class InitialActivity extends Activity {
                     @Override
                     public void onScrollChanged() {
 
-                        int[] fingerIndexLocator = new int[2];
-                        int[] dateMeterLocator = new int[2];
-
-                        fingerIndex.getLocationOnScreen(fingerIndexLocator);
-
-                        for (int i = 1; i < dateMeterContainer.getChildCount() - 2; i++) {
-                            DateMeter targetDateMeter = (DateMeter) dateMeterContainer.getChildAt(i);
-                            targetDateMeter.getLocationOnScreen(dateMeterLocator);
-                            int fingerIndexPointerX = fingerIndexLocator[0] + fingerIndex.getWidth() / 3;
-
-                            if (fingerIndexPointerX > dateMeterLocator[0] && fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
-
-                                if (selectedDate == null) selectedDate = targetDateMeter;
-                                if (selectedDate.getDate() == targetDateMeter.getDate()) return;
-
-                                selectedDate = targetDateMeter;
-                                targetDateMeter.makeSelectedFormat();
-                                targetDateMeter.setSelected(true);
-                            } else {
-                                if (targetDateMeter.isSelected()) {
-                                    targetDateMeter.resetFormat();
-                                    targetDateMeter.setSelected(false);
-                                }
-                            }
-                        }
-                        TextView headerText = (TextView) findViewById(R.id.main_header_text);
-                        headerText.setText(selectedDate.getDate().toString(getResources().getText(R.string.short_date_format).toString()));
+                        setSelectedDateToAlignWithFingerIndex();
                     }
                 });
                 return false;
             }
         });
+    }
+
+    private void setSelectedDateToAlignWithFingerIndex() {
+        int[] fingerIndexLocator = new int[2];
+        int[] dateMeterLocator = new int[2];
+
+        fingerIndex.getLocationOnScreen(fingerIndexLocator);
+
+        for (int i = 1; i < dateMeterContainer.getChildCount() - 2; i++) {
+            DateMeter targetDateMeter = (DateMeter) dateMeterContainer.getChildAt(i);
+            targetDateMeter.getLocationOnScreen(dateMeterLocator);
+            int fingerIndexPointerX = fingerIndexLocator[0] + fingerIndex.getWidth() / 3;
+
+            if (fingerIndexPointerX > dateMeterLocator[0] && fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
+
+                if (selectedDate == null) {
+                    selectedDate = targetDateMeter;
+                }
+                if (selectedDate.getDate() == targetDateMeter.getDate()) return;
+
+                selectedDate = targetDateMeter;
+                targetDateMeter.makeSelectedFormat();
+                targetDateMeter.setSelected(true);
+            } else {
+                if (targetDateMeter.isSelected()) {
+                    targetDateMeter.resetFormat();
+                    targetDateMeter.setSelected(false);
+                }
+            }
+        }
+        TextView headerText = (TextView) findViewById(R.id.main_header_text);
+        if(selectedDate == null) {
+            selectedDate = (DateMeter) dateMeterContainer.getChildAt(16);
+        }
+        headerText.setText(selectedDate.getDate().toString(getResources().getText(R.string.short_date_format).toString()));
     }
 
     private void addDateMeterView() {
@@ -314,36 +323,36 @@ public class InitialActivity extends Activity {
             @Override
             public void onFocusMoveIn(DateMeter touchDate) {
 
-                ImageView fireImage = (ImageView) findViewById(R.id.fire_image);
-                ImageView grassImage = (ImageView) findViewById(R.id.grass_image);
-                ImageView sunImage = (ImageView) findViewById(R.id.sun_image);
-                ImageView beachImage = (ImageView) findViewById(R.id.beach_image);
+            ImageView fireImage = (ImageView) findViewById(R.id.fire_image);
+            ImageView grassImage = (ImageView) findViewById(R.id.grass_image);
+            ImageView sunImage = (ImageView) findViewById(R.id.sun_image);
+            ImageView beachImage = (ImageView) findViewById(R.id.beach_image);
 
-                switch (touchDate.dateType) {
-                    case DateMeter.Menstrual: {
-                        fireImage.setVisibility(View.VISIBLE);
-                        grassImage.setVisibility(View.GONE);
-                        sunImage.setVisibility(View.GONE);
-                        beachImage.setVisibility(View.GONE);
-                        break;
-                    }
-                    case DateMeter.PossiblyOvulation: {
-                        fireImage.setVisibility(View.GONE);
-                        grassImage.setVisibility(View.GONE);
-                        sunImage.setVisibility(View.VISIBLE);
-                        beachImage.setVisibility(View.VISIBLE);
-                        break;
-                    }
-                    case DateMeter.Nothing: {
-                        fireImage.setVisibility(View.GONE);
-                        grassImage.setVisibility(View.VISIBLE);
-                        sunImage.setVisibility(View.VISIBLE);
-                        beachImage.setVisibility(View.GONE);
-                        break;
-                    }
+            switch (touchDate.dateType) {
+                case DateMeter.Menstrual: {
+                    fireImage.setVisibility(View.VISIBLE);
+                    grassImage.setVisibility(View.GONE);
+                    sunImage.setVisibility(View.GONE);
+                    beachImage.setVisibility(View.GONE);
+                    break;
                 }
+                case DateMeter.PossiblyOvulation: {
+                    fireImage.setVisibility(View.GONE);
+                    grassImage.setVisibility(View.GONE);
+                    sunImage.setVisibility(View.VISIBLE);
+                    beachImage.setVisibility(View.VISIBLE);
+                    break;
+                }
+                case DateMeter.Nothing: {
+                    fireImage.setVisibility(View.GONE);
+                    grassImage.setVisibility(View.VISIBLE);
+                    sunImage.setVisibility(View.VISIBLE);
+                    beachImage.setVisibility(View.GONE);
+                    break;
+                }
+            }
 
-                setDateDetailText(touchDate);
+            setDateDetailText(touchDate);
             }
         });
 
@@ -460,10 +469,15 @@ public class InitialActivity extends Activity {
                 targetLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        selectedDate = tempDate;
                         DateRepository date = DateRepository.getDateRepositories(getBaseContext(), tempDate, tempDate).get(0);
 
-                        selectedDate = new DateMeter(getBaseContext(), date, dateTouchListener);
+                        for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
+
+                            if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(date.date.toString("yyyy-MM-dd"))) {
+                                selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
+                                break;
+                            }
+                        }
 
                         log.setCategory(Log.Category.Button);
                         log.setScreenType(Log.Screen.MainScreenName);
@@ -573,6 +587,16 @@ public class InitialActivity extends Activity {
                         addPeriodAndOvulationFlagToDateMeters();
                     }
                 }
+
+                // todo: move this to a function
+                for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
+
+                    if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(extra.date.toString("yyyy-MM-dd"))) {
+                        selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
+                        break;
+                    }
+                }
+
                 selectedDate.comment = extra.comment;
                 selectedDate.temperature = (float) extra.temperature;
                 DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), selectedDate.comment);
@@ -797,6 +821,7 @@ public class InitialActivity extends Activity {
                 dateScrollerView.setVisibility(View.VISIBLE);
                 monthView.setVisibility(View.GONE);
                 chartView.setVisibility(View.GONE);
+                setSelectedDateToAlignWithFingerIndex();
             }
         }
     }
@@ -1323,41 +1348,41 @@ public class InitialActivity extends Activity {
             @Override
             public void onGlobalLayout() {
 
-                if (isAdjusted) {
-                    return;
-                } else if (dateMeterContainer.getWidth() == 0) {
-                    return;
-                }
+            if (isAdjusted) {
+                return;
+            } else if (dateMeterContainer.getWidth() == 0) {
+                return;
+            }
 
-                isAdjusted = true;
+            isAdjusted = true;
 
-                int[] firstChildLocal = new int[2];
-                int[] scrollViewLocal = new int[2];
+            int[] firstChildLocal = new int[2];
+            int[] scrollViewLocal = new int[2];
 
-                dateMeterScroller.getChildAt(0).getLocationOnScreen(firstChildLocal);
-                dateMeterScroller.getLocationOnScreen(scrollViewLocal);
+            dateMeterScroller.getChildAt(0).getLocationOnScreen(firstChildLocal);
+            dateMeterScroller.getLocationOnScreen(scrollViewLocal);
 
-                if (firstChildLocal[0] == scrollViewLocal[0]) {
-                    dateMeterScroller.scrollTo(dateMeterContainer.getChildAt(1).getWidth() * 15, 0);
-                }
+            if (firstChildLocal[0] == scrollViewLocal[0]) {
+                dateMeterScroller.scrollTo(dateMeterContainer.getChildAt(1).getWidth() * 15, 0);
+            }
 
-                if (setting.isFirstTime) {
-                    setting.isFirstTime = false;
+            if (setting.isFirstTime) {
+                setting.isFirstTime = false;
 
-                    Intent wizardIntent = new Intent(getBaseContext(), SetupWizardActivity.class);
-                    startActivityForResult(wizardIntent, DisplaySettingWizard);
+                Intent wizardIntent = new Intent(getBaseContext(), SetupWizardActivity.class);
+                startActivityForResult(wizardIntent, DisplaySettingWizard);
 
-                    setting.saveSetting(getBaseContext());
-                }
+                setting.saveSetting(getBaseContext());
+            }
 
-                int targetLength = (int) (dateMeterScroller.getHeight() * 0.5);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetLength, targetLength);
-                params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-                fingerIndex.setLayoutParams(params);
+            int targetLength = (int) (dateMeterScroller.getHeight() * 0.5);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetLength, targetLength);
+            params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            fingerIndex.setLayoutParams(params);
 
-                DateMeter todayDateMeter = (DateMeter) dateMeterContainer.getChildAt(17);
-                setDateDetailText(todayDateMeter);
-                selectedDate = todayDateMeter;
+            DateMeter todayDateMeter = (DateMeter) dateMeterContainer.getChildAt(17);
+            setDateDetailText(todayDateMeter);
+            setSelectedDateToAlignWithFingerIndex();
             }
         });
     }
