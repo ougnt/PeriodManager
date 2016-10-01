@@ -12,5 +12,6 @@ public abstract class IDateRepository {
     public int dateType;
     public String comment;
     public float temperature;
+    public long flags;
 
 }

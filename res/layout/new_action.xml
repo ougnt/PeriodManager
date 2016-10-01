@@ -170,7 +170,8 @@
                     android:background="@color/action_text_edit_bg"
                     android:hint="@string/comment_editable_text_hint"
                     android:textColor="@color/text_color"
-                    android:gravity="top|left" />
+                    android:gravity="top|left"
+                    android:minLines="3" />
 
                 <LinearLayout
                     android:orientation="horizontal"

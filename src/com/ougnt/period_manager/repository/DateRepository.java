@@ -13,12 +13,13 @@ import java.util.List;
  */
 public class DateRepository extends IDateRepository {
 
-    private DateRepository(DateTime date, int dateType, String comment, float temperature) {
+    private DateRepository(DateTime date, int dateType, String comment, float temperature, long flags) {
 
         this.date = date;
         this.dateType = dateType;
         this.comment = comment;
         this.temperature = temperature;
+        this.flags = flags;
     }
 
     public static List<DateRepository> getDateRepositories(Context context, DateTime startDate, DateTime endDate) {
@@ -27,7 +28,7 @@ public class DateRepository extends IDateRepository {
             dbHelper = new DatabaseRepositoryHelper(context);
         }
 
-        String[] columns = {"date", "date_type", "comment", "temperature_value"};
+        String[] columns = {"date", "date_type", "comment", "temperature_value", "flags"};
         Cursor cursor = dbHelper.getWritableDatabase().query(
                 "DATE_REPOSITORY",
                 columns,
@@ -45,7 +46,7 @@ public class DateRepository extends IDateRepository {
         cursor.moveToFirst();
         while(!cursor.isAfterLast()) {
 
-            dates.add(new DateRepository(DateTime.parse(cursor.getString(0)), cursor.getInt(1), cursor.getString(2), cursor.getFloat(3)));
+            dates.add(new DateRepository(DateTime.parse(cursor.getString(0)), cursor.getInt(1), cursor.getString(2), cursor.getFloat(3), cursor.getLong(4)));
             cursor.moveToNext();
         }
 
@@ -91,6 +92,22 @@ public class DateRepository extends IDateRepository {
         }
         ContentValues values = new ContentValues();
         values.put("temperature_value", temperature);
+
+        dbHelper.getWritableDatabase().update(
+                "DATE_REPOSITORY",
+                values,
+                "date = '" + targetDate.toString("yyyy-MM-dd") + "'",
+                null);
+
+    }
+
+    public static void updateDateRepositorySetFlags(Context context, DateTime targetDate, long flags) {
+
+        if(dbHelper == null) {
+            dbHelper = new DatabaseRepositoryHelper(context);
+        }
+        ContentValues values = new ContentValues();
+        values.put("flags", flags);
 
         dbHelper.getWritableDatabase().update(
                 "DATE_REPOSITORY",
