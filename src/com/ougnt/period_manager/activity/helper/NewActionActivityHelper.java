@@ -1,9 +1,15 @@
 package com.ougnt.period_manager.activity.helper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.support.v4.content.ContextCompat;
+import android.view.Display;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.InitialActivity;
@@ -61,16 +67,48 @@ public class NewActionActivityHelper implements View.OnClickListener {
                 extra.comment = String.valueOf(activity.commentInput.getText());
                 extra.isButtonPush = isActionButtonPushed;
                 extra.isCancel = false;
+                extra.flags = getNewFlags();
                 retIntent.putExtra(NewActionActivity.ExtraKey, extra.toJson());
                 activity.setResult(Activity.RESULT_OK, retIntent);
 
                 log.setAction(Log.Action.ActionClickSaveButton);
+                InitialActivity.sendTrafficMessage(log);
 
                 activity.finish();
+                break;
+            }
+            case R.id.emotion_icon_angry:{
+                paintEmotionIconClick((ImageButton) v);
+                emotionIconFlag = FlagHelper.EmotionAngryIcon;
+                log.setAction(Log.Action.ClickEmotionIcon);
+                break;
+            }
+            case R.id.emotion_icon_happy:{
+                paintEmotionIconClick((ImageButton) v);
+                emotionIconFlag = FlagHelper.EmotionHappyIcon;
+                log.setAction(Log.Action.ClickEmotionIcon);
+                break;
+            }
+            case R.id.emotion_icon_nothing:{
+                paintEmotionIconClick((ImageButton) v);
+                emotionIconFlag = FlagHelper.EmotionNothingIcon;
+                log.setAction(Log.Action.ClickEmotionIcon);
+                break;
+            }
+            case R.id.emotion_icon_sad: {
+                paintEmotionIconClick((ImageButton) v);
+                emotionIconFlag = FlagHelper.EmotionSadIcon;
+                log.setAction(Log.Action.ClickEmotionIcon);
+                break;
             }
         }
 
         InitialActivity.sendTrafficMessage(log);
+    }
+
+    private long getNewFlags() {
+
+        return (extra.flags & ~FlagHelper.EmotionFlag) | emotionIconFlag;
     }
 
     public void setUpDisplay() {
@@ -81,6 +119,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
         activity.temperatureInput.setText(temperatureDisplay);
         activity.commentInput.setText(extra.comment);
         isActionButtonPushed = false;
+        formatIcon();
 
         log.setCategory(Log.Category.Screen);
         log.setAction(Log.Action.Land);
@@ -104,8 +143,51 @@ public class NewActionActivityHelper implements View.OnClickListener {
         return ActionActivityExtra.fromJsonString(key);
     }
 
+    private void formatIcon() {
+        WindowManager wm = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x == 0 ? 2400 : size.x;
+
+        int iconSize = width / 4;
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(iconSize, iconSize);
+        activity.emotionAngryIcon.setLayoutParams(params);
+        activity.emotionHappyIcon.setLayoutParams(params);
+        activity.emotionNothingIcon.setLayoutParams(params);
+        activity.emotionSadIcon.setLayoutParams(params);
+
+        switch(FlagHelper.GetEmotionFlag(extra.flags)) {
+            case FlagHelper.EmotionAngryIcon: {
+                paintEmotionIconClick(activity.emotionAngryIcon);
+                break;
+            }
+            case FlagHelper.EmotionHappyIcon: {
+                paintEmotionIconClick(activity.emotionHappyIcon);
+                break;
+            }
+            case FlagHelper.EmotionNothingIcon: {
+                paintEmotionIconClick(activity.emotionNothingIcon);
+                break;
+            }
+            case FlagHelper.EmotionSadIcon: {
+                paintEmotionIconClick(activity.emotionSadIcon);
+                break;
+            }
+        }
+    }
+
+    private void paintEmotionIconClick(ImageButton clickedIcon) {
+        activity.emotionAngryIcon.setBackgroundColor(0);
+        activity.emotionHappyIcon.setBackgroundColor(0);
+        activity.emotionSadIcon.setBackgroundColor(0);
+        activity.emotionNothingIcon.setBackgroundColor(0);
+        clickedIcon.setBackgroundColor(ContextCompat.getColor(activity, R.color.on_select_zone_bg));
+    }
+
     public NewActionActivity activity;
     public ActionActivityExtra extra;
     public boolean isActionButtonPushed;
     public Log log;
+    private long emotionIconFlag;
 }

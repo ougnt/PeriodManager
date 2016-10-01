@@ -33,6 +33,10 @@ public class NewActionActivity extends Activity {
         actionButton.setOnClickListener(helper);
         temperatureHelp.setOnClickListener(helper);
         saveButton.setOnClickListener(helper);
+        emotionSadIcon.setOnClickListener(helper);
+        emotionNothingIcon.setOnClickListener(helper);
+        emotionHappyIcon.setOnClickListener(helper);
+        emotionAngryIcon.setOnClickListener(helper);
     }
 
     public void getAllViews() {
@@ -43,6 +47,10 @@ public class NewActionActivity extends Activity {
         temperatureInput = (EditText) findViewById(R.id.action_temperature_edittext);
         commentInput = (EditText) findViewById(R.id.action_comment);
         saveButton = (Button) findViewById(R.id.action_save_button);
+        emotionNothingIcon = (ImageButton) findViewById(R.id.emotion_icon_nothing);
+        emotionHappyIcon = (ImageButton) findViewById(R.id.emotion_icon_happy);
+        emotionSadIcon = (ImageButton) findViewById(R.id.emotion_icon_sad);
+        emotionAngryIcon = (ImageButton) findViewById(R.id.emotion_icon_angry);
     }
 
     public TextView dateTextView;
@@ -52,5 +60,10 @@ public class NewActionActivity extends Activity {
     public EditText temperatureInput;
     public EditText commentInput;
     public Button saveButton;
+    public ImageButton emotionNothingIcon;
+    public ImageButton emotionHappyIcon;
+    public ImageButton emotionSadIcon;
+    public ImageButton emotionAngryIcon;
+
     public NewActionActivityHelper helper;
 }

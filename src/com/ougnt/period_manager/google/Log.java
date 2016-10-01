@@ -97,5 +97,6 @@ public class Log {
         public static final String ClickSummary = "ClickSummary";
         public static final String ClickHelp = "ClickHelp";
         public static final String ClickSetting = "ClickSetting";
+        public static final String ClickEmotionIcon = "ClickEmotionIcon";
     }
 }

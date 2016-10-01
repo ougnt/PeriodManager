@@ -254,6 +254,7 @@ public class InitialActivity extends Activity {
                 extra.dateType = selectedDate.dateType;
                 extra.temperature = selectedDate.temperature;
                 extra.comment = selectedDate.comment;
+                extra.flags = selectedDate.getFlags();
                 Intent intent = new Intent(getBaseContext(), NewActionActivity.class);
                 intent.putExtra(NewActionActivity.ExtraKey, extra.toJson());
                 startActivityForResult(intent, DisplayNewActionPanel);
@@ -599,8 +600,10 @@ public class InitialActivity extends Activity {
 
                 selectedDate.comment = extra.comment;
                 selectedDate.temperature = (float) extra.temperature;
+                selectedDate.setFlags(extra.flags);
                 DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), selectedDate.comment);
                 DateRepository.updateDateRepositorySetTemperature(this, selectedDate.getDate(), selectedDate.temperature);
+                DateRepository.updateDateRepositorySetFlags(this, selectedDate.getDate(), selectedDate.getFlags());
                 addMonthView();
             }
         }
@@ -1363,7 +1366,12 @@ public class InitialActivity extends Activity {
             dateMeterScroller.getLocationOnScreen(scrollViewLocal);
 
             if (firstChildLocal[0] == scrollViewLocal[0]) {
-                dateMeterScroller.scrollTo(dateMeterContainer.getChildAt(1).getWidth() * 15, 0);
+                int[] todayLocal = new int[2];
+                int[] fingerIndexLocal = new int[2];
+                dateMeterContainer.getChildAt(16).getLocationOnScreen(todayLocal);
+                fingerIndex.getLocationOnScreen(fingerIndexLocal);
+                int centerOfFinger = fingerIndexLocal[0] + fingerIndex.getWidth() / 2;
+                dateMeterScroller.scrollTo(todayLocal[0] - centerOfFinger, 0);
             }
 
             if (setting.isFirstTime) {

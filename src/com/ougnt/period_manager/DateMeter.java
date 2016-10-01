@@ -45,10 +45,6 @@ public class DateMeter extends LinearLayout {
 
     public static final HashMap<Integer, Integer> ColorForDateType = new HashMap<Integer, Integer>();
 
-    private Context thisContext = null;
-
-    public int dateType = 0;
-
     static {
         if (AppForStatic.getContext() == null) {
             MenstrualColor = 0xFFF3CDFF;
@@ -73,7 +69,7 @@ public class DateMeter extends LinearLayout {
         ColorForDateType.put(Nothing, SafeZoneColor);
     }
 
-    static int IconWidth = 0;
+    static int IconSize = 0;
 
     // Only for the visualize tool don't use.
     public DateMeter(Context context, AttributeSet attrib) throws NotImplementException {
@@ -92,16 +88,17 @@ public class DateMeter extends LinearLayout {
         dateType = initialDate.dateType;
         temperature = initialDate.temperature;
         date = initialDate.date;
+        flags = initialDate.flags;
 
         // Wait until the static method fill in the ColorForDateType
-        while(ColorForDateType == null) {
+        while (ColorForDateType == null) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
-        while(ColorForDateType.size() <  4) {
+        while (ColorForDateType.size() < 4) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
@@ -181,10 +178,6 @@ public class DateMeter extends LinearLayout {
         formatIconVisibilityByDateType();
     }
 
-    protected DateTime date;
-
-    private int _mainColor;
-
     private LinearLayout formatIconLayout(LinearLayout layout) {
 
         LinearLayout.LayoutParams retParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
@@ -198,9 +191,9 @@ public class DateMeter extends LinearLayout {
         display.getSize(size);
         int width = size.x == 0 ? 2400 : size.x;
 
-        IconWidth = width / 20;
+        IconSize = width / 20;
 
-        LinearLayout.LayoutParams iconParam = new LinearLayout.LayoutParams(IconWidth, IconWidth);
+        LinearLayout.LayoutParams iconParam = new LinearLayout.LayoutParams(IconSize, IconSize);
 
         _menstrualIcon = new ImageView(getContext());
         _menstrualIcon.setImageResource(R.drawable.menstrual_icon);
@@ -401,7 +394,7 @@ public class DateMeter extends LinearLayout {
     }
 
     private int getProperMonthFontSize() {
-        return (int) (getProperFontSize() / 3);
+        return getProperFontSize() / 3;
     }
 
     private int getProperFontSize() {
@@ -410,7 +403,6 @@ public class DateMeter extends LinearLayout {
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int width = size.x;
         int height = size.y;
 
         switch (getContext().getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
@@ -427,6 +419,18 @@ public class DateMeter extends LinearLayout {
 
         return height / 28;
     }
+
+    public long getFlags() {
+        return flags;
+    }
+
+    public void setFlags(long flags) {
+        this.flags = flags;
+    }
+
+    protected DateTime date;
+    private long flags;
+    private int _mainColor;
 
     private LinearLayout _leftHorizontalLayout;
     private LinearLayout _contentHorizontalLayout;
@@ -447,6 +451,7 @@ public class DateMeter extends LinearLayout {
     private ImageView _menstrualIcon;
     private ImageView _ovulationIcon;
     private ImageView _nonOvulationIcon;
+    public int dateType = 0;
 
     private OnDateMeterFocusListener _listener;
 }
