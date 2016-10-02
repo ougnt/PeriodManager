@@ -8,10 +8,12 @@ import android.support.v4.content.ContextCompat;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.InitialActivity;
 import com.ougnt.period_manager.activity.NewActionActivity;
@@ -121,6 +123,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
         activity.commentInput.setText(extra.comment);
         isActionButtonPushed = false;
         formatIcon();
+        loadAdsToAdsContainer();
 
         log.setCategory(Log.Category.Screen);
         log.setAction(Log.Action.Land);
@@ -142,6 +145,13 @@ public class NewActionActivityHelper implements View.OnClickListener {
     private ActionActivityExtra parseExtras() {
         String key = activity.getIntent().getExtras().getString(NewActionActivity.ExtraKey);
         return ActionActivityExtra.fromJsonString(key);
+    }
+
+    private void loadAdsToAdsContainer() {
+        AdRequest.Builder builder = new AdRequest.Builder();
+        builder.setGender(AdRequest.GENDER_FEMALE);
+        AdRequest request = builder.build();
+        activity.adView.loadAd(request);
     }
 
     private void formatIcon() {

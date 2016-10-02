@@ -7,8 +7,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.helper.NewActionActivityHelper;
 
@@ -52,6 +54,7 @@ public class NewActionActivity extends Activity {
         emotionHappyIcon = (ImageButton) findViewById(R.id.emotion_icon_happy);
         emotionSadIcon = (ImageButton) findViewById(R.id.emotion_icon_sad);
         emotionAngryIcon = (ImageButton) findViewById(R.id.emotion_icon_angry);
+        adView = (AdView) findViewById(R.id.action_panel_ads_view);
     }
 
     public TextView dateTextView;
@@ -65,6 +68,7 @@ public class NewActionActivity extends Activity {
     public ImageButton emotionHappyIcon;
     public ImageButton emotionSadIcon;
     public ImageButton emotionAngryIcon;
+    public AdView adView;
 
     public NewActionActivityHelper helper;
 }
