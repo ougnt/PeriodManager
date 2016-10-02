@@ -83,4 +83,9 @@
     <string name="main_calendar_view">月ビュー</string>
     <string name="main_date_view">日ビュー</string>
     <string name="main_temperature_view">温ビュー</string>
+    <string name="action_activity_emotion">気持</string>
+    <string name="action_activity_emotion_angry">怒って</string>
+    <string name="action_activity_emotion_happy">ハッピー</string>
+    <string name="action_activity_emotion_normal">ノーマル</string>
+    <string name="action_activity_emotion_sad">悲しい</string>
 </resources>

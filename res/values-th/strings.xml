@@ -78,4 +78,9 @@
     <string name="main_calendar_view">มุมมองปฏิทิน</string>
     <string name="main_date_view">มุมมองรายวัน</string>
     <string name="main_temperature_view">กราฟอุณหถูมิ</string>
+    <string name="action_activity_emotion">อารมณ์</string>
+    <string name="action_activity_emotion_angry">โกรธ</string>
+    <string name="action_activity_emotion_happy">มีความสุข</string>
+    <string name="action_activity_emotion_normal">ปกติ</string>
+    <string name="action_activity_emotion_sad">เศร้า</string>
 </resources>
