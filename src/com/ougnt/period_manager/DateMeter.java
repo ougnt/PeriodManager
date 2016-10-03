@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ougnt.period_manager.activity.AppForStatic;
+import com.ougnt.period_manager.activity.helper.FlagHelper;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
 import com.ougnt.period_manager.exception.NotImplementException;
 import com.ougnt.period_manager.repository.IDateRepository;
@@ -106,7 +107,7 @@ public class DateMeter extends LinearLayout {
             }
         }
 
-        _mainColor = ColorForDateType.get(dateType);
+        _mainColor = ColorForDateType.get(dateType) == null ? Nothing : ColorForDateType.get(dateType);
 
         this.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
@@ -210,6 +211,29 @@ public class DateMeter extends LinearLayout {
         _nonOvulationIcon.setScaleType(ImageView.ScaleType.FIT_END);
         _nonOvulationIcon.setLayoutParams(iconParam);
 
+        _emotionIcon = new ImageView(getContext());
+        switch(FlagHelper.GetEmotionFlag(flags)) {
+            case FlagHelper.EmotionNothingIcon: {
+                _emotionIcon.setImageResource(R.drawable.emotion_nothing);
+                break;
+            }
+            case FlagHelper.EmotionSadIcon: {
+                _emotionIcon.setImageResource(R.drawable.emotion_sad);
+                break;
+            }
+            case FlagHelper.EmotionAngryIcon: {
+                _emotionIcon.setImageResource(R.drawable.emotion_angry);
+                break;
+            }
+            case FlagHelper.EmotionHappyIcon: {
+                _emotionIcon.setImageResource(R.drawable.emotion_happy);
+                break;
+            }
+        }
+        _emotionIcon.setScaleType(ImageView.ScaleType.FIT_END);
+        _emotionIcon.setLayoutParams(iconParam);
+
+
         formatIconVisibilityByDateType();
 
         LinearLayout iconPart = new LinearLayout(layout.getContext());
@@ -221,6 +245,7 @@ public class DateMeter extends LinearLayout {
         iconPart.addView(_menstrualIcon);
         iconPart.addView(_ovulationIcon);
         iconPart.addView(_nonOvulationIcon);
+        iconPart.addView(_emotionIcon);
 
         layout.addView(iconPart);
 
@@ -451,6 +476,7 @@ public class DateMeter extends LinearLayout {
     private ImageView _menstrualIcon;
     private ImageView _ovulationIcon;
     private ImageView _nonOvulationIcon;
+    private ImageView _emotionIcon;
     public int dateType = 0;
 
     private OnDateMeterFocusListener _listener;

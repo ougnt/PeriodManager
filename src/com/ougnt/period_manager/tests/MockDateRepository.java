@@ -15,5 +15,6 @@ public class MockDateRepository extends IDateRepository {
         dateType = 1;
         comment = "";
         temperature = 0f;
+        flags = 3;
     }
 }
