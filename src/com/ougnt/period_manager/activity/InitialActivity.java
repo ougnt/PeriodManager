@@ -189,6 +189,8 @@ public class InitialActivity extends Activity {
         sendTrafficMessage(log);
 
         initialApplication();
+        long loadTime = DateTime.now().getMillis() - startTime.getMillis();
+        System.out.println("LoadTime : " + loadTime);
     }
 
     @Override
@@ -207,35 +209,28 @@ public class InitialActivity extends Activity {
     private void initialApplication() {
 
         setContentView(R.layout.main);
+
+        DateTime latest = DateTime.now();
+
         getAllViews();
+
+        System.out.println("getAllView : " + (DateTime.now().getMillis() - latest.getMillis()));
+        latest = DateTime.now();
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.date_detail, newActionPanel);
 
-        AdRequest.Builder adBuilder = new AdRequest.Builder();
-        adBuilder.setGender(AdRequest.GENDER_FEMALE);
-        final AdRequest adRequest = adBuilder.build();
-//        adView.loadAd(adRequest);
-        adMobLayout.setVisibility(View.GONE);
-
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
-                adMobLayout.setVisibility(View.VISIBLE);
-                super.onAdLoaded();
-            }
-
-            @Override
-            public void onAdOpened() {
-                log.setAction(Log.Action.ClickAds);
-                log.setCategory(Log.Category.Ads);
-                sendTrafficMessage(log);
-            }
-        });
+        System.out.println("Inflate : " + (DateTime.now().getMillis() - latest.getMillis()));
+        latest = DateTime.now();
 
         addDateMeterView();
+
+        System.out.println("addDateMeterView : " + (DateTime.now().getMillis() - latest.getMillis()));
+        latest = DateTime.now();
+
         addMonthView();
+
+        System.out.println("After addMonthView : " + (DateTime.now().getMillis() - latest.getMillis()));
 
         adjustLayoutForDisplayModeAccordingToPDisplayMode();
 
@@ -286,6 +281,27 @@ public class InitialActivity extends Activity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+
+                AdRequest.Builder adBuilder = new AdRequest.Builder();
+                adBuilder.setGender(AdRequest.GENDER_FEMALE);
+                final AdRequest adRequest = adBuilder.build();
+                adMobLayout.setVisibility(View.GONE);
+
+                adView.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
+                        adMobLayout.setVisibility(View.VISIBLE);
+                        super.onAdLoaded();
+                    }
+
+                    @Override
+                    public void onAdOpened() {
+                        log.setAction(Log.Action.ClickAds);
+                        log.setCategory(Log.Category.Ads);
+                        sendTrafficMessage(log);
+                    }
+                });
                 adView.loadAd(adRequest);
             }
         }, 1000);
