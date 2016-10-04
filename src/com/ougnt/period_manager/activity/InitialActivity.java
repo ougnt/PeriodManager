@@ -214,8 +214,8 @@ public class InitialActivity extends Activity {
 
         AdRequest.Builder adBuilder = new AdRequest.Builder();
         adBuilder.setGender(AdRequest.GENDER_FEMALE);
-        AdRequest adRequest = adBuilder.build();
-        adView.loadAd(adRequest);
+        final AdRequest adRequest = adBuilder.build();
+//        adView.loadAd(adRequest);
         adMobLayout.setVisibility(View.GONE);
 
         adView.setAdListener(new AdListener() {
@@ -281,6 +281,14 @@ public class InitialActivity extends Activity {
                 return false;
             }
         });
+
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                adView.loadAd(adRequest);
+            }
+        }, 1000);
     }
 
     private void setSelectedDateToAlignWithFingerIndex() {

@@ -44,7 +44,7 @@ public class DateMeter extends LinearLayout {
     public static final int TextColor;
     public static final int TodayTextColor;
 
-    public static final HashMap<Integer, Integer> ColorForDateType = new HashMap<Integer, Integer>();
+    public static final HashMap<Integer, Integer> ColorForDateType = new HashMap<>();
 
     static {
         if (AppForStatic.getContext() == null) {
@@ -115,7 +115,7 @@ public class DateMeter extends LinearLayout {
         this.setGravity(Gravity.CENTER);
 
         _leftHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
-        _contentHorizontalLayout = generateContentLayout();
+        LinearLayout _contentHorizontalLayout = generateContentLayout();
         _rightHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
 
         this.addView(_leftHorizontalLayout);
@@ -275,6 +275,8 @@ public class DateMeter extends LinearLayout {
                 break;
             }
         }
+
+        _emotionIcon.setVisibility(VISIBLE);
     }
 
     private LinearLayout formatVerticalMarginLayout(LinearLayout layout) {
@@ -363,7 +365,7 @@ public class DateMeter extends LinearLayout {
         _upperMonthLayout = new LinearLayout(retLayout.getContext());
         _monthTextLayout = new LinearLayout(retLayout.getContext());
         _monthText = new TextView(_monthTextLayout.getContext());
-        _dayOfWeekText = new TextView(_monthTextLayout.getContext());
+        TextView _dayOfWeekText = new TextView(_monthTextLayout.getContext());
         LinearLayout.LayoutParams upperParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0, 0.65f);
         LinearLayout.LayoutParams textParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, 0, 0.3f);
 
@@ -458,7 +460,6 @@ public class DateMeter extends LinearLayout {
     private int _mainColor;
 
     private LinearLayout _leftHorizontalLayout;
-    private LinearLayout _contentHorizontalLayout;
     private LinearLayout _rightHorizontalLayout;
     private LinearLayout _contentTopLayout;
     private LinearLayout _contentBottomLayout;
@@ -466,7 +467,6 @@ public class DateMeter extends LinearLayout {
     private LinearLayout _leftSideLayout;
     private TextView _dayTextLayout;
     private TextView _monthText;
-    private TextView _dayOfWeekText;
     private LinearLayout _monthLayout;
     private LinearLayout _rightSideLayout;
     private LinearLayout _upperMonthLayout;
