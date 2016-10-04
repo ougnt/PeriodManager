@@ -61,6 +61,7 @@ public class Log {
         public static final String Screen = "Screen";
         public static final String Button = "Button";
         public static final String Ads = "Ads";
+        public static final String LoadTime = "LoadTime";
     }
 
     public class Screen {
@@ -90,7 +91,7 @@ public class Log {
         public static final String ClickAds = "ClickAds";
         public static final String ClickAddDetailToDateMeter = "ClickAddDetailToDateMeter";
         public static final String ClickAddDetailFromCalendar = "ClickAddDetailFromCalendar";
-        public static final String LandToMenu = "LangToMenu";
+        public static final String LandToMenu = "LandToMenu";
         public static final String ClickLockScreen = "ClickLockScreen";
         public static final String ClickSubmitReview = "ClickSubmitReview";
         public static final String ClickLanguageSelector = "ClickLanguageSelector";

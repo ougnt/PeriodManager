@@ -190,7 +190,10 @@ public class InitialActivity extends Activity {
 
         initialApplication();
         long loadTime = DateTime.now().getMillis() - startTime.getMillis();
-        System.out.println("LoadTime : " + loadTime);
+
+        log.setCategory(Log.Category.LoadTime);
+        log.setAction("InitialActivity.OnCreate");
+        sendLoadTimeMessage(log, loadTime);
     }
 
     @Override
@@ -214,23 +217,29 @@ public class InitialActivity extends Activity {
 
         getAllViews();
 
-        System.out.println("getAllView : " + (DateTime.now().getMillis() - latest.getMillis()));
+        log.setCategory(Log.Category.LoadTime);
+        log.setAction("InitialActivity.getAllView");
+        sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
+
         latest = DateTime.now();
 
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.date_detail, newActionPanel);
 
-        System.out.println("Inflate : " + (DateTime.now().getMillis() - latest.getMillis()));
+        log.setAction("InitialActivity.inflater");
+        sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
         latest = DateTime.now();
 
         addDateMeterView();
 
-        System.out.println("addDateMeterView : " + (DateTime.now().getMillis() - latest.getMillis()));
+        log.setAction("InitialActivity.addDateMeterView");
+        sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
         latest = DateTime.now();
 
         addMonthView();
 
-        System.out.println("After addMonthView : " + (DateTime.now().getMillis() - latest.getMillis()));
+        log.setAction("InitialActivity.addMonthView");
+        sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
 
         adjustLayoutForDisplayModeAccordingToPDisplayMode();
 
@@ -1432,6 +1441,24 @@ public class InitialActivity extends Activity {
         tracker.send(new HitBuilders.EventBuilder()
                 .setCategory(log.getCategory())
                 .setAction(log.getAction())
+                .build());
+    }
+
+    synchronized public static void sendLoadTimeMessage(Log log, long loadTime) {
+
+        if (log == null) {
+            return;
+        }
+
+        tracker.setScreenName(log.getScreenType());
+        tracker.setClientId(log.getDeviceId());
+        tracker.setAppVersion(log.getApplicationVersion());
+        tracker.setLanguage(log.getLanguage());
+        tracker.send(new HitBuilders.EventBuilder()
+                .setCategory(log.getCategory())
+                .setAction(log.getAction())
+                .setValue(loadTime)
+                .setLabel("Load Time")
                 .build());
     }
 
