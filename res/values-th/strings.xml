@@ -83,4 +83,7 @@
     <string name="action_activity_emotion_happy">มีความสุข</string>
     <string name="action_activity_emotion_normal">ปกติ</string>
     <string name="action_activity_emotion_sad">เศร้า</string>
+    <string name="action_activity_intercourse">มีเพศสัมพันธ์</string>
+    <string name="action_activity_have_not_intercourse">ไม่</string>
+    <string name="action_activity_have_intercourse">ใช่</string>
 </resources>

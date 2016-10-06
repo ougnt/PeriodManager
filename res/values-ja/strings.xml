@@ -88,4 +88,7 @@
     <string name="action_activity_emotion_happy">ハッピー</string>
     <string name="action_activity_emotion_normal">ノーマル</string>
     <string name="action_activity_emotion_sad">悲しい</string>
+    <string name="action_activity_have_intercourse">はい</string>
+    <string name="action_activity_have_not_intercourse">いいえ</string>
+    <string name="action_activity_intercourse">性行為</string>
 </resources>

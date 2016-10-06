@@ -40,6 +40,8 @@ public class NewActionActivity extends Activity {
         emotionNothingIcon.setOnClickListener(helper);
         emotionHappyIcon.setOnClickListener(helper);
         emotionAngryIcon.setOnClickListener(helper);
+        intercourseIcon.setOnClickListener(helper);
+        noIntercourseIcon.setOnClickListener(helper);
     }
 
     public void getAllViews() {
@@ -54,6 +56,8 @@ public class NewActionActivity extends Activity {
         emotionHappyIcon = (ImageButton) findViewById(R.id.emotion_icon_happy);
         emotionSadIcon = (ImageButton) findViewById(R.id.emotion_icon_sad);
         emotionAngryIcon = (ImageButton) findViewById(R.id.emotion_icon_angry);
+        noIntercourseIcon = (ImageButton) findViewById(R.id.action_panel_no_intercourse);
+        intercourseIcon = (ImageButton) findViewById(R.id.action_panel_intercourse);
         adView = (AdView) findViewById(R.id.action_panel_ads_view);
     }
 
@@ -68,6 +72,8 @@ public class NewActionActivity extends Activity {
     public ImageButton emotionHappyIcon;
     public ImageButton emotionSadIcon;
     public ImageButton emotionAngryIcon;
+    public ImageButton noIntercourseIcon;
+    public ImageButton intercourseIcon;
     public AdView adView;
 
     public NewActionActivityHelper helper;

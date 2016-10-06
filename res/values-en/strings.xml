@@ -85,4 +85,7 @@
     <string name="action_activity_emotion_happy">Happy</string>
     <string name="action_activity_emotion_normal">Normal</string>
     <string name="action_activity_emotion_sad">Sad</string>
+    <string name="action_activity_intercourse">Intercourse</string>
+    <string name="action_activity_have_intercourse">Yes</string>
+    <string name="action_activity_have_not_intercourse">No</string>
 </resources>

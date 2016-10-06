@@ -12,8 +12,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.phenotype.Flag;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.InitialActivity;
 import com.ougnt.period_manager.activity.NewActionActivity;
@@ -104,6 +103,18 @@ public class NewActionActivityHelper implements View.OnClickListener {
                 log.setAction(Log.Action.ClickEmotionIcon);
                 break;
             }
+            case R.id.action_panel_intercourse: {
+                paintIntercourseIcon((ImageButton) v);
+                intercourseFlag = FlagHelper.HaveIntercourseFlag;
+                log.setAction(Log.Action.ClickIntercourseIcon);
+                break;
+            }
+            case R.id.action_panel_no_intercourse: {
+                paintIntercourseIcon((ImageButton) v);
+                intercourseFlag = FlagHelper.HaventIntercourseFlag;
+                log.setAction(Log.Action.ClickIntercourseIcon);
+                break;
+            }
         }
 
         InitialActivity.sendTrafficMessage(log);
@@ -111,7 +122,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
 
     private long getNewFlags() {
 
-        return (extra.flags & ~FlagHelper.EmotionFlag) | emotionIconFlag;
+        return (extra.flags & ~FlagHelper.EmotionFlag & ~FlagHelper.IntercourseFlag) | emotionIconFlag | (intercourseFlag<<4);
     }
 
     public void setUpDisplay() {
@@ -167,6 +178,8 @@ public class NewActionActivityHelper implements View.OnClickListener {
         activity.emotionHappyIcon.setLayoutParams(params);
         activity.emotionNothingIcon.setLayoutParams(params);
         activity.emotionSadIcon.setLayoutParams(params);
+        activity.intercourseIcon.setLayoutParams(params);
+        activity.noIntercourseIcon.setLayoutParams(params);
 
         switch(FlagHelper.GetEmotionFlag(extra.flags)) {
             case FlagHelper.EmotionAngryIcon: {
@@ -186,6 +199,25 @@ public class NewActionActivityHelper implements View.OnClickListener {
                 break;
             }
         }
+
+        switch (FlagHelper.GetIntercourseFlag(extra.flags)) {
+            case FlagHelper.HaveIntercourseFlag: {
+                paintIntercourseIcon(activity.intercourseIcon);
+                break;
+            }
+            case FlagHelper.HaventIntercourseFlag: {
+                paintIntercourseIcon(activity.noIntercourseIcon);
+                break;
+            }
+        }
+        intercourseFlag = FlagHelper.GetIntercourseFlag(extra.flags);
+        emotionIconFlag = FlagHelper.GetEmotionFlag(extra.flags);
+    }
+
+    private void paintIntercourseIcon(ImageButton clickedIcon) {
+        activity.noIntercourseIcon.setBackgroundColor(0);
+        activity.intercourseIcon.setBackgroundColor(0);
+        clickedIcon.setBackgroundColor(ContextCompat.getColor(activity, R.color.on_select_zone_bg));
     }
 
     private void paintEmotionIconClick(ImageButton clickedIcon) {
@@ -201,4 +233,6 @@ public class NewActionActivityHelper implements View.OnClickListener {
     public boolean isActionButtonPushed;
     public Log log;
     private long emotionIconFlag;
+    private long intercourseFlag;
+
 }

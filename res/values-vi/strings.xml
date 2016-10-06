@@ -92,4 +92,7 @@
     <string name="action_activity_emotion_sad">buồn</string>
     <string name="action_activity_emotion_angry">bực bội</string>
     <string name="action_activity_emotion_normal">bình thường</string>
+    <string name="action_activity_intercourse">giao hợp</string>
+    <string name="action_activity_have_intercourse">Vâng</string>
+    <string name="action_activity_have_not_intercourse">Không</string>
 </resources>

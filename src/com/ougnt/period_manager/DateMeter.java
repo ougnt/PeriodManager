@@ -212,7 +212,7 @@ public class DateMeter extends LinearLayout {
         _nonOvulationIcon.setLayoutParams(iconParam);
 
         _emotionIcon = new ImageView(getContext());
-        switch(FlagHelper.GetEmotionFlag(flags)) {
+        switch (FlagHelper.GetEmotionFlag(flags)) {
             case FlagHelper.EmotionNothingIcon: {
                 _emotionIcon.setImageResource(R.drawable.emotion_nothing);
                 break;
@@ -233,6 +233,11 @@ public class DateMeter extends LinearLayout {
         _emotionIcon.setScaleType(ImageView.ScaleType.FIT_END);
         _emotionIcon.setLayoutParams(iconParam);
 
+        _intercourseIcon = new ImageView(getContext());
+        _intercourseIcon.setImageResource(R.drawable.intercourse_icon);
+        _intercourseIcon.setScaleType(ImageView.ScaleType.FIT_END);
+        _intercourseIcon.setLayoutParams(iconParam);
+
 
         formatIconVisibilityByDateType();
 
@@ -246,6 +251,7 @@ public class DateMeter extends LinearLayout {
         iconPart.addView(_ovulationIcon);
         iconPart.addView(_nonOvulationIcon);
         iconPart.addView(_emotionIcon);
+        iconPart.addView(_intercourseIcon);
 
         layout.addView(iconPart);
 
@@ -277,6 +283,11 @@ public class DateMeter extends LinearLayout {
         }
 
         _emotionIcon.setVisibility(VISIBLE);
+        if (FlagHelper.GetIntercourseFlag(flags) == FlagHelper.HaveIntercourseFlag) {
+            _intercourseIcon.setVisibility(VISIBLE);
+        } else {
+            _intercourseIcon.setVisibility(GONE);
+        }
     }
 
     private LinearLayout formatVerticalMarginLayout(LinearLayout layout) {
@@ -477,6 +488,7 @@ public class DateMeter extends LinearLayout {
     private ImageView _ovulationIcon;
     private ImageView _nonOvulationIcon;
     private ImageView _emotionIcon;
+    private ImageView _intercourseIcon;
     public int dateType = 0;
 
     private OnDateMeterFocusListener _listener;
