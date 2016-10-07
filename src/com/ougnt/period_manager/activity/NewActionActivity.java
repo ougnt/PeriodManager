@@ -58,7 +58,8 @@ public class NewActionActivity extends Activity {
         emotionAngryIcon = (ImageButton) findViewById(R.id.emotion_icon_angry);
         noIntercourseIcon = (ImageButton) findViewById(R.id.action_panel_no_intercourse);
         intercourseIcon = (ImageButton) findViewById(R.id.action_panel_intercourse);
-        adView = (AdView) findViewById(R.id.action_panel_ads_view);
+//        adView = (AdView) findViewById(R.id.action_panel_ads_view);
+        adViewContainer = (LinearLayout) findViewById(R.id.action_panel_ad_view_container);
     }
 
     public TextView dateTextView;
@@ -74,6 +75,7 @@ public class NewActionActivity extends Activity {
     public ImageButton emotionAngryIcon;
     public ImageButton noIntercourseIcon;
     public ImageButton intercourseIcon;
+    public LinearLayout adViewContainer;
     public AdView adView;
 
     public NewActionActivityHelper helper;

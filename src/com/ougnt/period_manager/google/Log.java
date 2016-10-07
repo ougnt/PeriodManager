@@ -100,5 +100,7 @@ public class Log {
         public static final String ClickSetting = "ClickSetting";
         public static final String ClickEmotionIcon = "ClickEmotionIcon";
         public static final String ClickIntercourseIcon = "ClickInterCourseIcon";
+        public static final String AdFailedToLoad = "AdFailedToLoad";
+        public static final String NativeAdClick = "NativeAdClick";
     }
 }

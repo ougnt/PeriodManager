@@ -368,13 +368,23 @@
                 </HorizontalScrollView>
             </LinearLayout>
 
-            <com.google.android.gms.ads.AdView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/action_panel_ads_view"
-                ads:adSize="FULL_WIDTHx80"
-                ads:adUnitId="ca-app-pub-2522554213803646/1447188214"
-                android:layout_marginTop="10dp" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/action_panel_ad_view_container"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="10dp">
+
+                <!--<com.google.android.gms.ads.AdView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:id="@+id/action_panel_ads_view"-->
+                    <!--ads:adSize="FULL_WIDTHx80"-->
+                    <!--ads:adUnitId="ca-app-pub-2522554213803646/1447188214"-->
+                    <!--android:layout_marginTop="10dp" />-->
+            </LinearLayout>
 
             <LinearLayout
                 android:orientation="vertical"

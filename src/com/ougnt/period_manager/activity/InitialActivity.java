@@ -293,6 +293,8 @@ public class InitialActivity extends Activity {
 
                 AdRequest.Builder adBuilder = new AdRequest.Builder();
                 adBuilder.setGender(AdRequest.GENDER_FEMALE);
+                adBuilder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
+                adBuilder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
                 final AdRequest adRequest = adBuilder.build();
                 adMobLayout.setVisibility(View.GONE);
 

@@ -4,14 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
+import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.phenotype.Flag;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.InitialActivity;
@@ -134,11 +139,26 @@ public class NewActionActivityHelper implements View.OnClickListener {
         activity.commentInput.setText(extra.comment);
         isActionButtonPushed = false;
         formatIcon();
-        loadAdsToAdsContainer();
 
         log.setCategory(Log.Category.Screen);
         log.setAction(Log.Action.Land);
         InitialActivity.sendTrafficMessage(log);
+
+        Handler adHandler = new Handler();
+        adHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                while(activity.adViewContainer.getWidth() == 0) {
+                    try {
+                        Thread.sleep(10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                loadAdsToAdsContainer();
+            }
+        }, 500);
     }
 
     public String getButtonText(int dateType) {
@@ -159,10 +179,41 @@ public class NewActionActivityHelper implements View.OnClickListener {
     }
 
     private void loadAdsToAdsContainer() {
+
         AdRequest.Builder builder = new AdRequest.Builder();
         builder.setGender(AdRequest.GENDER_FEMALE);
+        builder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
+        builder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
         AdRequest request = builder.build();
-        activity.adView.loadAd(request);
+        AdView adView = new AdView(activity);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        int width = activity.adViewContainer.getWidth() / 4;
+        width = width < 280 ? 280 : width;
+        adView.setAdSize(new AdSize(width, AdSize.AUTO_HEIGHT));
+        adView.setLayoutParams(params);
+        adView.setAdUnitId("ca-app-pub-2522554213803646/1447188214");
+        adView.loadAd(request);
+        activity.adViewContainer.addView(adView);
+        adView.setAdListener(new AdListener() {
+
+            @Override
+            public void onAdFailedToLoad(int i) {
+                super.onAdFailedToLoad(i);
+                log.setScreenType(Log.Screen.ActionPanel);
+                log.setCategory(Log.Category.Ads);
+                log.setAction(Log.Action.AdFailedToLoad);
+                InitialActivity.sendTrafficMessage(log);
+            }
+        });
+        adView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                log.setScreenType(Log.Screen.ActionPanel);
+                log.setCategory(Log.Category.Ads);
+                log.setAction(Log.Action.NativeAdClick);
+                InitialActivity.sendTrafficMessage(log);
+            }
+        });
     }
 
     private void formatIcon() {
