@@ -106,6 +106,6 @@ public class HttpHelper {
         for(int i = 0 ; i < e.getStackTrace().length; i++) {
             stacktrace += e.getStackTrace()[i].toString() + "\\n";
         }
-        HttpHelper.post(InitialActivity.ErrorLogUri, String.format("{\"errorMessage\":\"%s\",\"stacktrace\":\"%s\"}", e.getMessage(), stacktrace));
+        HttpHelper.post(InitialActivity.ErrorLogUri, String.format("{\"errorMessage\":\"%s\",\"stacktrace\":\"%s\",\"applicationVersion\":\"%s\"}", e.getMessage(), stacktrace, InitialActivity.ApplicationVersion));
     }
 }

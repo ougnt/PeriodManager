@@ -197,6 +197,7 @@ public class InitialActivity extends Activity {
             log.setCategory(Log.Category.LoadTime);
             log.setAction("InitialActivity.OnCreate");
             sendLoadTimeMessage(log, loadTime);
+            throw new Exception("Test");
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
