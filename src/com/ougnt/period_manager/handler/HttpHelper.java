@@ -2,6 +2,8 @@ package com.ougnt.period_manager.handler;
 
 import android.os.AsyncTask;
 
+import com.ougnt.period_manager.activity.InitialActivity;
+
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -63,7 +65,7 @@ public class HttpHelper {
                 try {
                     URL targetUrl = new URL(url);
                     HttpURLConnection connection = (HttpURLConnection) targetUrl.openConnection();
-                    connection.setRequestMethod("GET");
+                    connection.setRequestMethod("POST");
                     connection.setRequestProperty("Content-Type", "Application/Json");
                     connection.setUseCaches(false);
                     connection.setDoOutput(true);
@@ -97,5 +99,13 @@ public class HttpHelper {
         }
 
         return "";
+    }
+
+    public static void sendErrorLog(Exception e) {
+        String stacktrace = "";
+        for(int i = 0 ; i < e.getStackTrace().length; i++) {
+            stacktrace += e.getStackTrace()[i].toString() + "\\n";
+        }
+        HttpHelper.post(InitialActivity.ErrorLogUri, String.format("{\"errorMessage\":\"%s\",\"stacktrace\":\"%s\"}", e.getMessage(), stacktrace));
     }
 }

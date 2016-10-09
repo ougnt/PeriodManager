@@ -19,6 +19,7 @@ import com.ougnt.period_manager.activity.AppForStatic;
 import com.ougnt.period_manager.activity.helper.FlagHelper;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
 import com.ougnt.period_manager.exception.NotImplementException;
+import com.ougnt.period_manager.handler.HttpHelper;
 import com.ougnt.period_manager.repository.IDateRepository;
 import com.ougnt.period_manager.tests.MockDateRepository;
 
@@ -85,50 +86,54 @@ public class DateMeter extends LinearLayout {
     public DateMeter(Context context, IDateRepository initialDate, OnDateMeterFocusListener listener) {
         super(context);
 
-        comment = initialDate.comment;
-        dateType = initialDate.dateType;
-        temperature = initialDate.temperature;
-        date = initialDate.date;
-        flags = initialDate.flags;
+        try {
+            comment = initialDate.comment;
+            dateType = initialDate.dateType;
+            temperature = initialDate.temperature;
+            date = initialDate.date;
+            flags = initialDate.flags;
 
-        // Wait until the static method fill in the ColorForDateType
-        while (ColorForDateType == null) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            // Wait until the static method fill in the ColorForDateType
+            while (ColorForDateType == null) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
+            while (ColorForDateType.size() < 4) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            _mainColor = ColorForDateType.get(dateType) == null ? Nothing : ColorForDateType.get(dateType);
+
+            this.setOrientation(LinearLayout.HORIZONTAL);
+            LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+            this.setLayoutParams(params);
+            this.setGravity(Gravity.CENTER);
+
+            _leftHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
+            LinearLayout _contentHorizontalLayout = generateContentLayout();
+            _rightHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
+
+            this.addView(_leftHorizontalLayout);
+            this.addView(_contentHorizontalLayout);
+            this.addView(_rightHorizontalLayout);
+            this._listener = listener;
+
+            setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    makeSelectedFormat();
+                }
+            });
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
-        while (ColorForDateType.size() < 4) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        _mainColor = ColorForDateType.get(dateType) == null ? Nothing : ColorForDateType.get(dateType);
-
-        this.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        this.setLayoutParams(params);
-        this.setGravity(Gravity.CENTER);
-
-        _leftHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
-        LinearLayout _contentHorizontalLayout = generateContentLayout();
-        _rightHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
-
-        this.addView(_leftHorizontalLayout);
-        this.addView(_contentHorizontalLayout);
-        this.addView(_rightHorizontalLayout);
-        this._listener = listener;
-
-        setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                makeSelectedFormat();
-            }
-        });
     }
 
     public String comment = "";
@@ -140,153 +145,174 @@ public class DateMeter extends LinearLayout {
     }
 
     public void makeSelectedFormat() {
-        _leftHorizontalLayout.setBackgroundColor(OnSelectColor);
-        _rightHorizontalLayout.setBackgroundColor(OnSelectColor);
-        _contentTopLayout.setBackgroundColor(OnSelectColor);
-        _contentBottomLayout.setBackgroundColor(OnSelectColor);
-        _listener.onFocusMoveIn(this);
-        this.setBackgroundColor(OnSelectColor);
+        try {
+            _leftHorizontalLayout.setBackgroundColor(OnSelectColor);
+            _rightHorizontalLayout.setBackgroundColor(OnSelectColor);
+            _contentTopLayout.setBackgroundColor(OnSelectColor);
+            _contentBottomLayout.setBackgroundColor(OnSelectColor);
+            _listener.onFocusMoveIn(this);
+            this.setBackgroundColor(OnSelectColor);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     public void resetFormat() {
-        _leftHorizontalLayout.setBackgroundColor(Color.GRAY);
-        _rightHorizontalLayout.setBackgroundColor(Color.GRAY);
-        _contentTopLayout.setBackgroundColor(_mainColor);
-        _contentBottomLayout.setBackgroundColor(_mainColor);
-        this.setBackgroundColor(_mainColor);
+        try {
+            _leftHorizontalLayout.setBackgroundColor(Color.GRAY);
+            _rightHorizontalLayout.setBackgroundColor(Color.GRAY);
+            _contentTopLayout.setBackgroundColor(_mainColor);
+            _contentBottomLayout.setBackgroundColor(_mainColor);
+            this.setBackgroundColor(_mainColor);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     public void changeColor(int newDateType) {
 
-        dateType = newDateType;
-        int newColor = ColorForDateType.get(dateType);
+        try {
+            dateType = newDateType;
+            int newColor = ColorForDateType.get(dateType);
 
-        _mainColor = newColor;
-        _leftSideLayout.setBackgroundColor(newColor);
-        _dayTextLayout.setBackgroundColor(newColor);
-        _monthLayout.setBackgroundColor(newColor);
-        _rightSideLayout.setBackgroundColor(newColor);
-        _monthText.setBackgroundColor(newColor);
-        _monthTextLayout.setBackgroundColor(newColor);
-        _centralLayout.setBackgroundColor(newColor);
-        _upperMonthLayout.setBackgroundColor(newColor);
-        _iconLayout.setBackgroundColor(newColor);
-        _contentTopLayout.setBackgroundColor(newColor);
-        _contentBottomLayout.setBackgroundColor(newColor);
+            _mainColor = newColor;
+            _leftSideLayout.setBackgroundColor(newColor);
+            _dayTextLayout.setBackgroundColor(newColor);
+            _monthLayout.setBackgroundColor(newColor);
+            _rightSideLayout.setBackgroundColor(newColor);
+            _monthText.setBackgroundColor(newColor);
+            _monthTextLayout.setBackgroundColor(newColor);
+            _centralLayout.setBackgroundColor(newColor);
+            _upperMonthLayout.setBackgroundColor(newColor);
+            _iconLayout.setBackgroundColor(newColor);
+            _contentTopLayout.setBackgroundColor(newColor);
+            _contentBottomLayout.setBackgroundColor(newColor);
 
-        this.setBackgroundColor(newColor);
+            this.setBackgroundColor(newColor);
 
-        formatIconVisibilityByDateType();
+            formatIconVisibilityByDateType();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private LinearLayout formatIconLayout(LinearLayout layout) {
 
-        LinearLayout.LayoutParams retParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        layout.setLayoutParams(retParams);
-        layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setBackgroundColor(_mainColor);
+        try {
+            LayoutParams retParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+            layout.setLayoutParams(retParams);
+            layout.setOrientation(LinearLayout.HORIZONTAL);
+            layout.setBackgroundColor(_mainColor);
 
-        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x == 0 ? 2400 : size.x;
+            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int width = size.x == 0 ? 2400 : size.x;
 
-        IconSize = width / 20;
+            IconSize = width / 20;
 
-        LinearLayout.LayoutParams iconParam = new LinearLayout.LayoutParams(IconSize, IconSize);
+            LayoutParams iconParam = new LayoutParams(IconSize, IconSize);
 
-        _menstrualIcon = new ImageView(getContext());
-        _menstrualIcon.setImageResource(R.drawable.menstrual_icon);
-        _menstrualIcon.setScaleType(ImageView.ScaleType.FIT_END);
-        _menstrualIcon.setLayoutParams(iconParam);
+            _menstrualIcon = new ImageView(getContext());
+            _menstrualIcon.setImageResource(R.drawable.menstrual_icon);
+            _menstrualIcon.setScaleType(ImageView.ScaleType.FIT_END);
+            _menstrualIcon.setLayoutParams(iconParam);
 
-        _ovulationIcon = new ImageView(getContext());
-        _ovulationIcon.setImageResource(R.drawable.ovulation_icon);
-        _ovulationIcon.setScaleType(ImageView.ScaleType.FIT_END);
-        _ovulationIcon.setLayoutParams(iconParam);
+            _ovulationIcon = new ImageView(getContext());
+            _ovulationIcon.setImageResource(R.drawable.ovulation_icon);
+            _ovulationIcon.setScaleType(ImageView.ScaleType.FIT_END);
+            _ovulationIcon.setLayoutParams(iconParam);
 
-        _nonOvulationIcon = new ImageView(getContext());
-        _nonOvulationIcon.setImageResource(R.drawable.non_ovulation_icon);
-        _nonOvulationIcon.setScaleType(ImageView.ScaleType.FIT_END);
-        _nonOvulationIcon.setLayoutParams(iconParam);
+            _nonOvulationIcon = new ImageView(getContext());
+            _nonOvulationIcon.setImageResource(R.drawable.non_ovulation_icon);
+            _nonOvulationIcon.setScaleType(ImageView.ScaleType.FIT_END);
+            _nonOvulationIcon.setLayoutParams(iconParam);
 
-        _emotionIcon = new ImageView(getContext());
-        switch (FlagHelper.GetEmotionFlag(flags)) {
-            case FlagHelper.EmotionNothingIcon: {
-                _emotionIcon.setImageResource(R.drawable.emotion_nothing);
-                break;
+            _emotionIcon = new ImageView(getContext());
+            switch (FlagHelper.GetEmotionFlag(flags)) {
+                case FlagHelper.EmotionNothingIcon: {
+                    _emotionIcon.setImageResource(R.drawable.emotion_nothing);
+                    break;
+                }
+                case FlagHelper.EmotionSadIcon: {
+                    _emotionIcon.setImageResource(R.drawable.emotion_sad);
+                    break;
+                }
+                case FlagHelper.EmotionAngryIcon: {
+                    _emotionIcon.setImageResource(R.drawable.emotion_angry);
+                    break;
+                }
+                case FlagHelper.EmotionHappyIcon: {
+                    _emotionIcon.setImageResource(R.drawable.emotion_happy);
+                    break;
+                }
             }
-            case FlagHelper.EmotionSadIcon: {
-                _emotionIcon.setImageResource(R.drawable.emotion_sad);
-                break;
-            }
-            case FlagHelper.EmotionAngryIcon: {
-                _emotionIcon.setImageResource(R.drawable.emotion_angry);
-                break;
-            }
-            case FlagHelper.EmotionHappyIcon: {
-                _emotionIcon.setImageResource(R.drawable.emotion_happy);
-                break;
-            }
+            _emotionIcon.setScaleType(ImageView.ScaleType.FIT_END);
+            _emotionIcon.setLayoutParams(iconParam);
+
+            _intercourseIcon = new ImageView(getContext());
+            _intercourseIcon.setImageResource(R.drawable.intercourse_icon);
+            _intercourseIcon.setScaleType(ImageView.ScaleType.FIT_END);
+            _intercourseIcon.setLayoutParams(iconParam);
+
+
+            formatIconVisibilityByDateType();
+
+            LinearLayout iconPart = new LinearLayout(layout.getContext());
+
+            LayoutParams iconParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 0.8f);
+            iconPart.setLayoutParams(iconParams);
+            iconPart.setGravity(Gravity.BOTTOM | Gravity.LEFT);
+
+            iconPart.addView(_menstrualIcon);
+            iconPart.addView(_ovulationIcon);
+            iconPart.addView(_nonOvulationIcon);
+            iconPart.addView(_emotionIcon);
+            iconPart.addView(_intercourseIcon);
+
+            layout.addView(iconPart);
+
+            return layout;
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+            return layout;
         }
-        _emotionIcon.setScaleType(ImageView.ScaleType.FIT_END);
-        _emotionIcon.setLayoutParams(iconParam);
-
-        _intercourseIcon = new ImageView(getContext());
-        _intercourseIcon.setImageResource(R.drawable.intercourse_icon);
-        _intercourseIcon.setScaleType(ImageView.ScaleType.FIT_END);
-        _intercourseIcon.setLayoutParams(iconParam);
-
-
-        formatIconVisibilityByDateType();
-
-        LinearLayout iconPart = new LinearLayout(layout.getContext());
-
-        LayoutParams iconParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 0.8f);
-        iconPart.setLayoutParams(iconParams);
-        iconPart.setGravity(Gravity.BOTTOM | Gravity.LEFT);
-
-        iconPart.addView(_menstrualIcon);
-        iconPart.addView(_ovulationIcon);
-        iconPart.addView(_nonOvulationIcon);
-        iconPart.addView(_emotionIcon);
-        iconPart.addView(_intercourseIcon);
-
-        layout.addView(iconPart);
-
-        return layout;
     }
 
     private void formatIconVisibilityByDateType() {
 
-        switch (dateType) {
-            case Menstrual: {
-                _menstrualIcon.setVisibility(VISIBLE);
-                _nonOvulationIcon.setVisibility(VISIBLE);
-                _ovulationIcon.setVisibility(GONE);
-                break;
+        try {
+            switch (dateType) {
+                case Menstrual: {
+                    _menstrualIcon.setVisibility(VISIBLE);
+                    _nonOvulationIcon.setVisibility(VISIBLE);
+                    _ovulationIcon.setVisibility(GONE);
+                    break;
+                }
+                case OvulationDate:
+                case PossiblyOvulation: {
+                    _menstrualIcon.setVisibility(GONE);
+                    _ovulationIcon.setVisibility(VISIBLE);
+                    _nonOvulationIcon.setVisibility(GONE);
+                    break;
+                }
+                case Nothing: {
+                    _menstrualIcon.setVisibility(GONE);
+                    _ovulationIcon.setVisibility(GONE);
+                    _nonOvulationIcon.setVisibility(VISIBLE);
+                    break;
+                }
             }
-            case OvulationDate:
-            case PossiblyOvulation: {
-                _menstrualIcon.setVisibility(GONE);
-                _ovulationIcon.setVisibility(VISIBLE);
-                _nonOvulationIcon.setVisibility(GONE);
-                break;
-            }
-            case Nothing: {
-                _menstrualIcon.setVisibility(GONE);
-                _ovulationIcon.setVisibility(GONE);
-                _nonOvulationIcon.setVisibility(VISIBLE);
-                break;
-            }
-        }
 
-        _emotionIcon.setVisibility(VISIBLE);
-        if (FlagHelper.GetIntercourseFlag(flags) == FlagHelper.HaveIntercourseFlag) {
-            _intercourseIcon.setVisibility(VISIBLE);
-        } else {
-            _intercourseIcon.setVisibility(GONE);
+            _emotionIcon.setVisibility(VISIBLE);
+            if (FlagHelper.GetIntercourseFlag(flags) == FlagHelper.HaveIntercourseFlag) {
+                _intercourseIcon.setVisibility(VISIBLE);
+            } else {
+                _intercourseIcon.setVisibility(GONE);
+            }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
