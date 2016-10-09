@@ -373,9 +373,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/action_panel_ad_view_container"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp">
+                android:layout_marginRight="10dp">
 
                 <!--<com.google.android.gms.ads.AdView-->
                     <!--android:layout_width="wrap_content"-->

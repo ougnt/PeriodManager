@@ -3,6 +3,7 @@ package com.ougnt.period_manager.activity.helper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Point;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -183,13 +184,12 @@ public class NewActionActivityHelper implements View.OnClickListener {
         AdRequest.Builder builder = new AdRequest.Builder();
         builder.setGender(AdRequest.GENDER_FEMALE);
         builder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
-        builder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
+//        builder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
         AdRequest request = builder.build();
-        AdView adView = new AdView(activity);
+        final AdView adView = new AdView(activity);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        int width = activity.adViewContainer.getWidth() / 4;
-        width = width < 280 ? 280 : width;
-        adView.setAdSize(new AdSize(width, AdSize.AUTO_HEIGHT));
+        int width = activity.getResources().getConfiguration().screenWidthDp - 20;
+        adView.setAdSize(new AdSize(width, 80));
         adView.setLayoutParams(params);
         adView.setAdUnitId("ca-app-pub-2522554213803646/1447188214");
         adView.loadAd(request);
@@ -202,6 +202,16 @@ public class NewActionActivityHelper implements View.OnClickListener {
                 log.setScreenType(Log.Screen.ActionPanel);
                 log.setCategory(Log.Category.Ads);
                 log.setAction(Log.Action.AdFailedToLoad);
+                InitialActivity.sendTrafficMessage(log);
+            }
+
+            @Override
+            public void onAdOpened() {
+                super.onAdOpened();
+
+                log.setScreenType(Log.Screen.ActionPanel);
+                log.setCategory(Log.Category.Ads);
+                log.setAction(Log.Action.AdOpened);
                 InitialActivity.sendTrafficMessage(log);
             }
         });
