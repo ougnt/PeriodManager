@@ -78,13 +78,13 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 58;
+    public static final int ApplicationVersion = 59;
 
     // TODO : Change this to the real one
     // Live Env
-//    public static final String StatServer = "27.254.81.190:5555";
+    public static final String StatServer = "27.254.81.190:5555";
     // Dev env
-    public static final String StatServer = "192.168.1.101:9000";
+//    public static final String StatServer = "192.168.1.101:9000";
     public static final String StatUri = String.format("http://%s/usageStat", StatServer);
     public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
     public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
