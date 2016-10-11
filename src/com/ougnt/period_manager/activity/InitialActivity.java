@@ -468,7 +468,7 @@ public class InitialActivity extends Activity {
             DateTime calendarDate = selectedDate == null ? now() : selectedDate.getDate();
 
             setupCalendar(calendarDate.getMonthOfYear(), calendarDate.getYear());
-            loadDatesToView();
+            loadDatesToMonthView();
 
             TextView nextMonth = (TextView) findViewById(R.id.next_month);
             TextView previousMonth = (TextView) findViewById(R.id.previous_month);
@@ -507,7 +507,7 @@ public class InitialActivity extends Activity {
         }
     }
 
-    private void loadDatesToView() {
+    private void loadDatesToMonthView() {
 
         try {
             for (int row = 0; row < calendar.dateRepositories.length; row++) {
@@ -592,6 +592,9 @@ public class InitialActivity extends Activity {
                         color = ContextCompat.getColor(this, R.color.calendar_period_text);
                         break;
                     case DateMeter.PossiblyOvulation:
+                        color = ContextCompat.getColor(this, R.color.calendar_possibly_ovulation_text);
+                        break;
+                    case DateMeter.OvulationDate:
                         color = ContextCompat.getColor(this, R.color.calendar_ovulation_text);
                         break;
                     default:
@@ -764,7 +767,7 @@ public class InitialActivity extends Activity {
                 setupCalendar(--calendarCurrentMonth, calendarCurrentYear);
             }
 
-            loadDatesToView();
+            loadDatesToMonthView();
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
@@ -782,7 +785,7 @@ public class InitialActivity extends Activity {
                 setupCalendar(++calendarCurrentMonth, calendarCurrentYear);
             }
 
-            loadDatesToView();
+            loadDatesToMonthView();
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
