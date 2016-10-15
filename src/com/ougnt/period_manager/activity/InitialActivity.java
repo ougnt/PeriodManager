@@ -56,6 +56,7 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -679,16 +680,23 @@ public class InitialActivity extends Activity {
 
                         if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(extra.date.toString("yyyy-MM-dd"))) {
                             selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
+                            selectedDate.comment = extra.comment;
+                            selectedDate.temperature = (float) extra.temperature;
+                            selectedDate.setFlags(extra.flags);
+
+                            DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), selectedDate.comment);
+                            DateRepository.updateDateRepositorySetTemperature(this, selectedDate.getDate(), selectedDate.temperature);
+                            DateRepository.updateDateRepositorySetFlags(this, selectedDate.getDate(), selectedDate.getFlags());
+
+                            selectedDate = new DateMeter(this,
+                                    DateRepository.getDateRepositories(this, selectedDate.getDate(), selectedDate.getDate()).get(0),
+                                    dateTouchListener);
+                            dateMeterContainer.removeViewAt(i);
+                            dateMeterContainer.addView(selectedDate, i);
                             break;
                         }
                     }
 
-                    selectedDate.comment = extra.comment;
-                    selectedDate.temperature = (float) extra.temperature;
-                    selectedDate.setFlags(extra.flags);
-                    DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), selectedDate.comment);
-                    DateRepository.updateDateRepositorySetTemperature(this, selectedDate.getDate(), selectedDate.temperature);
-                    DateRepository.updateDateRepositorySetFlags(this, selectedDate.getDate(), selectedDate.getFlags());
                     addMonthView();
                 }
             }

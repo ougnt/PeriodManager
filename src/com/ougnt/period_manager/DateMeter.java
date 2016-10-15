@@ -20,6 +20,7 @@ import com.ougnt.period_manager.activity.helper.FlagHelper;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
 import com.ougnt.period_manager.exception.NotImplementException;
 import com.ougnt.period_manager.handler.HttpHelper;
+import com.ougnt.period_manager.repository.DateRepository;
 import com.ougnt.period_manager.repository.IDateRepository;
 import com.ougnt.period_manager.tests.MockDateRepository;
 
@@ -163,6 +164,7 @@ public class DateMeter extends LinearLayout {
             _rightHorizontalLayout.setBackgroundColor(Color.GRAY);
             _contentTopLayout.setBackgroundColor(_mainColor);
             _contentBottomLayout.setBackgroundColor(_mainColor);
+            _iconLayout = formatIconLayout(new LinearLayout(getContext()));
             this.setBackgroundColor(_mainColor);
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
@@ -256,6 +258,10 @@ public class DateMeter extends LinearLayout {
             _intercourseIcon.setScaleType(ImageView.ScaleType.FIT_END);
             _intercourseIcon.setLayoutParams(iconParam);
 
+            _pencilIcon = new ImageView(getContext());
+            _pencilIcon.setImageResource(R.drawable.pencil_icon);
+            _pencilIcon.setScaleType(ImageView.ScaleType.FIT_END);
+            _pencilIcon.setLayoutParams(iconParam);
 
             formatIconVisibilityByDateType();
 
@@ -270,6 +276,7 @@ public class DateMeter extends LinearLayout {
             iconPart.addView(_nonOvulationIcon);
             iconPart.addView(_emotionIcon);
             iconPart.addView(_intercourseIcon);
+            iconPart.addView(_pencilIcon);
 
             layout.addView(iconPart);
 
@@ -311,6 +318,10 @@ public class DateMeter extends LinearLayout {
             } else {
                 _intercourseIcon.setVisibility(GONE);
             }
+
+            int pencilVisibility = comment.equals("") ? GONE : VISIBLE;
+            _pencilIcon.setVisibility(pencilVisibility);
+
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
@@ -515,6 +526,7 @@ public class DateMeter extends LinearLayout {
     private ImageView _nonOvulationIcon;
     private ImageView _emotionIcon;
     private ImageView _intercourseIcon;
+    private ImageView _pencilIcon;
     public int dateType = 0;
 
     private OnDateMeterFocusListener _listener;
