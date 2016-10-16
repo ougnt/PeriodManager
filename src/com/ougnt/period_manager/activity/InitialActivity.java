@@ -675,7 +675,6 @@ public class InitialActivity extends Activity {
                         }
                     }
 
-                    // todo: move this to a function
                     for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
 
                         if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(extra.date.toString("yyyy-MM-dd"))) {

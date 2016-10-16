@@ -118,7 +118,7 @@ public class DateMeter extends LinearLayout {
             this.setGravity(Gravity.CENTER);
 
             _leftHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
-            LinearLayout _contentHorizontalLayout = generateContentLayout();
+            _contentHorizontalLayout = generateContentLayout();
             _rightHorizontalLayout = formatHorizontalMarginLayout(new LinearLayout(context));
 
             this.addView(_leftHorizontalLayout);
@@ -164,7 +164,8 @@ public class DateMeter extends LinearLayout {
             _rightHorizontalLayout.setBackgroundColor(Color.GRAY);
             _contentTopLayout.setBackgroundColor(_mainColor);
             _contentBottomLayout.setBackgroundColor(_mainColor);
-            _iconLayout = formatIconLayout(new LinearLayout(getContext()));
+            _iconLayout.removeAllViews();
+            formatIconLayout(_iconLayout);
             this.setBackgroundColor(_mainColor);
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
@@ -198,13 +199,18 @@ public class DateMeter extends LinearLayout {
         }
     }
 
-    private LinearLayout formatIconLayout(LinearLayout layout) {
+    private void formatIconLayout() {
+        formatIconLayout(null);
+    }
+
+    private void formatIconLayout(LinearLayout layout) {
 
         try {
+            _iconLayout = layout == null? new LinearLayout(getContext()) : layout;
             LayoutParams retParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            layout.setLayoutParams(retParams);
-            layout.setOrientation(LinearLayout.HORIZONTAL);
-            layout.setBackgroundColor(_mainColor);
+            _iconLayout.setLayoutParams(retParams);
+            _iconLayout.setOrientation(LinearLayout.HORIZONTAL);
+            _iconLayout.setBackgroundColor(_mainColor);
 
             WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
             Display display = wm.getDefaultDisplay();
@@ -265,7 +271,7 @@ public class DateMeter extends LinearLayout {
 
             formatIconVisibilityByDateType();
 
-            LinearLayout iconPart = new LinearLayout(layout.getContext());
+            LinearLayout iconPart = new LinearLayout(_iconLayout.getContext());
 
             LayoutParams iconParams = new LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 0.8f);
             iconPart.setLayoutParams(iconParams);
@@ -278,12 +284,11 @@ public class DateMeter extends LinearLayout {
             iconPart.addView(_intercourseIcon);
             iconPart.addView(_pencilIcon);
 
-            layout.addView(iconPart);
+            _iconLayout.setBackgroundColor(_mainColor);
 
-            return layout;
+            _iconLayout.addView(iconPart);
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
-            return layout;
         }
     }
 
@@ -358,7 +363,7 @@ public class DateMeter extends LinearLayout {
         _dayTextLayout = generateDayText(date);
         _monthLayout = generateMonthLayout(date);
         _rightSideLayout = generateSideLayout();
-        _iconLayout = formatIconLayout(new LinearLayout(getContext()));
+        formatIconLayout();
 
         _centralLayout.addView(_leftSideLayout);
         _centralLayout.addView(_dayTextLayout);
@@ -520,6 +525,7 @@ public class DateMeter extends LinearLayout {
     private LinearLayout _upperMonthLayout;
     private LinearLayout _monthTextLayout;
     private LinearLayout _iconLayout;
+    private LinearLayout _contentHorizontalLayout;
 
     private ImageView _menstrualIcon;
     private ImageView _ovulationIcon;

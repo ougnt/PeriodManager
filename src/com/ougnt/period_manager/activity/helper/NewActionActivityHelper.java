@@ -199,6 +199,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
             @Override
             public void onAdFailedToLoad(int i) {
                 super.onAdFailedToLoad(i);
+                activity.adViewContainer.setVisibility(View.GONE);
                 log.setScreenType(Log.Screen.ActionPanel);
                 log.setCategory(Log.Category.Ads);
                 log.setAction(Log.Action.AdFailedToLoad);
