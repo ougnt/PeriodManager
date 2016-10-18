@@ -53,6 +53,12 @@
                         android:id="@+id/flag_layout">
                 </LinearLayout>
             </LinearLayout>
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                      android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/menu_submit_review"
+                      android:id="@+id/submit_review_menu" android:textColor="@color/text_color"
+                      android:background="@color/menu_bg" android:layout_margin="2dp" android:gravity="center"/>
+
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -61,10 +67,6 @@
                     android:id="@+id/help_menu" android:textColor="@color/text_color" android:background="@color/menu_bg"
                     android:layout_margin="2dp" android:gravity="center"
                 android:visibility="gone" />
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                      android:textAppearance="?android:attr/textAppearanceLarge" android:text="@string/menu_submit_review"
-                      android:id="@+id/submit_review_menu" android:textColor="@color/text_color"
-                      android:background="@color/menu_bg" android:layout_margin="2dp" android:gravity="center"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -75,7 +77,8 @@
                 android:textColor="@color/text_color"
                 android:background="@color/menu_bg"
                 android:layout_margin="2dp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:visibility="gone" />
         </TableLayout>
     </LinearLayout>
 </LinearLayout>

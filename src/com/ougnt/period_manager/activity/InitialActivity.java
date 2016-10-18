@@ -23,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -174,7 +175,6 @@ public class InitialActivity extends Activity {
 
             this.requestWindowFeature(Window.FEATURE_NO_TITLE);
             this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
 
             SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
             String language = pref.getString(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
@@ -1661,6 +1661,20 @@ public class InitialActivity extends Activity {
             dateMeterScroller = (HorizontalScrollView) findViewById(R.id.dateScroller);
             fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
             dateDetailActionButton = (Button) findViewById(R.id.date_detail_action_button);
+            helpButton = (ImageButton) findViewById(R.id.main_help_button);
+
+            helpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    log.setAction(Log.Action.ClickMainHelp);
+                    log.setCategory(Log.Category.Button);
+                    log.setScreenType(Log.Screen.MainScreenName);
+                    sendTrafficMessage(log);
+
+                    Intent intent = new Intent(getBaseContext(), MainHelpActivity.class);
+                    startActivity(intent);
+                }
+            });
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
@@ -1673,6 +1687,7 @@ public class InitialActivity extends Activity {
     private LinearLayout newActionPanel;
     private AdView adView;
     private LinearLayout adMobLayout;
+    private ImageButton helpButton;
 
     private int calendarCurrentMonth, calendarCurrentYear;
     private OnDateMeterFocusListener dateTouchListener;

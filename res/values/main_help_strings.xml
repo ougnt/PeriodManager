@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_help_menstrual">This day is your (expected) period</string>
+    <string name="main_help_non_ovulation">This day has a few chances for ovulation</string>
+    <string name="main_help_ovulation">This day has some chances for ovulation</string>
+    <string name="main_help_intercourse">This day has been recorded that you have the intercourse</string>
+    <string name="main_help_pencil">This day has some comments/note</string>
+    <string name="main_help_explanation">What do the icons mean</string>
+</resources>

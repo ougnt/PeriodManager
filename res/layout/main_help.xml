@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/main_bg">
+
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.05"
+        android:layout_marginTop="5dp">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_help_close_button"
+            android:layout_gravity="top|right"
+            android:src="@drawable/close_button"
+            android:scaleType="fitCenter"
+            android:background="@color/main_bg" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/main_help_explanation"
+            android:id="@+id/textView14"
+            android:gravity="center"
+            android:textColor="@color/text_color" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_help_menstrual_icon"
+            android:layout_weight="0.2"
+            android:scaleType="fitStart"
+            android:src="@drawable/menstrual_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/main_help_menstrual"
+            android:id="@+id/main_help_menstrual_text"
+            android:layout_weight="0.8"
+            android:gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_help_non_ovulation_icon"
+            android:layout_weight="0.2"
+            android:scaleType="fitStart"
+            android:src="@drawable/non_ovulation_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/main_help_non_ovulation"
+            android:id="@+id/main_help_non_ovulation_text"
+            android:layout_weight="0.8"
+            android:gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_help_ovulation_icon"
+            android:layout_weight="0.2"
+            android:scaleType="fitStart"
+            android:src="@drawable/ovulation_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/main_help_ovulation"
+            android:id="@+id/main_help_ovulation_text"
+            android:layout_weight="0.8"
+            android:gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_help_intercourse_icon"
+            android:layout_weight="0.2"
+            android:scaleType="fitStart"
+            android:src="@drawable/intercourse_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/main_help_intercourse"
+            android:id="@+id/main_help_intercourse_text"
+            android:layout_weight="0.8"
+            android:gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp" >
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/main_help_pencil_icon"
+            android:layout_weight="0.2"
+            android:scaleType="fitStart"
+            android:src="@drawable/pencil_icon" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/main_help_pencil"
+            android:id="@+id/main_help_pencil_text"
+            android:layout_weight="0.8"
+            android:gravity="top|left"
+            android:layout_marginLeft="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:textColor="@color/text_color" />
+    </LinearLayout>
+
+</LinearLayout>

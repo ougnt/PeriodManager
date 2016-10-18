@@ -22,6 +22,7 @@
         <activity android:name=".activity.TemperatureHelpActivity" />
         <activity android:name=".activity.SetupWizardActivity" />
         <activity android:name=".activity.LoginActivity"/>
+        <activity android:name=".activity.MainHelpActivity"/>
         <activity android:name=".activity.NewActionActivity" />
         <activity
                 android:name="com.google.android.gms.ads.AdActivity"

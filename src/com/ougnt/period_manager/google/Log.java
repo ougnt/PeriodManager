@@ -103,5 +103,6 @@ public class Log {
         public static final String AdFailedToLoad = "AdFailedToLoad";
         public static final String NativeAdClick = "NativeAdClick";
         public static final String AdOpened = "NativeAdOpened";
+        public static final String ClickMainHelp = "ClickMainHelp";
     }
 }
