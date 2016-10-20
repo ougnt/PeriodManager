@@ -57,7 +57,6 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
@@ -307,34 +306,68 @@ public class InitialActivity extends Activity {
                 @Override
                 public void run() {
 
-                    AdRequest.Builder adBuilder = new AdRequest.Builder();
-                    adBuilder.setGender(AdRequest.GENDER_FEMALE);
-                    adBuilder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
-                    adBuilder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
-                    final AdRequest adRequest = adBuilder.build();
-                    adMobLayout.setVisibility(View.GONE);
+                    try {
 
-                    adView.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdLoaded() {
-                            adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
-                            adMobLayout.setVisibility(View.VISIBLE);
-                            super.onAdLoaded();
-                        }
+                        AdRequest.Builder adBuilder = new AdRequest.Builder();
+                        adBuilder.setGender(AdRequest.GENDER_FEMALE);
+                        adBuilder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
+                        adBuilder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
+                        final AdRequest adRequest = adBuilder.build();
+                        adMobLayout.setVisibility(View.GONE);
+                        adMobLayoutCenter.setVisibility(View.GONE);
 
-                        @Override
-                        public void onAdOpened() {
-                            log.setAction(Log.Action.ClickAds);
-                            log.setCategory(Log.Category.Ads);
-                            sendTrafficMessage(log);
+                        if (getExperimentVariance() == 0) {
+                            adView.setAdListener(new AdListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
+                                    adMobLayout.setVisibility(View.VISIBLE);
+                                    super.onAdLoaded();
+                                }
+
+                                @Override
+                                public void onAdOpened() {
+                                    log.setAction(Log.Action.ClickAds);
+                                    log.setCategory(Log.Category.Ads);
+                                    sendTrafficMessage(log);
+                                }
+                            });
+                            adView.loadAd(adRequest);
+                        } else {
+                            adViewCenter.setAdListener(new AdListener() {
+                                @Override
+                                public void onAdLoaded() {
+                                    adMobLayoutCenter.setLayoutParams(new LinearLayout.LayoutParams(adViewCenter.getAdSize().getWidth(), adViewCenter.getAdSize().getHeight()));
+                                    adMobLayoutCenter.setVisibility(View.VISIBLE);
+                                    super.onAdLoaded();
+                                }
+
+                                @Override
+                                public void onAdOpened() {
+                                    log.setAction(Log.Action.ClickAds);
+                                    log.setCategory(Log.Category.Ads);
+                                    sendTrafficMessage(log);
+                                }
+                            });
+                            adViewCenter.loadAd(adRequest);
                         }
-                    });
-                    adView.loadAd(adRequest);
+                    } catch (Exception e) {
+                        HttpHelper.sendErrorLog(e);
+                    }
                 }
             }, 1000);
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
+    }
+
+    private int getExperimentVariance() {
+
+        if(getDeviceId() == null) {
+            setDeviceId();
+        }
+
+        return (int) (getDeviceId().getMostSignificantBits() % 2);
     }
 
     private void setSelectedDateToAlignWithFingerIndex() {
@@ -1563,46 +1596,46 @@ public class InitialActivity extends Activity {
                 @Override
                 public void onGlobalLayout() {
 
-                if (isAdjusted) {
-                    return;
-                } else if (dateMeterContainer.getWidth() == 0) {
-                    return;
-                }
+                    if (isAdjusted) {
+                        return;
+                    } else if (dateMeterContainer.getWidth() == 0) {
+                        return;
+                    }
 
-                isAdjusted = true;
+                    isAdjusted = true;
 
-                int[] firstChildLocal = new int[2];
-                int[] scrollViewLocal = new int[2];
+                    int[] firstChildLocal = new int[2];
+                    int[] scrollViewLocal = new int[2];
 
-                dateMeterScroller.getChildAt(0).getLocationOnScreen(firstChildLocal);
-                dateMeterScroller.getLocationOnScreen(scrollViewLocal);
+                    dateMeterScroller.getChildAt(0).getLocationOnScreen(firstChildLocal);
+                    dateMeterScroller.getLocationOnScreen(scrollViewLocal);
 
-                if (firstChildLocal[0] == scrollViewLocal[0]) {
-                    int[] todayLocal = new int[2];
-                    int[] fingerIndexLocal = new int[2];
-                    dateMeterContainer.getChildAt(16).getLocationOnScreen(todayLocal);
-                    fingerIndex.getLocationOnScreen(fingerIndexLocal);
-                    int centerOfFinger = fingerIndexLocal[0] + fingerIndex.getWidth() / 2;
-                    dateMeterScroller.scrollTo(todayLocal[0] - centerOfFinger, 0);
-                }
+                    if (firstChildLocal[0] == scrollViewLocal[0]) {
+                        int[] todayLocal = new int[2];
+                        int[] fingerIndexLocal = new int[2];
+                        dateMeterContainer.getChildAt(16).getLocationOnScreen(todayLocal);
+                        fingerIndex.getLocationOnScreen(fingerIndexLocal);
+                        int centerOfFinger = fingerIndexLocal[0] + fingerIndex.getWidth() / 2;
+                        dateMeterScroller.scrollTo(todayLocal[0] - centerOfFinger, 0);
+                    }
 
-                if (setting.isFirstTime) {
-                    setting.isFirstTime = false;
+                    if (setting.isFirstTime) {
+                        setting.isFirstTime = false;
 
-                    Intent wizardIntent = new Intent(getBaseContext(), SetupWizardActivity.class);
-                    startActivityForResult(wizardIntent, DisplaySettingWizard);
+                        Intent wizardIntent = new Intent(getBaseContext(), SetupWizardActivity.class);
+                        startActivityForResult(wizardIntent, DisplaySettingWizard);
 
-                    setting.saveSetting(getBaseContext());
-                }
+                        setting.saveSetting(getBaseContext());
+                    }
 
-                int targetLength = (int) (dateMeterScroller.getHeight() * 0.5);
-                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetLength, targetLength);
-                params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-                fingerIndex.setLayoutParams(params);
+                    int targetLength = (int) (dateMeterScroller.getHeight() * 0.5);
+                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetLength, targetLength);
+                    params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+                    fingerIndex.setLayoutParams(params);
 
-                DateMeter todayDateMeter = (DateMeter) dateMeterContainer.getChildAt(17);
-                setDateDetailText(todayDateMeter);
-                setSelectedDateToAlignWithFingerIndex();
+                    DateMeter todayDateMeter = (DateMeter) dateMeterContainer.getChildAt(17);
+                    setDateDetailText(todayDateMeter);
+                    setSelectedDateToAlignWithFingerIndex();
                 }
             });
         } catch (Exception e) {
@@ -1615,6 +1648,12 @@ public class InitialActivity extends Activity {
         try {
             if (log == null) {
                 return;
+            }
+
+            if(DeviceId != null) {
+                if(DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
+                    return;
+                }
             }
 
             tracker.setScreenName(log.getScreenType());
@@ -1637,6 +1676,12 @@ public class InitialActivity extends Activity {
                 return;
             }
 
+            if(DeviceId != null) {
+                if(DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
+                    return;
+                }
+            }
+
             tracker.setScreenName(log.getScreenType());
             tracker.setClientId(log.getDeviceId());
             tracker.setAppVersion(log.getApplicationVersion());
@@ -1657,12 +1702,22 @@ public class InitialActivity extends Activity {
             dateMeterContainer = (LinearLayout) findViewById(R.id.dateScrollerContent);
             newActionPanel = (LinearLayout) findViewById(R.id.new_action_panel);
             adView = (AdView) findViewById(R.id.ad_view);
+            adViewCenter = (AdView) findViewById(R.id.ad_view_center);
             adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
+            adMobLayoutCenter = (LinearLayout) findViewById(R.id.ads_mob_view_center);
             dateMeterScroller = (HorizontalScrollView) findViewById(R.id.dateScroller);
             fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
             dateDetailActionButton = (Button) findViewById(R.id.date_detail_action_button);
             helpButton = (ImageButton) findViewById(R.id.main_help_button);
 
+            registerOnclickEvent();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private void registerOnclickEvent(){
+        try {
             helpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -1686,7 +1741,9 @@ public class InitialActivity extends Activity {
     private HorizontalScrollView dateMeterScroller;
     private LinearLayout newActionPanel;
     private AdView adView;
+    private AdView adViewCenter;
     private LinearLayout adMobLayout;
+    private LinearLayout adMobLayoutCenter;
     private ImageButton helpButton;
 
     private int calendarCurrentMonth, calendarCurrentYear;
