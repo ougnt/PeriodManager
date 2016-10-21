@@ -95,4 +95,10 @@
     <string name="action_activity_intercourse">giao hợp</string>
     <string name="action_activity_have_intercourse">Vâng</string>
     <string name="action_activity_have_not_intercourse">Không</string>
+    <string name="main_help_explanation">làm các dấu hiệu có ý nghĩa gì khi chúng được xuất hiện trong một ngày</string>
+    <string name="main_help_intercourse">Ngày này đã được ghi nhận rằng bạn có giao hợp</string>
+    <string name="main_help_menstrual">Ngày này là của bạn (dự kiến) thời gian</string>
+    <string name="main_help_non_ovulation">Đây là ngày có một vài cơ hội cho sự rụng trứng</string>
+    <string name="main_help_ovulation">Đây là ngày có một số cơ hội cho sự rụng trứng</string>
+    <string name="main_help_pencil">Đây là ngày có một số ý kiến</string>
 </resources>

@@ -86,4 +86,10 @@
     <string name="action_activity_intercourse">มีเพศสัมพันธ์</string>
     <string name="action_activity_have_not_intercourse">ไม่</string>
     <string name="action_activity_have_intercourse">ใช่</string>
+    <string name="main_help_explanation">สัญลักษณ์ อยู่ที่วันไหน แปลว่า วันนั้น</string>
+    <string name="main_help_intercourse">บันทึกว่ามีเพศสัมพันธ์</string>
+    <string name="main_help_menstrual">เป็น ประจำเดือน/คาดการณ์ ว่าจะเป็น ประจำเดือน</string>
+    <string name="main_help_non_ovulation">มีโอกาศน้อยมากที่จะเป็นวันตกไข่</string>
+    <string name="main_help_ovulation">มีโอกาศ เป็นวันตกไข่</string>
+    <string name="main_help_pencil">มีการจดบันทึก</string>
 </resources>

@@ -88,4 +88,10 @@
     <string name="action_activity_intercourse">Intercourse</string>
     <string name="action_activity_have_intercourse">Yes</string>
     <string name="action_activity_have_not_intercourse">No</string>
+    <string name="main_help_explanation">What do the signs mean when they are appear in a date</string>
+    <string name="main_help_intercourse">This day has been recorded that you have the intercourse</string>
+    <string name="main_help_menstrual">This day is your (expected) period</string>
+    <string name="main_help_non_ovulation">This day has a few chances for ovulation</string>
+    <string name="main_help_ovulation">This day has some chances for ovulation</string>
+    <string name="main_help_pencil">This day has some comments</string>
 </resources>

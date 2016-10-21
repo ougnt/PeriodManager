@@ -91,4 +91,10 @@
     <string name="action_activity_have_intercourse">はい</string>
     <string name="action_activity_have_not_intercourse">いいえ</string>
     <string name="action_activity_intercourse">性行為</string>
+    <string name="main_help_explanation">その日にはこの記号が表示なると、この意味がなります。</string>
+    <string name="main_help_intercourse">性交しました。</string>
+    <string name="main_help_menstrual">(多分)生理中します</string>
+    <string name="main_help_non_ovulation">排卵中無い</string>
+    <string name="main_help_ovulation">排卵中</string>
+    <string name="main_help_pencil">コメントをしました</string>
 </resources>
