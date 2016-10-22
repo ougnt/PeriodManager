@@ -97,4 +97,8 @@
     <string name="main_help_non_ovulation">排卵中無い</string>
     <string name="main_help_ovulation">排卵中</string>
     <string name="main_help_pencil">コメントをしました</string>
+    <string name="main_help_angry_emotion">この日は、怒っている日として編集されています</string>
+    <string name="main_help_happy_emotion">この日、それはあなたが満足している日として編集されています</string>
+    <string name="main_help_sad_emotion">この日、それはあなたが悲しい日として編集されています</string>
+    <string name="main_help_nothing_emotion"> この日、感情が編集されていません</string>
 </resources>

@@ -101,4 +101,8 @@
     <string name="main_help_non_ovulation">Đây là ngày có một vài cơ hội cho sự rụng trứng</string>
     <string name="main_help_ovulation">Đây là ngày có một số cơ hội cho sự rụng trứng</string>
     <string name="main_help_pencil">Đây là ngày có một số ý kiến</string>
+    <string name="main_help_nothing_emotion">Vào ngày này, những cảm xúc đã không được chỉnh sửa</string>
+    <string name="main_help_angry_emotion">Ngày này được chỉnh sửa như một ngày tức giận</string>
+    <string name="main_help_happy_emotion">Ngày này được chỉnh sửa như một ngày hạnh phúc</string>
+    <string name="main_help_sad_emotion">Ngày này được chỉnh sửa như là một ngày buồn</string>
 </resources>

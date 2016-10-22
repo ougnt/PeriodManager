@@ -92,4 +92,8 @@
     <string name="main_help_non_ovulation">มีโอกาศน้อยมากที่จะเป็นวันตกไข่</string>
     <string name="main_help_ovulation">มีโอกาศ เป็นวันตกไข่</string>
     <string name="main_help_pencil">มีการจดบันทึก</string>
+    <string name="main_help_angry_emotion">ตั้งว่าอารมณ์ ไม่ดี</string>
+    <string name="main_help_happy_emotion">ตั้งว่ามีความสุข</string>
+    <string name="main_help_nothing_emotion">ไม่ได้ตั้งค่าอารมณ์</string>
+    <string name="main_help_sad_emotion">ตั้งว่า เศร้า</string>
 </resources>

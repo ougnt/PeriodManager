@@ -6,4 +6,8 @@
     <string name="main_help_intercourse">This day has been recorded that you have the intercourse</string>
     <string name="main_help_pencil">This day has some comments/note</string>
     <string name="main_help_explanation">What do the signs mean when they are appear in a date</string>
+    <string name="main_help_nothing_emotion">This day has no emotion edited</string>
+    <string name="main_help_happy_emotion">This day is edited as a happy day</string>
+    <string name="main_help_sad_emotion">This day is edited as a sad day</string>
+    <string name="main_help_angry_emotion">This day is edited as an angry day</string>
 </resources>
