@@ -747,10 +747,9 @@ public class InitialActivity extends Activity {
             final SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
             final SharedPreferences.Editor edit = pref.edit();
 
-            if (getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview) && !isReviewing) {
+            if (getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview) && !isReviewing && ApplicationVersion < 1000) {
 
                 isReviewing = true;
-                // TODO : Add the commend asking if the user select No
                 setContentView(R.layout.do_you_like_app);
                 Button iLikeThisAppButton = (Button) findViewById(R.id.i_like_this_app_button);
                 Button iDontLikeThisAppButton = (Button) findViewById(R.id.i_dont_like_this_app_button);
@@ -803,8 +802,17 @@ public class InitialActivity extends Activity {
                 iDontLikeThisAppButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        submitStat();
-                        finish();
+                        setContentView(R.layout.we_also_love_a_negative_feedback);
+                        Button sendReviewButton = (Button) findViewById(R.id.review_send_review_button);
+                        sendReviewButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                // TODO : Send the stat to the server
+                                submitStat();
+                                finish();
+                            }
+                        });
                     }
                 });
 

@@ -99,4 +99,7 @@
     <string name="review_do_you_like_app">คุณถูกใจแอ๊ปของเรา รึเปล่า</string>
     <string name="review_no">ไม่อ่ะ</string>
     <string name="review_yes">ถูกใจสิ</string>
+    <string name="review_we_also_like_to_hear_a_negative_feedback">ไม่ใช่แค่คำชม ที่เราอยากฟัง เรายังอยากฟังคำติเตียน จากคุณ</string>
+    <string name="review_send_review">ส่งข้อความ</string>
+    <string name="review_hint">กรุณาใส่คำแนะนำตรงนี้</string>
 </resources>

@@ -104,4 +104,7 @@
     <string name="review_do_you_like_app">あなたはこのアップが好きですか？</string>
     <string name="review_yes">はい</string>
     <string name="review_no">いいえ</string>
+    <string name="review_we_also_like_to_hear_a_negative_feedback">だけでなく、正のフィードバック、我々はまた、負のフィードバックを聞くのが大好き</string>
+    <string name="review_send_review">レビューを送信</string>
+    <string name="review_hint">これにあなたのこーめんとを入って下さい。</string>
 </resources>

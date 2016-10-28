@@ -108,4 +108,7 @@
     <string name="review_do_you_like_app">Bạn có thích các ứng dụng?</string>
     <string name="review_yes">Vâng</string>
     <string name="review_no">Không</string>
+    <string name="review_we_also_like_to_hear_a_negative_feedback">Không chỉ có những phản hồi tích cực, chúng tôi cũng thích nghe những phản hồi tiêu cực</string>
+    <string name="review_send_review">gửi bài đánh giá</string>
+    <string name="review_hint">Vui lòng nhập thông tin phản hồi của bạn tại đây</string>
 </resources>

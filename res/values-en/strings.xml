@@ -101,4 +101,7 @@
     <string name="review_do_you_like_app">Do you like the application?</string>
     <string name="review_no">No</string>
     <string name="review_yes">Yes</string>
+    <string name="review_we_also_like_to_hear_a_negative_feedback">Even the negative feedback, we would like to hear from you</string>
+    <string name="review_send_review">Send Review</string>
+    <string name="review_hint">Please enter your feedback here</string>
 </resources>
