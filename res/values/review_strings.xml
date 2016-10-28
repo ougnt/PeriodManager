@@ -4,4 +4,7 @@
     <string name="review_open_review">Ok, open the review page for me.</string>
     <string name="review_later">I\'m quite busy now. May be later.</string>
     <string name="review_dont_show">Leave me alone. Don\'t show this again.</string>
+    <string name="review_do_you_like_app">Do you like the application?</string>
+    <string name="review_yes">Yes</string>
+    <string name="review_no">No</string>
 </resources>

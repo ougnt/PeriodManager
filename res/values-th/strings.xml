@@ -96,4 +96,7 @@
     <string name="main_help_happy_emotion">ตั้งว่ามีความสุข</string>
     <string name="main_help_nothing_emotion">ไม่ได้ตั้งค่าอารมณ์</string>
     <string name="main_help_sad_emotion">ตั้งว่า เศร้า</string>
+    <string name="review_do_you_like_app">คุณถูกใจแอ๊ปของเรา รึเปล่า</string>
+    <string name="review_no">ไม่อ่ะ</string>
+    <string name="review_yes">ถูกใจสิ</string>
 </resources>

@@ -98,4 +98,7 @@
     <string name="main_help_happy_emotion">This day is edited as a happy day</string>
     <string name="main_help_nothing_emotion">This day has no emotion edited</string>
     <string name="main_help_sad_emotion">This day is edited as a sad day</string>
+    <string name="review_do_you_like_app">Do you like the application?</string>
+    <string name="review_no">No</string>
+    <string name="review_yes">Yes</string>
 </resources>

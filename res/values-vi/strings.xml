@@ -105,4 +105,7 @@
     <string name="main_help_angry_emotion">Ngày này được chỉnh sửa như một ngày tức giận</string>
     <string name="main_help_happy_emotion">Ngày này được chỉnh sửa như một ngày hạnh phúc</string>
     <string name="main_help_sad_emotion">Ngày này được chỉnh sửa như là một ngày buồn</string>
+    <string name="review_do_you_like_app">Bạn có thích các ứng dụng?</string>
+    <string name="review_yes">Vâng</string>
+    <string name="review_no">Không</string>
 </resources>

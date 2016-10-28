@@ -582,6 +582,7 @@ public class InitialActivity extends Activity {
 
                             for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
 
+                                // TODO : Handle null selectedDate since the start time is before the first datemeter
                                 if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(date.date.toString("yyyy-MM-dd"))) {
                                     selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
                                     break;
@@ -737,6 +738,8 @@ public class InitialActivity extends Activity {
         }
     }
 
+
+    static Boolean isReviewing = false;
     @Override
     public void onBackPressed() {
 
@@ -744,43 +747,62 @@ public class InitialActivity extends Activity {
             final SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
             final SharedPreferences.Editor edit = pref.edit();
 
-            if (getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview)) {
+            if (getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview) && !isReviewing) {
 
-                setContentView(R.layout.review);
+                isReviewing = true;
+                // TODO : Add the commend asking if the user select No
+                setContentView(R.layout.do_you_like_app);
+                Button iLikeThisAppButton = (Button) findViewById(R.id.i_like_this_app_button);
+                Button iDontLikeThisAppButton = (Button) findViewById(R.id.i_dont_like_this_app_button);
 
-                Button reviewNowButton = (Button) findViewById(R.id.review_open);
-                Button laterButton = (Button) findViewById(R.id.review_later);
-                Button noShowButton = (Button) findViewById(R.id.review_no_show);
-
-                reviewNowButton.setOnClickListener(new View.OnClickListener() {
+                iLikeThisAppButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        setContentView(R.layout.review);
 
-                        addUsageCounter(PReviewNow);
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
-                        submitStat();
-                        finish();
+                        Button reviewNowButton = (Button) findViewById(R.id.review_open);
+                        Button laterButton = (Button) findViewById(R.id.review_later);
+                        Button noShowButton = (Button) findViewById(R.id.review_no_show);
+
+                        reviewNowButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                addUsageCounter(PReviewNow);
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
+                                submitStat();
+                                finish();
+                            }
+                        });
+
+                        laterButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                addUsageCounter(PReviewLater);
+                                edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
+                                edit.apply();
+                                submitStat();
+                                finish();
+                            }
+                        });
+
+                        noShowButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                addUsageCounter(PNoReview);
+                                edit.putInt(PTimeOfUsageBeforeReview, -1);
+                                edit.apply();
+                                submitStat();
+                                finish();
+                            }
+                        });
                     }
                 });
 
-                laterButton.setOnClickListener(new View.OnClickListener() {
+                iDontLikeThisAppButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        addUsageCounter(PReviewLater);
-                        edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
-                        edit.apply();
-                        submitStat();
-                        finish();
-                    }
-                });
-
-                noShowButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        addUsageCounter(PNoReview);
-                        edit.putInt(PTimeOfUsageBeforeReview, -1);
-                        edit.apply();
                         submitStat();
                         finish();
                     }

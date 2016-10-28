@@ -101,4 +101,7 @@
     <string name="main_help_happy_emotion">この日、それはあなたが満足している日として編集されています</string>
     <string name="main_help_sad_emotion">この日、それはあなたが悲しい日として編集されています</string>
     <string name="main_help_nothing_emotion"> この日、感情が編集されていません</string>
+    <string name="review_do_you_like_app">あなたはこのアップが好きですか？</string>
+    <string name="review_yes">はい</string>
+    <string name="review_no">いいえ</string>
 </resources>
