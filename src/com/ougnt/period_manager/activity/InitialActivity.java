@@ -21,6 +21,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -85,11 +86,12 @@ public class InitialActivity extends Activity {
     // Live Env
     public static final String StatServer = "27.254.81.190:5555";
     // Dev env
-//    public static final String StatServer = "192.168.1.101:9000";
+//    public static final String StatServer = "192.168.56.1:9000";
     public static final String StatUri = String.format("http://%s/usageStat", StatServer);
     public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
     public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
     public static final String ErrorLogUri = String.format("http://%s/errorLog", StatServer);
+    public static final String ReviewUrl = String.format("http://%s/sendReview", StatServer);
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
@@ -582,7 +584,7 @@ public class InitialActivity extends Activity {
 
                             for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
 
-                                // TODO : Handle null selectedDate since the start time is before the first datemeter
+                                // TODO : Bug : Handle null selectedDate since the start time is before the first datemeter
                                 if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(date.date.toString("yyyy-MM-dd"))) {
                                     selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
                                     break;
@@ -809,6 +811,9 @@ public class InitialActivity extends Activity {
                             public void onClick(View v) {
 
                                 // TODO : Send the stat to the server
+                                EditText reviewEditText = (EditText) findViewById(R.id.review_feed_back_edit_text);
+                                String review = reviewEditText.getText().toString();
+                                sendReview(review);
                                 submitStat();
                                 finish();
                             }
@@ -1034,6 +1039,11 @@ public class InitialActivity extends Activity {
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
+    }
+
+    private void sendReview(String review) {
+        String rewJson = String.format("{\"deviceId\":\"%s\",\"review\":\"%s\"}",getDeviceId().toString(), review);
+        HttpHelper.post(ReviewUrl, rewJson);
     }
 
     private void submitStat() {

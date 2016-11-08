@@ -67,7 +67,7 @@
 					<EditText
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
-						android:id="@+id/editText2"
+						android:id="@+id/review_feed_back_edit_text"
 						android:layout_margin="10dp"
 						android:background="@color/main_bg"
 						android:textColor="@color/text_color"
