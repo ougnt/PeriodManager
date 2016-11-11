@@ -1299,29 +1299,7 @@ public class InitialActivity extends Activity {
                             break;
                         }
 
-                        BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
-
-                        if (isNotifyPeriod) {
-
-                            notifier.setNotification(
-                                    this,
-                                    summary.expectedMenstrualDateFrom.minusDays(notifyPeriodDay),
-                                    getResources().getString(R.string.notify_period_title),
-                                    getResources().getString(R.string.notify_period_message)
-                            );
-                            addUsageCounter(PSettingNotifyPeriodCounter);
-                        }
-
-                        if (isNotifyOvulation) {
-
-                            notifier.setNotification(
-                                    this,
-                                    summary.expectedOvulationDateFrom.minusDays(notifyOvulationDay),
-                                    getResources().getString(R.string.notify_ovulation_title),
-                                    getResources().getString(R.string.notify_ovulation_message)
-                            );
-                            addUsageCounter(PSettingNotifyOvulationCounter);
-                        }
+                        setBroadcastNotification(summary);
                     }
 
                     break;
@@ -1367,29 +1345,7 @@ public class InitialActivity extends Activity {
                     return;
                 }
 
-                BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
-
-                if (isNotifyPeriod) {
-
-                    notifier.setNotification(
-                            this,
-                            summary.expectedMenstrualDateFrom.minusDays(notifyPeriodDay),
-                            getResources().getString(R.string.notify_period_title),
-                            getResources().getString(R.string.notify_period_message)
-                    );
-                    addUsageCounter(PSettingNotifyPeriodCounter);
-                }
-
-                if (isNotifyOvulation) {
-
-                    notifier.setNotification(
-                            this,
-                            summary.expectedOvulationDateFrom.minusDays(notifyOvulationDay),
-                            getResources().getString(R.string.notify_ovulation_title),
-                            getResources().getString(R.string.notify_ovulation_message)
-                    );
-                    addUsageCounter(PSettingNotifyOvulationCounter);
-                }
+                setBroadcastNotification(summary);
             }
         } catch (Resources.NotFoundException e) {
             HttpHelper.sendErrorLog(e);
@@ -1547,37 +1503,53 @@ public class InitialActivity extends Activity {
             paintDateMeter(estimatedNextMenstrualFrom, estimatedNextMenstrualTo, DateMeter.Menstrual);
 
             Intent summaryIntent = new Intent(this, SummaryActivity.class);
-            summaryIntent.putExtra(NextMenstrualFromExtra, dateToBePainted.plusDays((int) setting.periodCycle - 1).toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(NextMenstrualToExtra, dateToBePainted.plusDays((int) setting.periodCycle + 1).toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(NextOvulationToExtra, dateToBePainted.plusDays((int) setting.periodCycle - 8).toString("yyyy-MM-dd"));
+            DateTime nextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
+            DateTime nextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 1);
+            DateTime nextOvulationFrom = dateToBePainted.plusDays(6);
+            DateTime nextOvulationTo = dateToBePainted.plusDays((int) setting.periodCycle - 8);
 
-            if (getUsageCounter(PSettingIsNotifyPeriod) == 1) {
+            summaryIntent.putExtra(NextMenstrualFromExtra, nextMenstrualFrom.toString("yyyy-MM-dd"));
+            summaryIntent.putExtra(NextMenstrualToExtra, nextMenstrualTo.toString("yyyy-MM-dd"));
+            summaryIntent.putExtra(NextOvulationFromExtra, nextOvulationFrom.toString("yyyy-MM-dd"));
+            summaryIntent.putExtra(NextOvulationToExtra, nextOvulationTo.toString("yyyy-MM-dd"));
 
-                DateTime dateToBeNotified = DateTime.parse(summaryIntent.getExtras()
-                        .getString(NextMenstrualFromExtra))
-                        .minusDays(getUsageCounter(PSettingNotifyPeriodDay));
+            SummaryRepository summary = new  SummaryRepository();
+            summary.expectedMenstrualDateTo = nextMenstrualTo;
+            summary.expectedMenstrualDateFrom = nextMenstrualFrom;
+            summary.expectedOvulationDateTo = nextOvulationTo;
+            summary.expectedOvulationDateFrom = nextOvulationFrom;
+            summary.expectedOvulationDate = nextOvulationFrom.plusDays((int) (nextOvulationTo.getMillis() - nextOvulationFrom.getMillis()) / 2 / 1000 / 60 / 60 / 24);
 
-                BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
-                notifier.setNotification(this, dateToBeNotified,
-                        getResources().getString(R.string.notify_period_title),
-                        getResources().getString(R.string.notify_period_message));
-            }
-
-            if (getUsageCounter(PSettingIsNotifyOvulation) == 1) {
-
-                DateTime dateTimeToBeNotified = DateTime.parse(summaryIntent.getExtras()
-                        .getString(NextOvulationFromExtra))
-                        .minusDays(getUsageCounter(PSettingNotifyOvulationDay));
-                BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
-                notifier.setNotification(this, dateTimeToBeNotified,
-                        getResources().getString(R.string.notify_ovulation_title),
-                        getResources().getString(R.string.notify_ovulation_message));
-            }
+            setBroadcastNotification(summary);
 
             startActivityForResult(summaryIntent, DisplaySummary);
         } catch (Resources.NotFoundException e) {
             HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private void setBroadcastNotification(SummaryRepository summary) {
+
+        if (getUsageCounter(PSettingIsNotifyPeriod) == 1) {
+
+            DateTime dateToBeNotified = summary.expectedMenstrualDateFrom
+                    .minusDays(getUsageCounter(PSettingNotifyPeriodDay));
+
+            BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
+            notifier.setNotification(this, dateToBeNotified,
+                    getResources().getString(R.string.notify_period_title),
+                    getResources().getString(R.string.notify_period_message));
+        }
+
+        if (getUsageCounter(PSettingIsNotifyOvulation) == 1) {
+
+            DateTime dateTimeToBeNotified = summary.expectedOvulationDate
+                    .minusDays(getUsageCounter(PSettingNotifyOvulationDay));
+
+            BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
+            notifier.setNotification(this, dateTimeToBeNotified,
+                    getResources().getString(R.string.notify_ovulation_title),
+                    getResources().getString(R.string.notify_ovulation_message));
         }
     }
 
