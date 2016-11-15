@@ -104,4 +104,5 @@
     <string name="review_we_also_like_to_hear_a_negative_feedback">Even the negative feedback, we would like to hear from you</string>
     <string name="review_send_review">Send Review</string>
     <string name="review_hint">Please enter your feedback here</string>
+    <string name="summary_estimated_ovulation_exact">Expected highest chance for the ovulation at %1$s</string>
 </resources>

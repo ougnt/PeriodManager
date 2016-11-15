@@ -41,6 +41,7 @@ import com.ougnt.period_manager.PeriodCalendar;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
 import com.ougnt.period_manager.activity.extra.SetupWizardActivityExtra;
+import com.ougnt.period_manager.activity.extra.SummaryActivityExtra;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
@@ -62,11 +63,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-import static com.ougnt.period_manager.activity.SummaryActivity.NextMenstrualFromExtra;
-import static com.ougnt.period_manager.activity.SummaryActivity.NextMenstrualToExtra;
-import static com.ougnt.period_manager.activity.SummaryActivity.NextOvulationExtra;
-import static com.ougnt.period_manager.activity.SummaryActivity.NextOvulationFromExtra;
-import static com.ougnt.period_manager.activity.SummaryActivity.NextOvulationToExtra;
 import static org.joda.time.DateTime.now;
 
 public class InitialActivity extends Activity {
@@ -671,13 +667,10 @@ public class InitialActivity extends Activity {
                 }
                 case DisplaySummary: {
 
-                    SummaryRepository summary = new SummaryRepository();
-
-                    summary.expectedMenstrualDateFrom = DateTime.parse(data.getExtras().getString(NextMenstrualFromExtra));
-                    summary.expectedMenstrualDateTo = DateTime.parse(data.getExtras().getString(NextMenstrualToExtra));
-                    summary.expectedOvulationDateFrom = DateTime.parse(data.getExtras().getString(NextOvulationFromExtra));
-                    summary.expectedOvulationDateTo = DateTime.parse(data.getExtras().getString(NextOvulationToExtra));
-                    summary.expectedOvulationDate = DateTime.parse(data.getExtras().getString(NextOvulationExtra));
+                    String jsonSummary = data.getExtras().getString(SummaryActivityExtra.SummaryActivityExtraExtra);
+                    SummaryActivityExtra extra = SummaryActivityExtra.fromJson(jsonSummary);
+                    assert extra != null;
+                    SummaryRepository summary = extra.toSummaryRepository();
 
                     summary.save(this);
                     break;
@@ -1220,10 +1213,8 @@ public class InitialActivity extends Activity {
                     SummaryRepository summary = SummaryRepository.getSummary(this);
                     if (summary != null) {
                         Intent summaryIntent = new Intent(this, SummaryActivity.class);
-                        summaryIntent.putExtra(NextMenstrualFromExtra, summary.expectedMenstrualDateFrom.toString("yyyy-MM-dd"));
-                        summaryIntent.putExtra(NextMenstrualToExtra, summary.expectedMenstrualDateTo.toString("yyyy-MM-dd"));
-                        summaryIntent.putExtra(NextOvulationFromExtra, summary.expectedOvulationDateFrom.toString("yyyy-MM-dd"));
-                        summaryIntent.putExtra(NextOvulationToExtra, summary.expectedOvulationDateTo.toString("yyyy-MM-dd"));
+                        SummaryActivityExtra extra = SummaryActivityExtra.fromSummaryRepository(summary);
+                        summaryIntent.putExtra(SummaryActivityExtra.SummaryActivityExtraExtra, extra.toJson());
 
                         startActivityForResult(summaryIntent, DisplaySummary);
                     }
@@ -1502,16 +1493,10 @@ public class InitialActivity extends Activity {
             paintDateMeter(startNonOvulationPeriod, endNonOvulationPeriod, DateMeter.Nothing);
             paintDateMeter(estimatedNextMenstrualFrom, estimatedNextMenstrualTo, DateMeter.Menstrual);
 
-            Intent summaryIntent = new Intent(this, SummaryActivity.class);
             DateTime nextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
             DateTime nextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 1);
             DateTime nextOvulationFrom = dateToBePainted.plusDays(6);
             DateTime nextOvulationTo = dateToBePainted.plusDays((int) setting.periodCycle - 8);
-
-            summaryIntent.putExtra(NextMenstrualFromExtra, nextMenstrualFrom.toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(NextMenstrualToExtra, nextMenstrualTo.toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(NextOvulationFromExtra, nextOvulationFrom.toString("yyyy-MM-dd"));
-            summaryIntent.putExtra(NextOvulationToExtra, nextOvulationTo.toString("yyyy-MM-dd"));
 
             SummaryRepository summary = new  SummaryRepository();
             summary.expectedMenstrualDateTo = nextMenstrualTo;
@@ -1522,6 +1507,9 @@ public class InitialActivity extends Activity {
 
             setBroadcastNotification(summary);
 
+            Intent summaryIntent = new Intent(this, SummaryActivity.class);
+            SummaryActivityExtra extra = SummaryActivityExtra.fromSummaryRepository(summary);
+            summaryIntent.putExtra(SummaryActivityExtra.SummaryActivityExtraExtra, extra.toJson());
             startActivityForResult(summaryIntent, DisplaySummary);
         } catch (Resources.NotFoundException e) {
             HttpHelper.sendErrorLog(e);

@@ -2,5 +2,6 @@
 <resources>
     <string name="summary_estimated_ovulation">Estimated Ovulation Period From %1$s to %2$s</string>
     <string name="summary_estimated_menstrual">Estimated Menstrual Period From %1$s to %2$s</string>
+    <string name="summary_estimated_ovulation_exact">Expected highest chance for the ovulation at %1$s</string>
     <string name="summary_close">Close</string>
 </resources>

@@ -102,4 +102,5 @@
     <string name="review_we_also_like_to_hear_a_negative_feedback">ไม่ใช่แค่คำชม ที่เราอยากฟัง เรายังอยากฟังคำติเตียน จากคุณ</string>
     <string name="review_send_review">ส่งข้อความ</string>
     <string name="review_hint">กรุณาใส่คำแนะนำตรงนี้</string>
+    <string name="summary_estimated_ovulation_exact">โดยวันที่มีโอกาสตกไข่สูงสุดคือ วันที่  %1$s</string>
 </resources>
