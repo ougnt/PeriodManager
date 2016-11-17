@@ -76,7 +76,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 62;
+    public static final int ApplicationVersion = 63;
 
     // TODO : Change this to the real one
     // Live Env
@@ -150,7 +150,8 @@ public class InitialActivity extends Activity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
+        // TODO : remove center ads
+        // TODO : test between the banner to native ads
         try {
             super.onCreate(savedInstanceState);
 
@@ -312,43 +313,23 @@ public class InitialActivity extends Activity {
                         adBuilder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
                         final AdRequest adRequest = adBuilder.build();
                         adMobLayout.setVisibility(View.GONE);
-                        adMobLayoutCenter.setVisibility(View.GONE);
 
-                        if (getExperimentVariance() == 0) {
-                            adView.setAdListener(new AdListener() {
-                                @Override
-                                public void onAdLoaded() {
-                                    adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
-                                    adMobLayout.setVisibility(View.VISIBLE);
-                                    super.onAdLoaded();
-                                }
+                        adView.setAdListener(new AdListener() {
+                            @Override
+                            public void onAdLoaded() {
+                                adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
+                                adMobLayout.setVisibility(View.VISIBLE);
+                                super.onAdLoaded();
+                            }
 
-                                @Override
-                                public void onAdOpened() {
-                                    log.setAction(Log.Action.ClickAds);
-                                    log.setCategory(Log.Category.Ads);
-                                    sendTrafficMessage(log);
-                                }
-                            });
-                            adView.loadAd(adRequest);
-                        } else {
-                            adViewCenter.setAdListener(new AdListener() {
-                                @Override
-                                public void onAdLoaded() {
-                                    adMobLayoutCenter.setLayoutParams(new LinearLayout.LayoutParams(adViewCenter.getAdSize().getWidth(), adViewCenter.getAdSize().getHeight()));
-                                    adMobLayoutCenter.setVisibility(View.VISIBLE);
-                                    super.onAdLoaded();
-                                }
-
-                                @Override
-                                public void onAdOpened() {
-                                    log.setAction(Log.Action.ClickAds);
-                                    log.setCategory(Log.Category.Ads);
-                                    sendTrafficMessage(log);
-                                }
-                            });
-                            adViewCenter.loadAd(adRequest);
-                        }
+                            @Override
+                            public void onAdOpened() {
+                                log.setAction(Log.Action.ClickAds);
+                                log.setCategory(Log.Category.Ads);
+                                sendTrafficMessage(log);
+                            }
+                        });
+                        adView.loadAd(adRequest);
                     } catch (Exception e) {
                         HttpHelper.sendErrorLog(e);
                     }
@@ -1702,9 +1683,7 @@ public class InitialActivity extends Activity {
             dateMeterContainer = (LinearLayout) findViewById(R.id.dateScrollerContent);
             newActionPanel = (LinearLayout) findViewById(R.id.new_action_panel);
             adView = (AdView) findViewById(R.id.ad_view);
-            adViewCenter = (AdView) findViewById(R.id.ad_view_center);
             adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
-            adMobLayoutCenter = (LinearLayout) findViewById(R.id.ads_mob_view_center);
             dateMeterScroller = (HorizontalScrollView) findViewById(R.id.dateScroller);
             fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
             dateDetailActionButton = (Button) findViewById(R.id.date_detail_action_button);
@@ -1741,9 +1720,7 @@ public class InitialActivity extends Activity {
     private HorizontalScrollView dateMeterScroller;
     private LinearLayout newActionPanel;
     private AdView adView;
-    private AdView adViewCenter;
     private LinearLayout adMobLayout;
-    private LinearLayout adMobLayoutCenter;
     private ImageButton helpButton;
 
     private int calendarCurrentMonth, calendarCurrentYear;
