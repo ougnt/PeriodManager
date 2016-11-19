@@ -16,7 +16,7 @@
     <string name="help_2">A date with this icon means it is the day you have a period</string>
     <string name="help_3">This icon means it is not a ovulation day</string>
     <string name="help_4">This icon means it is a ovulation day</string>
-    <string name="help_select_date">Select your first day of you previous period</string>
+    <string name="help_select_date">Select your first day of your previous period</string>
     <string name="help_push_menstrual_button">Push the "Period Start" Button</string>
     <string name="help_prediction">The system will estimate the ovulation days</string>
     <string name="help_seek">Scroll the calendar to seek for the ovulation/non-ovulation days</string>

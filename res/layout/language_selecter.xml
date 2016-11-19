@@ -40,6 +40,17 @@
         <LinearLayout android:orientation="horizontal" android:layout_width="0dp" android:layout_height="match_parent"
                       android:layout_weight="1" android:background="@drawable/flag_vietnamese" android:layout_margin="6dp"
                       android:layout_marginRight="3dp" android:id="@+id/flag_vietnamese" android:onClick="vietnameseOnclick"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/flag_russian"
+            android:layout_margin="6dp"
+            android:layout_marginRight="3dp"
+            android:id="@+id/flag_russian"
+            android:onClick="russianOnclick" />
     </LinearLayout>
     <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="5dp"
                   android:layout_margin="5dp" android:background="@color/edit_text_bg"/>
