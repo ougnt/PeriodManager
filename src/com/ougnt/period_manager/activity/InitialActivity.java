@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -150,8 +151,6 @@ public class InitialActivity extends Activity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        // TODO : remove center ads
-        // TODO : test between the banner to native ads
         try {
             super.onCreate(savedInstanceState);
 
@@ -309,27 +308,47 @@ public class InitialActivity extends Activity {
 
                         AdRequest.Builder adBuilder = new AdRequest.Builder();
                         adBuilder.setGender(AdRequest.GENDER_FEMALE);
-                        adBuilder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
-                        adBuilder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
+//                        adBuilder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
+//                        adBuilder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
                         final AdRequest adRequest = adBuilder.build();
                         adMobLayout.setVisibility(View.GONE);
 
-                        adView.setAdListener(new AdListener() {
+                        Handler adHandler = new Handler();
+                        adHandler.postDelayed(new Runnable() {
                             @Override
-                            public void onAdLoaded() {
-                                adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
-                                adMobLayout.setVisibility(View.VISIBLE);
-                                super.onAdLoaded();
-                            }
+                            public void run() {
+                                adView = new AdView(getBaseContext());
+                                if (getExperimentVariance() == 0) {
+                                    int width = getResources().getConfiguration().screenWidthDp;
+                                    adView.setAdSize(new AdSize(width, 80));
+                                    adView.setAdUnitId("ca-app-pub-2522554213803646/2989170212");
+                                } else {
+                                    int width = getResources().getConfiguration().screenWidthDp;
+                                    adView.setAdSize(new AdSize(width, 80));
+                                    adView.setAdUnitId("ca-app-pub-2522554213803646/4225526617");
+                                }
+                                adView.setAdListener(new AdListener() {
+                                    @Override
+                                    public void onAdLoaded() {
+                                        int factor = getResources().getDisplayMetrics().heightPixels / getResources().getDisplayMetrics().densityDpi;
+                                        adMobLayout.removeAllViews();
+                                        adMobLayout.addView(adView);
+                                        adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 80 * factor));
+                                        adMobLayout.setVisibility(View.VISIBLE);
+                                        super.onAdLoaded();
+                                    }
 
-                            @Override
-                            public void onAdOpened() {
-                                log.setAction(Log.Action.ClickAds);
-                                log.setCategory(Log.Category.Ads);
-                                sendTrafficMessage(log);
+                                    @Override
+                                    public void onAdOpened() {
+                                        log.setAction(Log.Action.ClickAds);
+                                        log.setCategory(Log.Category.Ads);
+                                        sendTrafficMessage(log);
+                                    }
+                                });
+                                adView.loadAd(adRequest);
                             }
-                        });
-                        adView.loadAd(adRequest);
+                        }, 500);
+
                     } catch (Exception e) {
                         HttpHelper.sendErrorLog(e);
                     }
@@ -1682,7 +1701,6 @@ public class InitialActivity extends Activity {
         try {
             dateMeterContainer = (LinearLayout) findViewById(R.id.dateScrollerContent);
             newActionPanel = (LinearLayout) findViewById(R.id.new_action_panel);
-            adView = (AdView) findViewById(R.id.ad_view);
             adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
             dateMeterScroller = (HorizontalScrollView) findViewById(R.id.dateScroller);
             fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
