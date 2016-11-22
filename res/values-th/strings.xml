@@ -103,4 +103,5 @@
     <string name="review_send_review">ส่งข้อความ</string>
     <string name="review_hint">กรุณาใส่คำแนะนำตรงนี้</string>
     <string name="summary_estimated_ovulation_exact">โดยวันที่มีโอกาสตกไข่สูงสุดคือ วันที่  %1$s</string>
+    <string name="date_detail_click_to_see_more">คลิ๊กเพื่อดูเพิ่ม</string>
 </resources>

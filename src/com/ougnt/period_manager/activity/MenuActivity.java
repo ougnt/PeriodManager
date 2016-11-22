@@ -67,6 +67,10 @@ public class MenuActivity extends Activity {
                 flagLayout.setBackgroundResource(R.drawable.flag_vietnamese);
                 break;
             }
+            case "ru": {
+                flagLayout.setBackgroundResource(R.drawable.flag_russian);
+                break;
+            }
         }
 
         helper = new MenuActivityHelper(this);

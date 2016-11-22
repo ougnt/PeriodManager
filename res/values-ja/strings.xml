@@ -108,4 +108,5 @@
     <string name="review_send_review">レビューを送信</string>
     <string name="review_hint">これにあなたのこーめんとを入って下さい。</string>
     <string name="summary_estimated_ovulation_exact">%1$s での排卵の可能性が最も高い</string>
+    <string name="date_detail_click_to_see_more">詳細情報</string>
 </resources>

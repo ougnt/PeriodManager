@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -77,7 +78,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 63;
+    public static final int ApplicationVersion = 64;
 
     // TODO : Change this to the real one
     // Live Env
@@ -333,7 +334,7 @@ public class InitialActivity extends Activity {
                                         int factor = getResources().getDisplayMetrics().heightPixels / getResources().getDisplayMetrics().densityDpi;
                                         adMobLayout.removeAllViews();
                                         adMobLayout.addView(adView);
-                                        adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 80 * factor));
+                                        adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
                                         adMobLayout.setVisibility(View.VISIBLE);
                                         super.onAdLoaded();
                                     }
@@ -463,7 +464,7 @@ public class InitialActivity extends Activity {
     private void setDateDetailText(DateMeter touchDate) {
 
         try {
-            TextView todayText = (TextView) findViewById(R.id.date_detail_text);
+            final TextView todayText = (TextView) findViewById(R.id.date_detail_text);
             SummaryRepository summary = SummaryRepository.getSummary(getBaseContext());
             if (summary == null) {
                 todayText.setText(getResources().getString(R.string.date_detail_no_detail_yet));
@@ -489,6 +490,32 @@ public class InitialActivity extends Activity {
 
             String displayText = explainationText + estNextOvu + estNextMens;
             todayText.setText(displayText);
+            final String[] lines = todayText.getText().toString().split("\n");
+
+            todayText.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(todayText.getLineCount() > 4) {
+                        todayText.setTag(1);
+                        todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
+                        todayText.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if((int)v.getTag() == 1) {
+                                    todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    v.setTag(2);
+                                } else if((int)v.getTag() == 2) {
+                                    todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[1], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    v.setTag(3);
+                                } else {
+                                    todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[2], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    v.setTag(1);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
         } catch (Resources.NotFoundException e) {
             HttpHelper.sendErrorLog(e);
         }
