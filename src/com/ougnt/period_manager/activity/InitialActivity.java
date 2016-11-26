@@ -7,12 +7,14 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
+import android.gesture.Gesture;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.Html;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -78,7 +80,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 64;
+    public static final int ApplicationVersion = 65;
 
     // TODO : Change this to the real one
     // Live Env
@@ -331,7 +333,6 @@ public class InitialActivity extends Activity {
                                 adView.setAdListener(new AdListener() {
                                     @Override
                                     public void onAdLoaded() {
-                                        int factor = getResources().getDisplayMetrics().heightPixels / getResources().getDisplayMetrics().densityDpi;
                                         adMobLayout.removeAllViews();
                                         adMobLayout.addView(adView);
                                         adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -362,7 +363,7 @@ public class InitialActivity extends Activity {
 
     private int getExperimentVariance() {
 
-        if(getDeviceId() == null) {
+        if (getDeviceId() == null) {
             setDeviceId();
         }
 
@@ -381,7 +382,8 @@ public class InitialActivity extends Activity {
                 targetDateMeter.getLocationOnScreen(dateMeterLocator);
                 int fingerIndexPointerX = fingerIndexLocator[0] + fingerIndex.getWidth() / 3;
 
-                if (fingerIndexPointerX > dateMeterLocator[0] && fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
+                if (fingerIndexPointerX > dateMeterLocator[0] &&
+                        fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
 
                     if (selectedDate == null) {
                         selectedDate = targetDateMeter;
@@ -399,7 +401,7 @@ public class InitialActivity extends Activity {
                 }
             }
             TextView headerText = (TextView) findViewById(R.id.main_header_text);
-            if(selectedDate == null) {
+            if (selectedDate == null) {
                 selectedDate = (DateMeter) dateMeterContainer.getChildAt(16);
             }
             headerText.setText(selectedDate.getDate().toString(getResources().getText(R.string.short_date_format).toString()));
@@ -415,36 +417,36 @@ public class InitialActivity extends Activity {
                 @Override
                 public void onFocusMoveIn(DateMeter touchDate) {
 
-                ImageView fireImage = (ImageView) findViewById(R.id.fire_image);
-                ImageView grassImage = (ImageView) findViewById(R.id.grass_image);
-                ImageView sunImage = (ImageView) findViewById(R.id.sun_image);
-                ImageView beachImage = (ImageView) findViewById(R.id.beach_image);
+                    ImageView fireImage = (ImageView) findViewById(R.id.fire_image);
+                    ImageView grassImage = (ImageView) findViewById(R.id.grass_image);
+                    ImageView sunImage = (ImageView) findViewById(R.id.sun_image);
+                    ImageView beachImage = (ImageView) findViewById(R.id.beach_image);
 
-                switch (touchDate.dateType) {
-                    case DateMeter.Menstrual: {
-                        fireImage.setVisibility(View.VISIBLE);
-                        grassImage.setVisibility(View.GONE);
-                        sunImage.setVisibility(View.GONE);
-                        beachImage.setVisibility(View.GONE);
-                        break;
+                    switch (touchDate.dateType) {
+                        case DateMeter.Menstrual: {
+                            fireImage.setVisibility(View.VISIBLE);
+                            grassImage.setVisibility(View.GONE);
+                            sunImage.setVisibility(View.GONE);
+                            beachImage.setVisibility(View.GONE);
+                            break;
+                        }
+                        case DateMeter.PossiblyOvulation: {
+                            fireImage.setVisibility(View.GONE);
+                            grassImage.setVisibility(View.GONE);
+                            sunImage.setVisibility(View.VISIBLE);
+                            beachImage.setVisibility(View.VISIBLE);
+                            break;
+                        }
+                        case DateMeter.Nothing: {
+                            fireImage.setVisibility(View.GONE);
+                            grassImage.setVisibility(View.VISIBLE);
+                            sunImage.setVisibility(View.VISIBLE);
+                            beachImage.setVisibility(View.GONE);
+                            break;
+                        }
                     }
-                    case DateMeter.PossiblyOvulation: {
-                        fireImage.setVisibility(View.GONE);
-                        grassImage.setVisibility(View.GONE);
-                        sunImage.setVisibility(View.VISIBLE);
-                        beachImage.setVisibility(View.VISIBLE);
-                        break;
-                    }
-                    case DateMeter.Nothing: {
-                        fireImage.setVisibility(View.GONE);
-                        grassImage.setVisibility(View.VISIBLE);
-                        sunImage.setVisibility(View.VISIBLE);
-                        beachImage.setVisibility(View.GONE);
-                        break;
-                    }
-                }
 
-                setDateDetailText(touchDate);
+                    setDateDetailText(touchDate);
                 }
             });
 
@@ -495,16 +497,16 @@ public class InitialActivity extends Activity {
             todayText.post(new Runnable() {
                 @Override
                 public void run() {
-                    if(todayText.getLineCount() > 4) {
+                    if (todayText.getLineCount() > 4) {
                         todayText.setTag(1);
                         todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
                         todayText.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if((int)v.getTag() == 1) {
+                                if ((int) v.getTag() == 1) {
                                     todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
                                     v.setTag(2);
-                                } else if((int)v.getTag() == 2) {
+                                } else if ((int) v.getTag() == 2) {
                                     todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[1], getResources().getString(R.string.date_detail_click_to_see_more))));
                                     v.setTag(3);
                                 } else {
@@ -762,6 +764,7 @@ public class InitialActivity extends Activity {
 
 
     static Boolean isReviewing = false;
+
     @Override
     public void onBackPressed() {
 
@@ -1062,7 +1065,7 @@ public class InitialActivity extends Activity {
     }
 
     private void sendReview(String review) {
-        String rewJson = String.format("{\"deviceId\":\"%s\",\"review\":\"%s\"}",getDeviceId().toString(), review);
+        String rewJson = String.format("{\"deviceId\":\"%s\",\"review\":\"%s\"}", getDeviceId().toString(), review);
         HttpHelper.post(ReviewUrl, rewJson);
     }
 
@@ -1525,7 +1528,7 @@ public class InitialActivity extends Activity {
             DateTime nextOvulationFrom = dateToBePainted.plusDays(6);
             DateTime nextOvulationTo = dateToBePainted.plusDays((int) setting.periodCycle - 8);
 
-            SummaryRepository summary = new  SummaryRepository();
+            SummaryRepository summary = new SummaryRepository();
             summary.expectedMenstrualDateTo = nextMenstrualTo;
             summary.expectedMenstrualDateFrom = nextMenstrualFrom;
             summary.expectedOvulationDateTo = nextOvulationTo;
@@ -1643,7 +1646,8 @@ public class InitialActivity extends Activity {
                         dateMeterContainer.getChildAt(16).getLocationOnScreen(todayLocal);
                         fingerIndex.getLocationOnScreen(fingerIndexLocal);
                         int centerOfFinger = fingerIndexLocal[0] + fingerIndex.getWidth() / 2;
-                        dateMeterScroller.scrollTo(todayLocal[0] - centerOfFinger, 0);
+                        dateMeterScroller.scrollTo(todayLocal[0] -
+                                dateMeterScroller.getWidth() / 2, 0);
                     }
 
                     if (setting.isFirstTime) {
@@ -1660,13 +1664,36 @@ public class InitialActivity extends Activity {
                     params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
                     fingerIndex.setLayoutParams(params);
 
-                    DateMeter todayDateMeter = (DateMeter) dateMeterContainer.getChildAt(17);
-                    setDateDetailText(todayDateMeter);
-                    setSelectedDateToAlignWithFingerIndex();
+                    selectedDate = (DateMeter) dateMeterContainer.getChildAt(17);
+                    setDateDetailText(selectedDate);
+                    dateMeterScroller.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            setSelectedDateToAlignWithFingerIndex();
+                        }
+                    },50);
                 }
             });
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    synchronized private void moveDateMeter(int targetPixel) {
+        moveDateMeter(targetPixel, 0);
+    }
+
+    synchronized private void moveDateMeter(final int targetPixel, final int movedPixel) {
+
+        if(Math.abs(movedPixel) < Math.abs(targetPixel)) {
+            dateMeterScroller.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dateMeterScroller.scrollBy(targetPixel / 10, 0);
+                    moveDateMeter(targetPixel, movedPixel + targetPixel / 10);
+                    setSelectedDateToAlignWithFingerIndex();
+                }
+            }, 10);
         }
     }
 
@@ -1677,8 +1704,8 @@ public class InitialActivity extends Activity {
                 return;
             }
 
-            if(DeviceId != null) {
-                if(DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
+            if (DeviceId != null) {
+                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
                     return;
                 }
             }
@@ -1703,8 +1730,8 @@ public class InitialActivity extends Activity {
                 return;
             }
 
-            if(DeviceId != null) {
-                if(DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
+            if (DeviceId != null) {
+                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
                     return;
                 }
             }
@@ -1724,6 +1751,19 @@ public class InitialActivity extends Activity {
         }
     }
 
+    private void processDateDetailFlinging(float distant) {
+        int newDateMeterIndex = distant > 0 ? getSelectedDateMeterIndex() + 1 : getSelectedDateMeterIndex() - 1;
+        if (newDateMeterIndex == 0 || newDateMeterIndex == dateMeterContainer.getChildCount() - 1)
+            return;
+        DateMeter currentSelectedDate = selectedDate;
+        DateMeter newSelectedDate = (DateMeter) dateMeterContainer.getChildAt(newDateMeterIndex);
+        selectedDate = newSelectedDate;
+
+        int direction = distant > 0 ? -1 : 1;
+
+        moveDateMeter(direction * (currentSelectedDate.getWidth() / 2 + newSelectedDate.getWidth() / 2 - 30));
+    }
+
     private void getAllViews() {
         try {
             dateMeterContainer = (LinearLayout) findViewById(R.id.dateScrollerContent);
@@ -1733,14 +1773,15 @@ public class InitialActivity extends Activity {
             fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
             dateDetailActionButton = (Button) findViewById(R.id.date_detail_action_button);
             helpButton = (ImageButton) findViewById(R.id.main_help_button);
+            dateDetailMainLayout = (LinearLayout) findViewById(R.id.date_detail_main_layout);
 
-            registerOnclickEvent();
+            registerOnclickAndOnSwipeEvent();
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
     }
 
-    private void registerOnclickEvent(){
+    private void registerOnclickAndOnSwipeEvent() {
         try {
             helpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1752,6 +1793,12 @@ public class InitialActivity extends Activity {
 
                     Intent intent = new Intent(getBaseContext(), MainHelpActivity.class);
                     startActivity(intent);
+                }
+            });
+            dateDetailMainLayout.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return gestureDetector.onTouchEvent(event);
                 }
             });
         } catch (Exception e) {
@@ -1767,6 +1814,21 @@ public class InitialActivity extends Activity {
     private AdView adView;
     private LinearLayout adMobLayout;
     private ImageButton helpButton;
+    private LinearLayout dateDetailMainLayout;
+    private GestureDetector gestureDetector = new GestureDetector(getBaseContext(), new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (Math.abs(velocityX) > 200) {
+                processDateDetailFlinging(velocityX);
+            }
+            return true;
+        }
+    });
 
     private int calendarCurrentMonth, calendarCurrentYear;
     private OnDateMeterFocusListener dateTouchListener;
