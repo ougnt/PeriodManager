@@ -1,11 +1,8 @@
 package com.ougnt.period_manager.tests;
 
 
-import com.ougnt.period_manager.AdsManagerImpl;
 import junit.framework.Assert;
 import junit.framework.TestCase;
-
-import java.util.UUID;
 
 /**
  * * # Created by wacharint on 4/25/16.

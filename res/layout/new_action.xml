@@ -37,7 +37,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="10"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:id="@+id/new_action_panel_scroll_content">
 
             <LinearLayout android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content"
                           android:layout_weight="3" android:id="@+id/linearLayout2" android:weightSum="1"

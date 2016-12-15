@@ -1,0 +1,80 @@
+package com.ougnt.period_manager.androidtests;
+
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+
+import com.ougnt.period_manager.DateMeter;
+import com.ougnt.period_manager.activity.InitialActivity;
+import com.ougnt.period_manager.activity.helper.FlagHelper;
+import com.ougnt.period_manager.androidtests.pages.DateDetailPage;
+import com.ougnt.period_manager.androidtests.pages.InitialPage;
+import com.ougnt.period_manager.androidtests.pages.MenuPage;
+
+import junit.framework.Assert;
+
+import org.joda.time.DateTime;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+@RunWith(AndroidJUnit4.class)
+public class EndToEndTest {
+
+    @Rule
+    public ActivityTestRule<InitialActivity> mActivityRule = new ActivityTestRule<>(InitialActivity.class);
+
+    private InitialPage initialPage;
+    private DateDetailPage dateDetailPage;
+    private MenuPage menuPage;
+
+    @Before
+    public void setUp() {
+
+        initialPage = new InitialPage();
+        dateDetailPage = new DateDetailPage();
+        menuPage = new MenuPage();
+    }
+
+    @Test
+    public void ensureTheHamburgerMenuClickedWillShowMenu() {
+        // Type text and then press the button.
+        initialPage.clickHamburgerMenu();
+
+        // Check that the text was changed.
+        menuPage.checkWhetherMenuPageDisplayed();
+    }
+
+    @Test
+    public void ensureTheDateDetailsIsWorking() {
+
+        // Check the initial page first
+        initialPage.checkSelectedDateEqualToToday();
+        DateMeter pointingDateMeter = initialPage.getPointedDateMeter();
+
+        Assert.assertEquals(DateTime.now().toString("yyyy-MM-dd"), pointingDateMeter.getDate().toString("yyyy-MM-dd"));
+        initialPage.clickDateDetailButton();
+
+        dateDetailPage.clickEmotionSad();
+        dateDetailPage.clickHaveIntercourse();
+        dateDetailPage.clickSave();
+
+        Assert.assertEquals(DateTime.now().toString("yyyy-MM-dd"), pointingDateMeter.getDate().toString("yyyy-MM-dd"));
+        Assert.assertEquals(FlagHelper.EmotionSadIcon, FlagHelper.GetEmotionFlag(pointingDateMeter.getFlags()) & FlagHelper.EmotionSadIcon);
+        Assert.assertEquals(FlagHelper.HaveIntercourseFlag, FlagHelper.GetIntercourseFlag(pointingDateMeter.getFlags()));
+
+        initialPage.clickDateDetailButton();
+        dateDetailPage.clickEmotionNothing();
+        dateDetailPage.clickHaventIntercourse();
+        dateDetailPage.clickSave();
+
+        pointingDateMeter = initialPage.getPointedDateMeter();
+        Assert.assertEquals(DateTime.now().toString("yyyy-MM-dd"), pointingDateMeter.getDate().toString("yyyy-MM-dd"));
+        Assert.assertEquals(FlagHelper.EmotionNothingIcon, FlagHelper.GetEmotionFlag(pointingDateMeter.getFlags()) & FlagHelper.EmotionSadIcon);
+        Assert.assertEquals(FlagHelper.HaventIntercourseFlag, FlagHelper.GetIntercourseFlag(pointingDateMeter.getFlags()));
+    }
+
+    @After
+    public void tearDown() {  }
+}

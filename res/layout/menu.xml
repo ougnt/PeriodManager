@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" android:theme="@style/Theme.Transparent" android:weightSum="1">
+              android:layout_height="match_parent" android:theme="@style/Theme.Transparent" android:weightSum="1"
+    android:id="@+id/menu_layout">
 
     <LinearLayout
             android:orientation="vertical"

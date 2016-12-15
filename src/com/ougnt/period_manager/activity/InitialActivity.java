@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.gesture.Gesture;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -311,8 +310,6 @@ public class InitialActivity extends Activity {
 
                         AdRequest.Builder adBuilder = new AdRequest.Builder();
                         adBuilder.setGender(AdRequest.GENDER_FEMALE);
-//                        adBuilder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
-//                        adBuilder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
                         final AdRequest adRequest = adBuilder.build();
                         adMobLayout.setVisibility(View.GONE);
 
@@ -321,15 +318,11 @@ public class InitialActivity extends Activity {
                             @Override
                             public void run() {
                                 adView = new AdView(getBaseContext());
-                                if (getExperimentVariance() == 0) {
-                                    int width = getResources().getConfiguration().screenWidthDp;
-                                    adView.setAdSize(new AdSize(width, 80));
-                                    adView.setAdUnitId("ca-app-pub-2522554213803646/2989170212");
-                                } else {
-                                    int width = getResources().getConfiguration().screenWidthDp;
-                                    adView.setAdSize(new AdSize(width, 80));
-                                    adView.setAdUnitId("ca-app-pub-2522554213803646/4225526617");
-                                }
+
+                                int width = getResources().getConfiguration().screenWidthDp;
+                                adView.setAdSize(new AdSize(width, 80));
+                                adView.setAdUnitId("ca-app-pub-2522554213803646/4225526617");
+
                                 adView.setAdListener(new AdListener() {
                                     @Override
                                     public void onAdLoaded() {
