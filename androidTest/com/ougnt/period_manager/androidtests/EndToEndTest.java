@@ -50,6 +50,7 @@ public class EndToEndTest {
     public void ensureTheDateDetailsIsWorking() {
 
         // Check the initial page first
+        initialPage.clickDateViewToggleButton();
         initialPage.checkSelectedDateEqualToToday();
         DateMeter pointingDateMeter = initialPage.getPointedDateMeter();
 
@@ -73,6 +74,20 @@ public class EndToEndTest {
         Assert.assertEquals(DateTime.now().toString("yyyy-MM-dd"), pointingDateMeter.getDate().toString("yyyy-MM-dd"));
         Assert.assertEquals(FlagHelper.EmotionNothingIcon, FlagHelper.GetEmotionFlag(pointingDateMeter.getFlags()) & FlagHelper.EmotionSadIcon);
         Assert.assertEquals(FlagHelper.HaventIntercourseFlag, FlagHelper.GetIntercourseFlag(pointingDateMeter.getFlags()));
+    }
+
+    @Test
+    public void ensureTheViewToggleIsWorking() {
+        initialPage.clickConclusionToggleButton();
+        initialPage.checkConclusionViewShowing();
+        initialPage.clickDateViewToggleButton();
+        initialPage.checkDateViewShowing();
+        initialPage.clickMonthViewToggleButton();
+        initialPage.checkMonthViewShowing();
+        initialPage.clickChartViewToggleButton();
+        initialPage.checkChartViewToggleButton();
+        initialPage.clickConclusionToggleButton();
+        initialPage.checkConclusionViewShowing();
     }
 
     @After

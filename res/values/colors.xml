@@ -20,6 +20,9 @@
     <color name="ads_background">#84FFCF</color>
     <color name="ads_text">#FF4743</color>
     <color name="button_urgent">#7DBCF3</color>
+    <color name="conclusion_switcher_lite">#FFFCB3</color>
+    <color name="conclusion_switcher">#F1EEAB</color>
+    <color name="conclusion_switcher_dark">#D7D59C</color>
     <color name="calendar_month_bg_lite">#FFDFDF</color>
     <color name="calendar_month_bg_dark">#D0AFAF</color>
     <color name="calendar_date_bg_lite">#3EFFD4</color>

@@ -140,6 +140,7 @@ public class InitialActivity extends Activity {
     public static final int DisplayModeDateScroller = 0;
     public static final int DisplayModeMonthView = 1;
     public static final int DisplayModeChartView = 2;
+    public static final int DisplayModeConclusionView = 4;
     public static DateTime startTime = now();
 
     SettingRepository setting;
@@ -916,9 +917,36 @@ public class InitialActivity extends Activity {
 
             switch (clickedButton.getId()) {
 
+                case R.id.conclusion_view_toggle: {
+                    switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToConclusion);
+                        }
+                        case DisplayModeDateScroller: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToConclusion);
+                            break;
+                        }
+                        case DisplayModeMonthView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToConclusion);
+                            break;
+                        }
+                        case DisplayModeChartView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToConclusion);
+                            break;
+                        }
+                        default: {
+                            log.setAction(Log.Action.ClickDisplayToggleFromUnknownToMonthView);
+                        }
+                    }
+                    newDisplayMode = DisplayModeConclusionView;
+                    break;
+                }
                 case R.id.date_view_toggle: {
 
                     switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToDateScroller);
+                        }
                         case DisplayModeDateScroller: {
                             log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToDateScroller);
                             break;
@@ -941,6 +969,9 @@ public class InitialActivity extends Activity {
                 }
                 case R.id.month_view_toggle: {
                     switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToMonthView);
+                        }
                         case DisplayModeDateScroller: {
                             log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToMonthView);
                             break;
@@ -962,6 +993,9 @@ public class InitialActivity extends Activity {
                 }
                 case R.id.chart_view_toggle: {
                     switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToTemperature);
+                        }
                         case DisplayModeDateScroller: {
                             log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToTemperature);
                             break;
@@ -998,15 +1032,26 @@ public class InitialActivity extends Activity {
     private void adjustLayoutForDisplayModeAccordingToPDisplayMode() {
 
         try {
+            LinearLayout conclusionView = (LinearLayout) findViewById(R.id.conclusion_panel);
             LinearLayout dateScrollerView = (LinearLayout) findViewById(R.id.date_scroller);
             LinearLayout monthView = (LinearLayout) findViewById(R.id.month_view_panel);
             LinearLayout chartView = (LinearLayout) findViewById(R.id.chart_view_panel);
 
             switch (getUsageCounter(PMainDisplayMode)) {
 
+                case DisplayModeConclusionView: {
+
+                    // Show only month view hide other
+                    conclusionView.setVisibility(View.VISIBLE);
+                    monthView.setVisibility(View.GONE);
+                    dateScrollerView.setVisibility(View.GONE);
+                    chartView.setVisibility(View.GONE);
+                    break;
+                }
                 case DisplayModeMonthView: {
 
                     // Show only month view hide other
+                    conclusionView.setVisibility(View.GONE);
                     monthView.setVisibility(View.VISIBLE);
                     dateScrollerView.setVisibility(View.GONE);
                     chartView.setVisibility(View.GONE);
@@ -1015,6 +1060,7 @@ public class InitialActivity extends Activity {
                 case DisplayModeChartView: {
 
                     // Show only chart view, hide other
+                    conclusionView.setVisibility(View.GONE);
                     chartView.setVisibility(View.VISIBLE);
                     dateScrollerView.setVisibility(View.GONE);
                     monthView.setVisibility(View.GONE);
@@ -1025,10 +1071,12 @@ public class InitialActivity extends Activity {
                 default: {
 
                     // The default is show only date scroller view, hide other
+                    conclusionView.setVisibility(View.GONE);
                     dateScrollerView.setVisibility(View.VISIBLE);
                     monthView.setVisibility(View.GONE);
                     chartView.setVisibility(View.GONE);
                     setSelectedDateToAlignWithFingerIndex();
+                    break;
                 }
             }
         } catch (Exception e) {

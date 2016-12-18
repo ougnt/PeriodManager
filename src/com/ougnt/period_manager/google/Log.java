@@ -83,6 +83,10 @@ public class Log {
         public static final String ClickDisplayToggleButtonFromDateScrollerToTemperature = "ClickDisplayToggleButtonFromDateScrollerToTemperature";
         public static final String ClickDisplayToggleButtonFromMonthViewToTemperature = "ClickDisplayToggleButtonFromMonthViewToTemperature";
         public static final String ClickDisplayToggleButtonFromTemperatureViewToTemperature = "ClickDisplayToggleButtonFromTemperatureViewToTemperature";
+        public static final String ClickDisplayToggleButtonFromConclusionToConclusion = "ClickDisplayToggleButtonFromConclusionToConclusion";
+        public static final String ClickDisplayToggleButtonFromDateScrollerToConclusion = "ClickDisplayToggleButtonFromDateScrollerToConclusion";
+        public static final String ClickDisplayToggleButtonFromMonthViewToConclusion = "ClickDisplayToggleButtonFromMonthViewToConclusion";
+        public static final String ClickDisplayToggleButtonFromTemperatureViewToConclusion = "ClickDisplayToggleButtonFromTemperatureViewToConclusion";
         public static final String ClickDisplayToggleFromUnknownToTemperature = "ClickDisplayToggleFromUnknownToTemperature";
         public static final String ActionButtonUnClick = "ActionButtonUnClick";
         public static final String ActionButtonClick = "ActionButtonClick";
@@ -104,5 +108,8 @@ public class Log {
         public static final String NativeAdClick = "NativeAdClick";
         public static final String AdOpened = "NativeAdOpened";
         public static final String ClickMainHelp = "ClickMainHelp";
+        public static final String ClickDisplayToggleButtonFromConclusionToDateScroller = "ClickDisplayToggleButtonFromConclusionToDateScroller";
+        public static final String ClickDisplayToggleButtonFromConclusionToMonthView = "ClickDisplayToggleButtonFromConclusionToMonthView";
+        public static final String ClickDisplayToggleButtonFromConclusionToTemperature = "ClickDisplayToggleButtonFromConclusionToTemperature";
     }
 }

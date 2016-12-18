@@ -3,6 +3,8 @@ package com.ougnt.period_manager.androidtests.pages;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.assertion.ViewAssertions;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -95,5 +97,37 @@ public class InitialPage {
             }
         });
         return DateTimeFormat.forPattern("MMM dd yyyy").parseDateTime(ret[0]);
+    }
+
+    public void clickConclusionToggleButton() {
+        onView(withId(R.id.conclusion_view_toggle)).perform(ViewActions.click());
+    }
+
+    public void checkConclusionViewShowing() {
+        onView(withId(R.id.conclusion_panel)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+    }
+
+    public void clickDateViewToggleButton() {
+        onView(withId(R.id.date_view_toggle)).perform(ViewActions.click());
+    }
+
+    public void checkDateViewShowing() {
+        onView(withId(R.id.date_scroller)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+    }
+
+    public void clickMonthViewToggleButton() {
+        onView(withId(R.id.month_view_toggle)).perform(ViewActions.click());
+    }
+
+    public void checkMonthViewShowing() {
+        onView(withId(R.id.month_view_panel)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+    }
+
+    public void clickChartViewToggleButton() {
+        onView(withId(R.id.chart_view_toggle)).perform(ViewActions.click());
+    }
+
+    public void checkChartViewToggleButton() {
+        onView(withId(R.id.chart_view_panel)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
     }
 }

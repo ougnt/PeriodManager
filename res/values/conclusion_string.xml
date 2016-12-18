@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="conclusion_suggestion_icon_string">Conclusion</string>
+    <string name="conclusion_suggestion_title_string">Conclusion Information</string>
+    <string name="conclusion_suggestion_date_string">Having an intercource during %1$s and %2$s would have a chance to have a baby</string>
+    <string name="conclusion_suggestion_days_to_the_date_string">The date is %1$s</string>
+    <string name="conclusion_suggestion_days_to_the_date_option_next_xxx_days_string">next %1$s day(s)</string>
+    <string name="conclusion_suggestion_days_to_the_date_option_today_string">today</string>
+    <string name="conclusion_suggestion_need_alert_string">Do you want the application to alert you for the date?</string>
+</resources>
