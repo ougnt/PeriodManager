@@ -1046,6 +1046,7 @@ public class InitialActivity extends Activity {
                     monthView.setVisibility(View.GONE);
                     dateScrollerView.setVisibility(View.GONE);
                     chartView.setVisibility(View.GONE);
+                    loadConclusionData();
                     break;
                 }
                 case DisplayModeMonthView: {
@@ -1082,6 +1083,59 @@ public class InitialActivity extends Activity {
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
+    }
+
+    private void loadConclusionData() {
+        try {
+            SummaryRepository summary = SummaryRepository.getSummary(this);
+            int daysToNextMenstrual = dateDiff(summary.expectedMenstrualDateFrom, DateTime.now()) + 1;
+            int daysToNextMenstrualTo = dateDiff(summary.expectedMenstrualDateTo, DateTime.now());
+            int daysToNextOvulation = dateDiff(summary.expectedOvulationDate, DateTime.now());
+            String daysToNextOvulationText;
+            String daysToNextMenstrualText;
+            String dateFormat = getResources().getString(R.string.short_date_format);
+
+            conclusionSuggestDate.setText(Html.fromHtml(String.format(getResources().getText(R.string.conclusion_suggestion_date_string).toString(),
+                    "<b>" + summary.expectedOvulationDate.minusDays(1).toString(dateFormat) + "</b>",
+                    "<b>" + summary.expectedOvulationDate.plusDays(1).toString(dateFormat) + "</b>")));
+
+            if(daysToNextOvulation == 0 || daysToNextOvulation == -1 || daysToNextOvulation == 1) {
+                daysToNextOvulationText = getResources().getString(R.string.conclusion_days_to_the_date_option_today_string);
+            } else if(daysToNextOvulation < -1) {
+                daysToNextOvulationText = "";
+            } else {
+                daysToNextOvulationText = String.format(
+                        getResources().getString(R.string.conclusion_days_to_the_date_option_next_xxx_days_string),
+                        daysToNextOvulation);
+            }
+
+            conclusionSuggestionDaysToDate.setText(String.format(getResources().getText(R.string.conclusion_days_to_the_date_string).toString(),
+                    daysToNextOvulationText));
+
+            conclusionEstimatedNextMenstrualDate.setText(Html.fromHtml(String.format(
+                    getResources().getString(R.string.conclusion_estimated_next_menstrual_date_string),
+                    "<b>" + summary.expectedMenstrualDateFrom.toString(dateFormat) + "</b>",
+                    "<b>" + summary.expectedMenstrualDateTo.toString(dateFormat) + "</b>")));
+
+            if(daysToNextMenstrual < 0 && daysToNextMenstrualTo < 0) {
+
+                daysToNextMenstrualText = "";
+            } else if(daysToNextMenstrual <= 0 && daysToNextMenstrualTo <= 0) {
+                daysToNextMenstrualText = getResources().getString(R.string.conclusion_days_to_the_date_option_today_string);
+            } else {
+                daysToNextMenstrualText = String.format(
+                        getResources().getString(R.string.conclusion_days_to_the_date_option_next_xxx_days_string),
+                        daysToNextMenstrual);
+            }
+            conclusionEstimatedNextMenstrualDaysToDate.setText(daysToNextMenstrualText);
+            // TODO: Complete this
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private int dateDiff(DateTime dateTo, DateTime dateFrom) {
+        return (int) ((dateTo.getMillis() - dateFrom.getMillis()) / 1000 / 60 / 60 / 24);
     }
 
     private void loadChartData() {
@@ -1712,7 +1766,7 @@ public class InitialActivity extends Activity {
                         public void run() {
                             setSelectedDateToAlignWithFingerIndex();
                         }
-                    },50);
+                    }, 50);
                 }
             });
         } catch (Exception e) {
@@ -1726,7 +1780,7 @@ public class InitialActivity extends Activity {
 
     synchronized private void moveDateMeter(final int targetPixel, final int movedPixel) {
 
-        if(Math.abs(movedPixel) < Math.abs(targetPixel)) {
+        if (Math.abs(movedPixel) < Math.abs(targetPixel)) {
             dateMeterScroller.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1815,6 +1869,10 @@ public class InitialActivity extends Activity {
             dateDetailActionButton = (Button) findViewById(R.id.date_detail_action_button);
             helpButton = (ImageButton) findViewById(R.id.main_help_button);
             dateDetailMainLayout = (LinearLayout) findViewById(R.id.date_detail_main_layout);
+            conclusionSuggestDate = (TextView) findViewById(R.id.conclusion_suggestion_date);
+            conclusionSuggestionDaysToDate = (TextView) findViewById(R.id.conclusion_suggestion_days_to_the_date);
+            conclusionEstimatedNextMenstrualDate = (TextView) findViewById(R.id.conclusion_estimated_next_menstrual_date_string);
+            conclusionEstimatedNextMenstrualDaysToDate = (TextView) findViewById(R.id.conclusion_estimated_next_menstrual_days_string);
 
             registerOnclickAndOnSwipeEvent();
         } catch (Exception e) {
@@ -1856,6 +1914,12 @@ public class InitialActivity extends Activity {
     private LinearLayout adMobLayout;
     private ImageButton helpButton;
     private LinearLayout dateDetailMainLayout;
+
+    private TextView conclusionSuggestDate;
+    private TextView conclusionSuggestionDaysToDate;
+    private TextView conclusionEstimatedNextMenstrualDate;
+    private TextView conclusionEstimatedNextMenstrualDaysToDate;
+
     private GestureDetector gestureDetector = new GestureDetector(getBaseContext(), new GestureDetector.SimpleOnGestureListener() {
         @Override
         public boolean onDown(MotionEvent e) {

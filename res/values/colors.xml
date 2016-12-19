@@ -49,4 +49,6 @@
     <color name="action_text_edit_bg_light">#FFFBF1</color>
     <color name="action_text_edit_bg_dark">#DDDAD1</color>
     <color name="date_detail_text_color">#0080FF</color>
+    <color name="conclusion_title_text_color">#0080FF</color>
+    <color name="conclusion_title_estimation_text_color">#FF6666</color>
 </resources>
