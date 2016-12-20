@@ -77,6 +77,15 @@ public class EndToEndTest {
     }
 
     @Test
+    public void ensureTheConclusionShowingTheRightInfo() {
+        initialPage.clickDateViewToggleButton();
+        initialPage.setTodayIsFirstMenstrualDate(dateDetailPage);
+        initialPage.clickConclusionToggleButton();
+        initialPage.checkOvulationSuggestion();
+//        initialPage.checkMenstrualSuggestion();
+    }
+
+    @Test
     public void ensureTheViewToggleIsWorking() {
         initialPage.clickConclusionToggleButton();
         initialPage.checkConclusionViewShowing();

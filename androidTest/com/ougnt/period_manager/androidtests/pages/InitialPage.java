@@ -14,6 +14,9 @@ import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.androidtests.ViewActions.ImageViewGetterViewAction;
 import com.ougnt.period_manager.androidtests.ViewActions.LinearLayoutGetterViewAction;
+import com.ougnt.period_manager.androidtests.ViewActions.TextViewGetterViewAction;
+
+import junit.framework.Assert;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
@@ -24,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static android.support.test.espresso.Espresso.onView;
+import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
@@ -129,5 +133,34 @@ public class InitialPage {
 
     public void checkChartViewToggleButton() {
         onView(withId(R.id.chart_view_panel)).check(ViewAssertions.matches(ViewMatchers.isDisplayed()));
+    }
+
+    public void setTodayIsFirstMenstrualDate(DateDetailPage dateDetailPage) {
+
+        if(isTodayMenstrualDate()) {
+            clickDateDetailButton();
+            dateDetailPage.clickActionButton();
+            dateDetailPage.clickSave();
+        }
+
+        clickDateDetailButton();
+        dateDetailPage.clickActionButton();
+        dateDetailPage.clickSave();
+        pressBack();
+    }
+
+    private boolean isTodayMenstrualDate() {
+        DateMeter today = getPointedDateMeter();
+        return today.dateType == DateMeter.Menstrual;
+    }
+
+    public void checkOvulationSuggestion() {
+        TextView[] textViews = new TextView[1];
+        onView(withId(R.id.conclusion_suggestion_date)).perform(ViewActions.scrollTo(), new TextViewGetterViewAction(textViews));
+        Assert.assertEquals(String.format(
+                        textViews[0].getContext().getString(R.string.conclusion_suggestion_date_string),
+                        DateTime.now().plusDays(12).toString(textViews[0].getResources().getString(R.string.short_date_format)),
+                        DateTime.now().plusDays(14).toString(textViews[0].getResources().getString(R.string.short_date_format))),
+                textViews[0].getText().toString());
     }
 }

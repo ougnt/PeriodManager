@@ -4,6 +4,7 @@ import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.action.ViewActions;
 import android.support.test.espresso.assertion.ViewAssertions;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -44,5 +45,9 @@ public class DateDetailPage {
         ViewInteraction emotionButton = onView(withId(R.id.action_panel_no_intercourse));
         emotionButton.perform(ViewActions.scrollTo());
         emotionButton.perform(ViewActions.click());
+    }
+
+    public void clickActionButton() {
+        onView(withId(R.id.action_action_button_image)).perform(ViewActions.click());
     }
 }
