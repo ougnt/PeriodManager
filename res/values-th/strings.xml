@@ -104,4 +104,12 @@
     <string name="review_hint">กรุณาใส่คำแนะนำตรงนี้</string>
     <string name="summary_estimated_ovulation_exact">โดยวันที่มีโอกาสตกไข่สูงสุดคือ วันที่  %1$s</string>
     <string name="date_detail_click_to_see_more">คลิ๊กเพื่อดูเพิ่ม</string>
+    <string name="conclusion_days_to_the_date_option_next_xxx_days_string">หรือในอีก %1$s วัน</string>
+    <string name="conclusion_days_to_the_date_option_today_string">วันนี้</string>
+    <string name="conclusion_days_to_the_date_string">นั่นคือ</string>
+    <string name="conclusion_estimated_next_menstrual_date_string">คาดการณ์ประจำเดือนครั้งหน้าจะเริ่มประมาณ วันที่ %1$s ถึงวันที่ %2$s</string>
+    <string name="conclusion_estimated_next_menstrual_title_sring">คาดการณ์ ประจำเดือนครั้งต่อไป</string>
+    <string name="conclusion_suggestion_date_string">มีเพศสัมพันธ์ระหว่างวันที่ %1$s ถึงวันที่ %2$s จะมีโอกาศตั้งครรภ์สูง</string>
+    <string name="conclusion_suggestion_icon_string">สรุป</string>
+    <string name="conclusion_suggestion_title_string">ข้อมูลโดยสรุป</string>
 </resources>

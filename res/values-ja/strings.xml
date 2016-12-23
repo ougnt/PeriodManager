@@ -109,4 +109,12 @@
     <string name="review_hint">これにあなたのこーめんとを入って下さい。</string>
     <string name="summary_estimated_ovulation_exact">%1$s での排卵の可能性が最も高い</string>
     <string name="date_detail_click_to_see_more">詳細情報</string>
+    <string name="conclusion_days_to_the_date_option_today_string">今日</string>
+    <string name="conclusion_days_to_the_date_string">この日は</string>
+    <string name="conclusion_days_to_the_date_option_next_xxx_days_string">次の %1$s 日間</string>
+    <string name="conclusion_estimated_next_menstrual_title_sring">期待される次の月経</string>
+    <string name="conclusion_suggestion_icon_string">結論</string>
+    <string name="conclusion_suggestion_title_string">結論情報</string>
+    <string name="conclusion_estimated_next_menstrual_date_string">あなたの次の期間は %1$s と %2$s に始まります</string>
+    <string name="conclusion_suggestion_date_string">%1$s と %2$s の間に交流を持つことは、赤ちゃんを持つチャンスがあるだろう</string>
 </resources>

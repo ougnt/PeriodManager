@@ -79,7 +79,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 67;
+    public static final int ApplicationVersion = 68;
 
     // TODO : Change this to the real one
     // Live Env
@@ -142,6 +142,20 @@ public class InitialActivity extends Activity {
     public static final int DisplayModeChartView = 2;
     public static final int DisplayModeConclusionView = 4;
     public static DateTime startTime = now();
+
+    // Available in version 69
+    public static final int ILikeTheApplication = 0x01;
+    public static final int IDontLikeTheApplication = 0x02;
+    public static final int IDontLikeTheApplicationBecauseItIsSlow = 0x04;
+    public static final int IDontLikeTheApplicationBecauseItIsHardToUse = 0x08;
+    public static final int IDontLikeTheApplicationBecauseTheDesignIsNotLookProfreshional = 0x10;
+    public static final int IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand = 0x20;
+    public static final int IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfreshional = 0x40;
+    public static final int IDontLikeTheApplicationBecauseOtherApplicationIsBetter = 0x80;
+    public static final int IDontLikeTheApplicationBecauseOfOtherReason = 0x100;
+    public static final int ILikeTheApplicationAndIWantToReview = 0x200;
+    public static final int ILikeTheApplicationButIDontLikeToReviewNow = 0x400;
+    public static final int ILikeTheApplicationButIDontLikeToReview = 0x800;
 
     SettingRepository setting;
 
@@ -765,6 +779,7 @@ public class InitialActivity extends Activity {
         try {
             final SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
             final SharedPreferences.Editor edit = pref.edit();
+            final int[] survayFlags = new int[1];
 
             if (getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview) && !isReviewing && ApplicationVersion < 1000) {
 
@@ -777,6 +792,7 @@ public class InitialActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         setContentView(R.layout.review);
+                        survayFlags[0] |= ILikeTheApplication;
 
                         Button reviewNowButton = (Button) findViewById(R.id.review_open);
                         Button laterButton = (Button) findViewById(R.id.review_later);
@@ -787,6 +803,7 @@ public class InitialActivity extends Activity {
                             public void onClick(View v) {
 
                                 addUsageCounter(PReviewNow);
+                                survayFlags[0] |= ILikeTheApplicationAndIWantToReview;
                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
                                 submitStat();
                                 finish();
@@ -797,6 +814,7 @@ public class InitialActivity extends Activity {
                             @Override
                             public void onClick(View v) {
                                 addUsageCounter(PReviewLater);
+                                survayFlags[0] |= ILikeTheApplicationButIDontLikeToReviewNow;
                                 edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
                                 edit.apply();
                                 submitStat();
@@ -809,6 +827,7 @@ public class InitialActivity extends Activity {
                             public void onClick(View v) {
 
                                 addUsageCounter(PNoReview);
+                                survayFlags[0] |= ILikeTheApplicationButIDontLikeToReview;
                                 edit.putInt(PTimeOfUsageBeforeReview, -1);
                                 edit.apply();
                                 submitStat();
@@ -822,6 +841,7 @@ public class InitialActivity extends Activity {
                     @Override
                     public void onClick(View v) {
                         setContentView(R.layout.we_also_love_a_negative_feedback);
+                        survayFlags[0] |= IDontLikeTheApplication;
                         Button sendReviewButton = (Button) findViewById(R.id.review_send_review_button);
                         sendReviewButton.setOnClickListener(new View.OnClickListener() {
                             @Override
@@ -1099,28 +1119,33 @@ public class InitialActivity extends Activity {
                     "<b>" + summary.expectedOvulationDate.minusDays(1).toString(dateFormat) + "</b>",
                     "<b>" + summary.expectedOvulationDate.plusDays(1).toString(dateFormat) + "</b>")));
 
-            if(daysToNextOvulation == 0 || daysToNextOvulation == -1 || daysToNextOvulation == 1) {
+            if (daysToNextOvulation == 0 || daysToNextOvulation == -1 || daysToNextOvulation == 1) {
                 daysToNextOvulationText = getResources().getString(R.string.conclusion_days_to_the_date_option_today_string);
-            } else if(daysToNextOvulation < -1) {
+
+                daysToNextOvulationText = String.format(getResources().getText(R.string.conclusion_days_to_the_date_string).toString(),
+                        daysToNextOvulationText);
+
+            } else if (daysToNextOvulation < -1) {
                 daysToNextOvulationText = "";
             } else {
                 daysToNextOvulationText = String.format(
                         getResources().getString(R.string.conclusion_days_to_the_date_option_next_xxx_days_string),
                         daysToNextOvulation);
+                daysToNextOvulationText = String.format(getResources().getText(R.string.conclusion_days_to_the_date_string).toString(),
+                        daysToNextOvulationText);
             }
 
-            conclusionSuggestionDaysToDate.setText(String.format(getResources().getText(R.string.conclusion_days_to_the_date_string).toString(),
-                    daysToNextOvulationText));
+            conclusionSuggestionDaysToDate.setText(daysToNextOvulationText);
 
             conclusionEstimatedNextMenstrualDate.setText(Html.fromHtml(String.format(
                     getResources().getString(R.string.conclusion_estimated_next_menstrual_date_string),
                     "<b>" + summary.expectedMenstrualDateFrom.toString(dateFormat) + "</b>",
                     "<b>" + summary.expectedMenstrualDateTo.toString(dateFormat) + "</b>")));
 
-            if(daysToNextMenstrual < 0 && daysToNextMenstrualTo < 0) {
+            if (daysToNextMenstrual < 0 && daysToNextMenstrualTo < 0) {
 
                 daysToNextMenstrualText = "";
-            } else if(daysToNextMenstrual <= 0 && daysToNextMenstrualTo <= 0) {
+            } else if (daysToNextMenstrual <= 0 && daysToNextMenstrualTo <= 0) {
                 daysToNextMenstrualText = getResources().getString(R.string.conclusion_days_to_the_date_option_today_string);
             } else {
                 daysToNextMenstrualText = String.format(

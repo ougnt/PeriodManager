@@ -109,4 +109,12 @@
     <string name="tuesday">вторник</string>
     <string name="wednesday">среда</string>
     <string name="date_detail_click_to_see_more">больше информации</string>
+    <string name="conclusion_days_to_the_date_option_next_xxx_days_string">Следующие %1$s дня</string>
+    <string name="conclusion_days_to_the_date_option_today_string">Cегодня</string>
+    <string name="conclusion_days_to_the_date_string">Дата %1$s</string>
+    <string name="conclusion_estimated_next_menstrual_date_string">Ваш следующий период начнется в %1$s и %2$s</string>
+    <string name="conclusion_estimated_next_menstrual_title_sring">Ожидаемое следующий менструальный</string>
+    <string name="conclusion_suggestion_icon_string">Вывод</string>
+    <string name="conclusion_suggestion_title_string">Вывод информации</string>
+    <string name="conclusion_suggestion_date_string">Там половой акт в %1$s - %2$s будет иметь возможность иметь детей.</string>
 </resources>
