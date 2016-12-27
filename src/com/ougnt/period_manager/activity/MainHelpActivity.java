@@ -57,7 +57,7 @@ public class MainHelpActivity extends Activity {
         params = new LinearLayout.LayoutParams(optimalLength, optimalLength);
         params.setMargins(10, 10, 10, 10);
         menstrualIcon.setLayoutParams(params);
-        menstrualIcon.setLayoutParams(params);
+        estimatedMenstrualIcon.setLayoutParams(params);
         nonOvulationIcon.setLayoutParams(params);
         ovulationIcon.setLayoutParams(params);
         intercourseIcon.setLayoutParams(params);
@@ -72,6 +72,7 @@ public class MainHelpActivity extends Activity {
         params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, optimalLength);
         params.setMargins(10, 10, 10, 10);
         menstrualText.setLayoutParams(params);
+        estimatedMenstrualText.setLayoutParams(params);
         nonOvulationText.setLayoutParams(params);
         ovulationText.setLayoutParams(params);
         intercourseText.setLayoutParams(params);
@@ -84,11 +85,13 @@ public class MainHelpActivity extends Activity {
 
     private void setAllViewVisibility(int visibility) {
         menstrualIcon.setVisibility(visibility);
+        estimatedMenstrualIcon.setVisibility(visibility);
         nonOvulationIcon.setVisibility(visibility);
         ovulationIcon.setVisibility(visibility);
         intercourseIcon.setVisibility(visibility);
         pencilIcon.setVisibility(visibility);
         menstrualText.setVisibility(visibility);
+        estimatedMenstrualText.setVisibility(visibility);
         nonOvulationText.setVisibility(visibility);
         ovulationText.setVisibility(visibility);
         intercourseText.setVisibility(visibility);
@@ -106,6 +109,7 @@ public class MainHelpActivity extends Activity {
 
     private void getAllViews() {
         menstrualIcon = (ImageView) findViewById(R.id.main_help_menstrual_icon);
+        estimatedMenstrualIcon = (ImageView) findViewById(R.id.main_help_estimated_menstrual_icon);
         nonOvulationIcon = (ImageView) findViewById(R.id.main_help_non_ovulation_icon);
         ovulationIcon = (ImageView) findViewById(R.id.main_help_ovulation_icon);
         intercourseIcon = (ImageView) findViewById(R.id.main_help_intercourse_icon);
@@ -116,6 +120,7 @@ public class MainHelpActivity extends Activity {
         emotionAngryIcon = (ImageView) findViewById(R.id.main_help_emotion_angry_icon);
 
         menstrualText = (TextView) findViewById(R.id.main_help_menstrual_text);
+        estimatedMenstrualText = (TextView) findViewById(R.id.main_help_estimated_menstrual_text);
         nonOvulationText = (TextView) findViewById(R.id.main_help_non_ovulation_text);
         ovulationText = (TextView) findViewById(R.id.main_help_ovulation_text);
         intercourseText = (TextView) findViewById(R.id.main_help_intercourse_text);
@@ -138,6 +143,7 @@ public class MainHelpActivity extends Activity {
     private LinearLayout.LayoutParams params;
 
     private ImageView menstrualIcon;
+    private ImageView estimatedMenstrualIcon;
     private ImageView nonOvulationIcon;
     private ImageView ovulationIcon;
     private ImageView intercourseIcon;
@@ -148,6 +154,7 @@ public class MainHelpActivity extends Activity {
     private ImageView emotionAngryIcon;
 
     private TextView menstrualText;
+    private TextView estimatedMenstrualText;
     private TextView nonOvulationText;
     private TextView ovulationText;
     private TextView intercourseText;

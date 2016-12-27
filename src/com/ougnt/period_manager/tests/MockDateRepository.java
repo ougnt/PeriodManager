@@ -1,5 +1,6 @@
 package com.ougnt.period_manager.tests;
 
+import com.ougnt.period_manager.DateMeter;
 import com.ougnt.period_manager.repository.DateRepository;
 import com.ougnt.period_manager.repository.IDateRepository;
 
@@ -12,7 +13,7 @@ public class MockDateRepository extends IDateRepository {
 
     public MockDateRepository() {
         date = DateTime.now();
-        dateType = 1;
+        dateType = DateMeter.ExpectedMenstrual;
         comment = "";
         temperature = 0f;
         flags = 0x13;

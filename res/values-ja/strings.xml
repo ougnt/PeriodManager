@@ -93,7 +93,7 @@
     <string name="action_activity_intercourse">性行為</string>
     <string name="main_help_explanation">その日にはこの記号が表示なると、この意味がなります。</string>
     <string name="main_help_intercourse">性交しました。</string>
-    <string name="main_help_menstrual">(多分)生理中します</string>
+    <string name="main_help_menstrual">生理中します</string>
     <string name="main_help_non_ovulation">排卵中無い</string>
     <string name="main_help_ovulation">排卵中</string>
     <string name="main_help_pencil">コメントをしました</string>
@@ -117,4 +117,12 @@
     <string name="conclusion_suggestion_title_string">結論情報</string>
     <string name="conclusion_estimated_next_menstrual_date_string">あなたの次の期間は %1$s と %2$s に始まります</string>
     <string name="conclusion_suggestion_date_string">%1$s と %2$s の間に交流を持つことは、赤ちゃんを持つチャンスがあるだろう</string>
+    <string name="main_help_estimated_menstrual">今日はあなたの次の月経日です</string>
+    <string name="IDontLikeTheApplicationBecauseItIsHardToUse">アプリケーションは使いにくい</string>
+    <string name="IDontLikeTheApplicationBecauseItIsSlow">アプリケーションが遅いです</string>
+    <string name="IDontLikeTheApplicationBecauseOfOtherReason">その他の理由</string>
+    <string name="IDontLikeTheApplicationBecauseOtherApplicationIsBetter">他のアプリケーションはより良いです</string>
+    <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">デザインがプロフェッショナルに見えない</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">言語がプロのように見えない</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">言語は分かりにくい</string>
 </resources>

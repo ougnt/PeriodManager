@@ -121,4 +121,12 @@
     <string name="conclusion_days_to_the_date_option_next_xxx_days_string">%1$s ngày tới</string>
     <string name="conclusion_estimated_next_menstrual_date_string">giai đoạn tiếp theo của bạn sẽ bắt đầu trong %1$s và %2$s</string>
     <string name="conclusion_suggestion_date_string">Có một intercource trong %1$s và %2$s sẽ có cơ hội để có em bé</string>
+    <string name="main_help_estimated_menstrual">Ngày này là dự kiến ngày kinh nguyệt tiếp theo của bạn</string>
+    <string name="IDontLikeTheApplicationBecauseItIsHardToUse">Ứng dụng này là khó sử dụng</string>
+    <string name="IDontLikeTheApplicationBecauseItIsSlow">Ứng dụng này là chậm</string>
+    <string name="IDontLikeTheApplicationBecauseOfOtherReason">Một số lý do khác</string>
+    <string name="IDontLikeTheApplicationBecauseOtherApplicationIsBetter">Các ứng dụng khác là tốt hơn</string>
+    <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">Thiết kế không nhìn chuyên nghiệp</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">Ngôn ngữ không trông chuyên nghiệp</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">Đây là ngôn ngữ khó hiểu</string>
 </resources>

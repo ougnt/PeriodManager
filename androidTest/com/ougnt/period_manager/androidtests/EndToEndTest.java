@@ -83,6 +83,7 @@ public class EndToEndTest {
         initialPage.clickConclusionToggleButton();
         initialPage.checkOvulationSuggestion();
 //        initialPage.checkMenstrualSuggestion();
+        initialPage.checkAssignedDateMetersAreCorrect();
     }
 
     @Test

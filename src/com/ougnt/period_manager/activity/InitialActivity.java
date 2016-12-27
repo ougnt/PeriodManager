@@ -23,7 +23,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
@@ -79,7 +79,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 68;
+    public static final int ApplicationVersion = 69;
 
     // TODO : Change this to the real one
     // Live Env
@@ -148,9 +148,9 @@ public class InitialActivity extends Activity {
     public static final int IDontLikeTheApplication = 0x02;
     public static final int IDontLikeTheApplicationBecauseItIsSlow = 0x04;
     public static final int IDontLikeTheApplicationBecauseItIsHardToUse = 0x08;
-    public static final int IDontLikeTheApplicationBecauseTheDesignIsNotLookProfreshional = 0x10;
+    public static final int IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional = 0x10;
     public static final int IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand = 0x20;
-    public static final int IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfreshional = 0x40;
+    public static final int IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional = 0x40;
     public static final int IDontLikeTheApplicationBecauseOtherApplicationIsBetter = 0x80;
     public static final int IDontLikeTheApplicationBecauseOfOtherReason = 0x100;
     public static final int ILikeTheApplicationAndIWantToReview = 0x200;
@@ -848,9 +848,23 @@ public class InitialActivity extends Activity {
                             public void onClick(View v) {
 
                                 // TODO : Send the stat to the server
-                                EditText reviewEditText = (EditText) findViewById(R.id.review_feed_back_edit_text);
-                                String review = reviewEditText.getText().toString();
-                                sendReview(review);
+                                CheckBox hardToUseCheckBox = (CheckBox) findViewById(R.id.review_it_is_hard_to_use);
+                                CheckBox slowCheckBox = (CheckBox) findViewById(R.id.review_it_is_slow);
+                                CheckBox otherApplicationIsBetterCheckBox = (CheckBox) findViewById(R.id.review_other_app_is_better);
+                                CheckBox designDoesNotLookProfCheckBox = (CheckBox) findViewById(R.id.review_the_design_does_not_look_prof);
+                                CheckBox languageDoesNotLookProfCheckBox = (CheckBox) findViewById(R.id.review_the_language_does_not_look_prof);
+                                CheckBox languageIsHardToUnderstandCheckBox = (CheckBox) findViewById(R.id.review_the_language_is_hard_to_understand);
+                                CheckBox otherReasonCheckBox = (CheckBox) findViewById(R.id.review_other_reason);
+
+                                survayFlags[0] |= hardToUseCheckBox.isChecked() ? IDontLikeTheApplicationBecauseItIsHardToUse : 0;
+                                survayFlags[0] |= slowCheckBox.isChecked() ? IDontLikeTheApplicationBecauseItIsSlow : 0;
+                                survayFlags[0] |= otherApplicationIsBetterCheckBox.isChecked() ? IDontLikeTheApplicationBecauseOtherApplicationIsBetter : 0;
+                                survayFlags[0] |= designDoesNotLookProfCheckBox.isChecked() ? IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional : 0;
+                                survayFlags[0] |= languageDoesNotLookProfCheckBox.isChecked() ? IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional : 0;
+                                survayFlags[0] |= languageIsHardToUnderstandCheckBox.isChecked() ? IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand : 0;
+                                survayFlags[0] |= otherReasonCheckBox.isChecked() ? IDontLikeTheApplicationBecauseOfOtherReason : 0;
+
+                                sendReview(survayFlags[0]);
                                 submitStat();
                                 finish();
                             }
@@ -1184,7 +1198,7 @@ public class InitialActivity extends Activity {
         }
     }
 
-    private void sendReview(String review) {
+    private void sendReview(int review) {
         String rewJson = String.format("{\"deviceId\":\"%s\",\"review\":\"%s\"}", getDeviceId().toString(), review);
         HttpHelper.post(ReviewUrl, rewJson);
     }
@@ -1641,7 +1655,7 @@ public class InitialActivity extends Activity {
             paintDateMeter(startOfOvulationPeriod, endOfOvulationPeriod, DateMeter.PossiblyOvulation);
             paintDateMeter(ovulationDate, ovulationDate, DateMeter.OvulationDate);
             paintDateMeter(startNonOvulationPeriod, endNonOvulationPeriod, DateMeter.Nothing);
-            paintDateMeter(estimatedNextMenstrualFrom, estimatedNextMenstrualTo, DateMeter.Menstrual);
+            paintDateMeter(estimatedNextMenstrualFrom, estimatedNextMenstrualTo, DateMeter.ExpectedMenstrual);
 
             DateTime nextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
             DateTime nextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 1);

@@ -48,7 +48,7 @@
     <string name="main_help_explanation">Что означают знаки, когда они появляются в дате</string>
     <string name="main_help_happy_emotion">В этот день редактируется как счастливый день</string>
     <string name="main_help_intercourse">В этот день было записано, что у вас есть половой акт</string>
-    <string name="main_help_menstrual">В этот день ваш (ожидаемый) период</string>
+    <string name="main_help_menstrual">В этот день ваш период</string>
     <string name="main_help_non_ovulation">В этот день имеет мало шансов на овуляцию</string>
     <string name="main_help_nothing_emotion">В этот день не имеет эмоций отредактирован</string>
     <string name="main_help_ovulation">В этот день есть некоторые шансы на овуляцию</string>
@@ -117,4 +117,12 @@
     <string name="conclusion_suggestion_icon_string">Вывод</string>
     <string name="conclusion_suggestion_title_string">Вывод информации</string>
     <string name="conclusion_suggestion_date_string">Там половой акт в %1$s - %2$s будет иметь возможность иметь детей.</string>
+    <string name="main_help_estimated_menstrual">В этот день ваш ожидается следующий день менструального цикла</string>
+    <string name="IDontLikeTheApplicationBecauseItIsHardToUse">Приложение трудно использовать</string>
+    <string name="IDontLikeTheApplicationBecauseItIsSlow">Приложение является медленным</string>
+    <string name="IDontLikeTheApplicationBecauseOfOtherReason">Некоторые другие причины,</string>
+    <string name="IDontLikeTheApplicationBecauseOtherApplicationIsBetter">Другое приложение лучше</string>
+    <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">Дизайн не выглядит профессионально</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">Язык не выглядит профессионально</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">Язык трудно понять</string>
 </resources>

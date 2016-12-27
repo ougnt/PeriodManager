@@ -15,6 +15,7 @@ import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.androidtests.ViewActions.ImageViewGetterViewAction;
 import com.ougnt.period_manager.androidtests.ViewActions.LinearLayoutGetterViewAction;
 import com.ougnt.period_manager.androidtests.ViewActions.TextViewGetterViewAction;
+import com.ougnt.period_manager.repository.FetchingButton;
 
 import junit.framework.Assert;
 
@@ -31,6 +32,9 @@ import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagKey;
+import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 public class InitialPage {
 
@@ -162,5 +166,22 @@ public class InitialPage {
                         DateTime.now().plusDays(12).toString(textViews[0].getResources().getString(R.string.short_date_format)),
                         DateTime.now().plusDays(14).toString(textViews[0].getResources().getString(R.string.short_date_format))),
                 textViews[0].getText().toString());
+    }
+
+    public void checkAssignedDateMetersAreCorrect() {
+        LinearLayout[] containers = new LinearLayout[1];
+        onView(withId(R.id.dateScrollerContent)).perform(new LinearLayoutGetterViewAction(containers));
+        clickDateViewToggleButton();
+        onView(withId(FetchingButton.NextId)).perform(ViewActions.scrollTo(), ViewActions.click());
+        onView(withId(FetchingButton.NextId)).perform(ViewActions.scrollTo(), ViewActions.click());
+        Assert.assertEquals(DateMeter.Menstrual, ((DateMeter) containers[0].getChildAt(15 + 1)).dateType);
+        Assert.assertEquals(DateMeter.Menstrual, ((DateMeter) containers[0].getChildAt(15 + 7)).dateType);
+        Assert.assertEquals(DateMeter.PossiblyOvulation, ((DateMeter) containers[0].getChildAt(15 + 8)).dateType);
+        Assert.assertEquals(DateMeter.OvulationDate, ((DateMeter) containers[0].getChildAt(15 + 14)).dateType);
+        Assert.assertEquals(DateMeter.PossiblyOvulation, ((DateMeter) containers[0].getChildAt(15 + 21)).dateType);
+        Assert.assertEquals(DateMeter.Nothing, ((DateMeter) containers[0].getChildAt(15 + 22)).dateType);
+        Assert.assertEquals(DateMeter.Nothing, ((DateMeter) containers[0].getChildAt(15 + 27)).dateType);
+        Assert.assertEquals(DateMeter.ExpectedMenstrual, ((DateMeter) containers[0].getChildAt(15 + 28)).dateType);
+        Assert.assertEquals(DateMeter.ExpectedMenstrual, ((DateMeter) containers[0].getChildAt(15 + 31)).dateType);
     }
 }

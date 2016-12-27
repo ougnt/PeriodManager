@@ -88,7 +88,7 @@
     <string name="action_activity_have_intercourse">ใช่</string>
     <string name="main_help_explanation">สัญลักษณ์ อยู่ที่วันไหน แปลว่า วันนั้น</string>
     <string name="main_help_intercourse">บันทึกว่ามีเพศสัมพันธ์</string>
-    <string name="main_help_menstrual">เป็น ประจำเดือน/คาดการณ์ ว่าจะเป็น ประจำเดือน</string>
+    <string name="main_help_menstrual">เป็น ประจำเดือน</string>
     <string name="main_help_non_ovulation">มีโอกาศน้อยมากที่จะเป็นวันตกไข่</string>
     <string name="main_help_ovulation">มีโอกาศ เป็นวันตกไข่</string>
     <string name="main_help_pencil">มีการจดบันทึก</string>
@@ -112,4 +112,12 @@
     <string name="conclusion_suggestion_date_string">มีเพศสัมพันธ์ระหว่างวันที่ %1$s ถึงวันที่ %2$s จะมีโอกาศตั้งครรภ์สูง</string>
     <string name="conclusion_suggestion_icon_string">สรุป</string>
     <string name="conclusion_suggestion_title_string">ข้อมูลโดยสรุป</string>
+    <string name="main_help_estimated_menstrual">คาดการณ์ว่าจะเป็นประจำเดือน</string>
+    <string name="IDontLikeTheApplicationBecauseItIsHardToUse">ใช้งานยาก</string>
+    <string name="IDontLikeTheApplicationBecauseItIsSlow">ทำงานช้า</string>
+    <string name="IDontLikeTheApplicationBecauseOfOtherReason">อื่นๆ</string>
+    <string name="IDontLikeTheApplicationBecauseOtherApplicationIsBetter">แอพ อื่นดีกว่า</string>
+    <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">รูปแบบไม่สวย</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">ภาษาดูไม่เป็นทางการ</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">ไม่เข้าใจภาษา</string>
 </resources>

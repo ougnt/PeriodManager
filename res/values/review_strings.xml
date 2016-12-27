@@ -10,4 +10,11 @@
     <string name="review_we_also_like_to_hear_a_negative_feedback">Even the negative feedback, we would like to hear from you</string>
     <string name="review_send_review">Send Review</string>
     <string name="review_hint">Please enter your feedback here</string>
+    <string name="IDontLikeTheApplicationBecauseItIsSlow">The application is slow</string>
+    <string name="IDontLikeTheApplicationBecauseItIsHardToUse">The application is hard to use</string>
+    <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">The design does not look professional</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">The language is hard to understand</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">The language does not look professional</string>
+    <string name="IDontLikeTheApplicationBecauseOtherApplicationIsBetter">The other application is better</string>
+    <string name="IDontLikeTheApplicationBecauseOfOtherReason">Some other reasons</string>
 </resources>

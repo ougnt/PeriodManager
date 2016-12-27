@@ -36,6 +36,7 @@ public class DateMeter extends LinearLayout {
     public static final int Menstrual = 0x01;
     public static final int PossiblyOvulation = 0x02;
     public static final int OvulationDate = 0x04;
+    public static final int ExpectedMenstrual = 0x08;
     public static final int Nothing = 0x00;
 
     public static final int MenstrualColor;
@@ -67,6 +68,7 @@ public class DateMeter extends LinearLayout {
             TodayTextColor = ContextCompat.getColor(AppForStatic.getContext(), R.color.today_text_color);
         }
         ColorForDateType.put(Menstrual, MenstrualColor);
+        ColorForDateType.put(ExpectedMenstrual, MenstrualColor);
         ColorForDateType.put(PossiblyOvulation, PossiblyOvulationColor);
         ColorForDateType.put(OvulationDate, OvulationDateColor);
         ColorForDateType.put(Nothing, SafeZoneColor);
@@ -102,7 +104,7 @@ public class DateMeter extends LinearLayout {
                     e.printStackTrace();
                 }
             }
-            while (ColorForDateType.size() < 4) {
+            while (ColorForDateType.size() < 5) {
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException e) {
@@ -237,6 +239,11 @@ public class DateMeter extends LinearLayout {
             _nonOvulationIcon.setScaleType(ImageView.ScaleType.FIT_END);
             _nonOvulationIcon.setLayoutParams(iconParam);
 
+            _expectedMenstrualIcon = new ImageView(getContext());
+            _expectedMenstrualIcon.setImageResource(R.drawable.estimated_menstrual_icon);
+            _expectedMenstrualIcon.setScaleType(ImageView.ScaleType.FIT_END);
+            _expectedMenstrualIcon.setLayoutParams(iconParam);
+
             _emotionIcon = new ImageView(getContext());
             switch (FlagHelper.GetEmotionFlag(flags)) {
                 case FlagHelper.EmotionNothingIcon: {
@@ -280,6 +287,7 @@ public class DateMeter extends LinearLayout {
             iconPart.addView(_menstrualIcon);
             iconPart.addView(_ovulationIcon);
             iconPart.addView(_nonOvulationIcon);
+            iconPart.addView(_expectedMenstrualIcon);
             iconPart.addView(_emotionIcon);
             iconPart.addView(_intercourseIcon);
             iconPart.addView(_pencilIcon);
@@ -300,6 +308,7 @@ public class DateMeter extends LinearLayout {
                     _menstrualIcon.setVisibility(VISIBLE);
                     _nonOvulationIcon.setVisibility(VISIBLE);
                     _ovulationIcon.setVisibility(GONE);
+                    _expectedMenstrualIcon.setVisibility(GONE);
                     break;
                 }
                 case OvulationDate:
@@ -307,13 +316,22 @@ public class DateMeter extends LinearLayout {
                     _menstrualIcon.setVisibility(GONE);
                     _ovulationIcon.setVisibility(VISIBLE);
                     _nonOvulationIcon.setVisibility(GONE);
+                    _expectedMenstrualIcon.setVisibility(GONE);
                     break;
                 }
                 case Nothing: {
                     _menstrualIcon.setVisibility(GONE);
                     _ovulationIcon.setVisibility(GONE);
                     _nonOvulationIcon.setVisibility(VISIBLE);
+                    _expectedMenstrualIcon.setVisibility(GONE);
                     break;
+                }
+                case ExpectedMenstrual: {
+
+                    _menstrualIcon.setVisibility(GONE);
+                    _ovulationIcon.setVisibility(GONE);
+                    _nonOvulationIcon.setVisibility(VISIBLE);
+                    _expectedMenstrualIcon.setVisibility(VISIBLE);
                 }
             }
 
@@ -530,6 +548,7 @@ public class DateMeter extends LinearLayout {
     private ImageView _menstrualIcon;
     private ImageView _ovulationIcon;
     private ImageView _nonOvulationIcon;
+    private ImageView _expectedMenstrualIcon;
     private ImageView _emotionIcon;
     private ImageView _intercourseIcon;
     private ImageView _pencilIcon;

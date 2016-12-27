@@ -26,6 +26,7 @@ import com.ougnt.period_manager.activity.TemperatureHelpActivity;
 import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
 import com.ougnt.period_manager.google.Log;
 
+import static com.ougnt.period_manager.DateMeter.ExpectedMenstrual;
 import static com.ougnt.period_manager.DateMeter.Menstrual;
 import static com.ougnt.period_manager.DateMeter.Nothing;
 import static com.ougnt.period_manager.DateMeter.OvulationDate;
@@ -169,6 +170,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
             case Nothing:
             case OvulationDate:
             case PossiblyOvulation:
+            case ExpectedMenstrual:
             default:
                 return activity.getResources().getString(R.string.action_activity_click_me_if_your_period_start_this_day);
         }

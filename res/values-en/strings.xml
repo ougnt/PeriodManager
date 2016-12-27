@@ -90,7 +90,7 @@
     <string name="action_activity_have_not_intercourse">No</string>
     <string name="main_help_explanation">What do the signs mean when they are appear in a date</string>
     <string name="main_help_intercourse">This day has been recorded that you have the intercourse</string>
-    <string name="main_help_menstrual">This day is your (expected) period</string>
+    <string name="main_help_menstrual">This day is your period</string>
     <string name="main_help_non_ovulation">This day has a few chances for ovulation</string>
     <string name="main_help_ovulation">This day has some chances for ovulation</string>
     <string name="main_help_pencil">This day has some comments</string>
@@ -114,4 +114,12 @@
     <string name="conclusion_suggestion_date_string">Having an intercourse during %1$s and %2$s would have a chance to have a baby</string>
     <string name="conclusion_suggestion_icon_string">Conclusion</string>
     <string name="conclusion_suggestion_title_string">Conclusion Information</string>
+    <string name="main_help_estimated_menstrual">This day is your expected next period</string>
+    <string name="IDontLikeTheApplicationBecauseItIsHardToUse">The application is hard to use</string>
+    <string name="IDontLikeTheApplicationBecauseItIsSlow">The application is slow</string>
+    <string name="IDontLikeTheApplicationBecauseOfOtherReason">Some other reasons</string>
+    <string name="IDontLikeTheApplicationBecauseOtherApplicationIsBetter">The other application is better</string>
+    <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">The design does not look professional</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">The language does not look professional</string>
+    <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">The language is hard to understand</string>
 </resources>
