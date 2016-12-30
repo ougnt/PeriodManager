@@ -72,7 +72,9 @@ public class NewActionActivityHelper implements View.OnClickListener {
             case R.id.action_save_button: {
                 Intent retIntent = new Intent();
 
-                extra.temperature = Double.parseDouble(activity.temperatureInput.getText().toString());
+                double newTemperature = Double.parseDouble(activity.temperatureInput.getText().toString());
+                extra.isTemperatureChange = extra.temperature != newTemperature;
+                extra.temperature = newTemperature;
                 extra.comment = String.valueOf(activity.commentInput.getText());
                 extra.isButtonPush = isActionButtonPushed;
                 extra.isCancel = false;

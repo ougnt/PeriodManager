@@ -112,5 +112,6 @@ public class Log {
         public static final String ClickDisplayToggleButtonFromConclusionToDateScroller = "ClickDisplayToggleButtonFromConclusionToDateScroller";
         public static final String ClickDisplayToggleButtonFromConclusionToMonthView = "ClickDisplayToggleButtonFromConclusionToMonthView";
         public static final String ClickDisplayToggleButtonFromConclusionToTemperature = "ClickDisplayToggleButtonFromConclusionToTemperature";
+        public static final String ChangeTemperature = "ChangeTemperature";
     }
 }

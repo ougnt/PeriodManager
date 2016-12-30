@@ -730,6 +730,7 @@ public class InitialActivity extends Activity {
                 }
                 case DisplayNewActionPanel: {
 
+                    DateTime startProcessDisplayNewActionPanel = DateTime.now();
                     if (data == null) return;
                     ActionActivityExtra extra = ActionActivityExtra.fromJsonString(data.getExtras().getString(NewActionActivity.ExtraKey));
 
@@ -739,6 +740,13 @@ public class InitialActivity extends Activity {
                         } else {
                             addPeriodAndOvulationFlagToDateMeters();
                         }
+                    }
+
+                    if(extra.isTemperatureChange) {
+                        log.setAction(Log.Action.ChangeTemperature);
+                        log.setCategory(Log.Category.Button);
+                        log.setScreenType(Log.Screen.ActionPanel);
+                        sendTrafficMessage(log);
                     }
 
                     for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
@@ -763,6 +771,11 @@ public class InitialActivity extends Activity {
                     }
 
                     addMonthView();
+
+                    log.setAction(Log.Action.ActionClickSaveButton);
+                    log.setScreenType(Log.Screen.ActionPanel);
+                    log.setCategory(Log.Category.LoadTime);
+                    sendLoadTimeMessage(log, DateTime.now().getMillis() - startProcessDisplayNewActionPanel.getMillis());
                 }
             }
         } catch (Exception e) {

@@ -14,6 +14,7 @@ public class ActionActivityExtra {
     private static final String CommentJson = "Comment";
     private static final String TemperatureJson = "Temperature";
     private static final String IsButtonPushed = "IsButtonPushed";
+    private static final String IsTemperatureChange = "IsTemperatureChange";
     private static final String Flags = "Flags";
 
     public ActionActivityExtra() {
@@ -33,6 +34,7 @@ public class ActionActivityExtra {
             ret.temperature = json.getDouble(TemperatureJson);
             ret.isButtonPush = json.getBoolean(IsButtonPushed);
             ret.flags = json.getLong(Flags);
+            ret.isTemperatureChange = json.getBoolean(IsTemperatureChange);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -43,13 +45,14 @@ public class ActionActivityExtra {
 
     public String toJson() {
 
-        return String.format("{'%s':'%s', '%s':'%s','%s':'%s','%s':'%s','%s':'%s','%s':'%s'}",
+        return String.format("{'%s':'%s', '%s':'%s','%s':'%s','%s':'%s','%s':'%s','%s':'%s','%s':'%s'}",
                 DateJson, date.toString("yyyy-MM-dd"),
                 DateTypeJson, dateType,
                 TemperatureJson, temperature,
                 CommentJson, comment,
                 IsButtonPushed, isButtonPush,
-                Flags, flags);
+                Flags, flags,
+                IsTemperatureChange, isTemperatureChange);
     }
 
     public int dateType;
@@ -58,5 +61,6 @@ public class ActionActivityExtra {
     public double temperature;
     public boolean isButtonPush;
     public boolean isCancel;
+    public boolean isTemperatureChange;
     public long flags;
 }
