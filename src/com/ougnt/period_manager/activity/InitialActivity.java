@@ -79,7 +79,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 69;
+    public static final int ApplicationVersion = 70;
 
     // TODO : Change this to the real one
     // Live Env
@@ -1839,7 +1839,8 @@ public class InitialActivity extends Activity {
             }
 
             if (DeviceId != null) {
-                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
+                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490") ||
+                        DeviceId.equals("481e9faa-1b89-4ec4-9439-4220bee1c6c2")) {
                     return;
                 }
             }
@@ -1865,7 +1866,8 @@ public class InitialActivity extends Activity {
             }
 
             if (DeviceId != null) {
-                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490")) {
+                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490") ||
+                        DeviceId.equals("481e9faa-1b89-4ec4-9439-4220bee1c6c2")) {
                     return;
                 }
             }
@@ -1874,9 +1876,9 @@ public class InitialActivity extends Activity {
             tracker.setClientId(log.getDeviceId());
             tracker.setAppVersion(log.getApplicationVersion());
             tracker.setLanguage(log.getLanguage());
-            tracker.send(new HitBuilders.EventBuilder()
+            tracker.send(new HitBuilders.TimingBuilder()
                     .setCategory(log.getCategory())
-                    .setAction(log.getAction())
+                    .setVariable(log.getAction())
                     .setValue(loadTime)
                     .setLabel("Load Time")
                     .build());

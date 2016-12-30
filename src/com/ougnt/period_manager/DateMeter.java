@@ -262,6 +262,9 @@ public class DateMeter extends LinearLayout {
                     _emotionIcon.setImageResource(R.drawable.emotion_happy);
                     break;
                 }
+                case FlagHelper.EmotionStressfulIcon: {
+                    _emotionIcon.setImageResource(R.drawable.emotion_stressful);
+                }
             }
             _emotionIcon.setScaleType(ImageView.ScaleType.FIT_END);
             _emotionIcon.setLayoutParams(iconParam);

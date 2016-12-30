@@ -125,4 +125,6 @@
     <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">Дизайн не выглядит профессионально</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">Язык не выглядит профессионально</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">Язык трудно понять</string>
+    <string name="action_activity_emotion_stressful">напряженный</string>
+    <string name="main_help_stressful_emotion">В этот день редактируется как напряженный день</string>
 </resources>

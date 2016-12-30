@@ -125,4 +125,6 @@
     <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">デザインがプロフェッショナルに見えない</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">言語がプロのように見えない</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">言語は分かりにくい</string>
+    <string name="action_activity_emotion_stressful">ストレス</string>
+    <string name="main_help_stressful_emotion">この日はストレスの多い日として編集されています</string>
 </resources>

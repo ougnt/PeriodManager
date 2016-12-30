@@ -129,4 +129,6 @@
     <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">Thiết kế không nhìn chuyên nghiệp</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">Ngôn ngữ không trông chuyên nghiệp</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">Đây là ngôn ngữ khó hiểu</string>
+    <string name="action_activity_emotion_stressful">căng thẳng</string>
+    <string name="main_help_stressful_emotion">Ngày này được chỉnh sửa như một ngày căng thẳng</string>
 </resources>

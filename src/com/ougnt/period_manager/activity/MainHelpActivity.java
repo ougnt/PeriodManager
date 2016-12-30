@@ -66,6 +66,7 @@ public class MainHelpActivity extends Activity {
         emotionHappyIcon.setLayoutParams(params);
         emotionSadIcon.setLayoutParams(params);
         emotionAngryIcon.setLayoutParams(params);
+        emotionStressIcon.setLayoutParams(params);
     }
 
     private void assignRectangleParamToView() {
@@ -101,10 +102,13 @@ public class MainHelpActivity extends Activity {
         emotionHappyIcon.setVisibility(visibility);
         emotionSadIcon.setVisibility(visibility);
         emotionAngryIcon.setVisibility(visibility);
+        emotionStressIcon.setVisibility(visibility);
         emotionNormalText.setVisibility(visibility);
         emotionHappyText.setVisibility(visibility);
         emotionSadText.setVisibility(visibility);
         emotionAngryText.setVisibility(visibility);
+        emotionStressText.setVisibility(visibility);
+
     }
 
     private void getAllViews() {
@@ -118,6 +122,7 @@ public class MainHelpActivity extends Activity {
         emotionHappyIcon = (ImageView) findViewById(R.id.main_help_emotion_happy_icon);
         emotionSadIcon = (ImageView) findViewById(R.id.main_help_emotion_sad_icon);
         emotionAngryIcon = (ImageView) findViewById(R.id.main_help_emotion_angry_icon);
+        emotionStressIcon = (ImageView) findViewById(R.id.main_help_emotion_stressful_icon);
 
         menstrualText = (TextView) findViewById(R.id.main_help_menstrual_text);
         estimatedMenstrualText = (TextView) findViewById(R.id.main_help_estimated_menstrual_text);
@@ -130,6 +135,7 @@ public class MainHelpActivity extends Activity {
         emotionHappyText = (TextView) findViewById(R.id.main_help_emotion_happy_text);
         emotionSadText = (TextView) findViewById(R.id.main_help_emotion_sad_text);
         emotionAngryText = (TextView) findViewById(R.id.main_help_emotion_angry_text);
+        emotionStressText = (TextView) findViewById(R.id.main_help_emotion_stressful_text);
 
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +158,7 @@ public class MainHelpActivity extends Activity {
     private ImageView emotionHappyIcon;
     private ImageView emotionSadIcon;
     private ImageView emotionAngryIcon;
+    private ImageView emotionStressIcon;
 
     private TextView menstrualText;
     private TextView estimatedMenstrualText;
@@ -163,6 +170,7 @@ public class MainHelpActivity extends Activity {
     private TextView emotionHappyText;
     private TextView emotionSadText;
     private TextView emotionAngryText;
+    private TextView emotionStressText;
 
     private ImageButton closeButton;
 }

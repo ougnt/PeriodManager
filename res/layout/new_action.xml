@@ -277,6 +277,28 @@
                                 android:gravity="center" />
                         </LinearLayout>
 
+                        <LinearLayout
+                            android:orientation="vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" >
+
+                            <ImageButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/emotion_icon_stressful"
+                                android:src="@drawable/emotion_stressful"
+                                android:scaleType="fitXY" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:text="@string/action_activity_emotion_stressful"
+                                android:id="@+id/textView15"
+                                android:textColor="@color/text_color"
+                                android:gravity="center" />
+                        </LinearLayout>
+
                     </LinearLayout>
                 </HorizontalScrollView>
             </LinearLayout>

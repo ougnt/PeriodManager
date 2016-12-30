@@ -74,6 +74,12 @@ public class EndToEndTest {
         Assert.assertEquals(DateTime.now().toString("yyyy-MM-dd"), pointingDateMeter.getDate().toString("yyyy-MM-dd"));
         Assert.assertEquals(FlagHelper.EmotionNothingIcon, FlagHelper.GetEmotionFlag(pointingDateMeter.getFlags()) & FlagHelper.EmotionSadIcon);
         Assert.assertEquals(FlagHelper.HaventIntercourseFlag, FlagHelper.GetIntercourseFlag(pointingDateMeter.getFlags()));
+
+        initialPage.clickDateDetailButton();
+        dateDetailPage.clickEmotionStressful();
+        dateDetailPage.clickSave();
+
+        Assert.assertEquals(FlagHelper.EmotionStressfulIcon, FlagHelper.GetEmotionFlag(pointingDateMeter.getFlags()) & FlagHelper.EmotionStressfulIcon);
     }
 
     @Test

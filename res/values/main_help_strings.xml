@@ -11,4 +11,5 @@
     <string name="main_help_happy_emotion">This day is edited as a happy day</string>
     <string name="main_help_sad_emotion">This day is edited as a sad day</string>
     <string name="main_help_angry_emotion">This day is edited as an angry day</string>
+    <string name="main_help_stressful_emotion">This day is edited as a stressful day</string>
 </resources>

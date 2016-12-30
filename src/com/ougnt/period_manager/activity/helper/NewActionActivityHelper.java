@@ -110,6 +110,12 @@ public class NewActionActivityHelper implements View.OnClickListener {
                 log.setAction(Log.Action.ClickEmotionIcon);
                 break;
             }
+            case R.id.emotion_icon_stressful: {
+                paintEmotionIconClick((ImageButton) v);
+                emotionIconFlag = FlagHelper.EmotionStressfulIcon;
+                log.setAction(Log.Action.ClickEmotionIcon);
+                break;
+            }
             case R.id.action_panel_intercourse: {
                 paintIntercourseIcon((ImageButton) v);
                 intercourseFlag = FlagHelper.HaveIntercourseFlag;
@@ -242,6 +248,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
         activity.emotionHappyIcon.setLayoutParams(params);
         activity.emotionNothingIcon.setLayoutParams(params);
         activity.emotionSadIcon.setLayoutParams(params);
+        activity.emotionStressfulIcon.setLayoutParams(params);
         activity.intercourseIcon.setLayoutParams(params);
         activity.noIntercourseIcon.setLayoutParams(params);
 
@@ -261,6 +268,9 @@ public class NewActionActivityHelper implements View.OnClickListener {
             case FlagHelper.EmotionSadIcon: {
                 paintEmotionIconClick(activity.emotionSadIcon);
                 break;
+            }
+            case FlagHelper.EmotionStressfulIcon: {
+                paintEmotionIconClick(activity.emotionStressfulIcon);
             }
         }
 
@@ -289,6 +299,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
         activity.emotionHappyIcon.setBackgroundColor(0);
         activity.emotionSadIcon.setBackgroundColor(0);
         activity.emotionNothingIcon.setBackgroundColor(0);
+        activity.emotionStressfulIcon.setBackgroundColor(0);
         clickedIcon.setBackgroundColor(ContextCompat.getColor(activity, R.color.on_select_zone_bg));
     }
 

@@ -13,6 +13,9 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.helper.NewActionActivityHelper;
+import com.ougnt.period_manager.google.Log;
+
+import org.joda.time.DateTime;
 
 public class NewActionActivity extends Activity {
 
@@ -21,6 +24,7 @@ public class NewActionActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DateTime entering = DateTime.now();
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -29,6 +33,12 @@ public class NewActionActivity extends Activity {
         getAllViews();
         helper = new NewActionActivityHelper(this);
         registerOnClick();
+
+        Log log = new Log(this);
+        log.setCategory(Log.Category.LoadTime);
+        log.setAction(Log.Action.ClickAddDetail);
+        log.setScreenType(Log.Screen.ActionPanel);
+        InitialActivity.sendLoadTimeMessage(log, DateTime.now().getMillis() - entering.getMillis());
     }
 
     private void registerOnClick() {
@@ -40,6 +50,7 @@ public class NewActionActivity extends Activity {
         emotionNothingIcon.setOnClickListener(helper);
         emotionHappyIcon.setOnClickListener(helper);
         emotionAngryIcon.setOnClickListener(helper);
+        emotionStressfulIcon.setOnClickListener(helper);
         intercourseIcon.setOnClickListener(helper);
         noIntercourseIcon.setOnClickListener(helper);
     }
@@ -56,6 +67,7 @@ public class NewActionActivity extends Activity {
         emotionHappyIcon = (ImageButton) findViewById(R.id.emotion_icon_happy);
         emotionSadIcon = (ImageButton) findViewById(R.id.emotion_icon_sad);
         emotionAngryIcon = (ImageButton) findViewById(R.id.emotion_icon_angry);
+        emotionStressfulIcon = (ImageButton) findViewById(R.id.emotion_icon_stressful);
         noIntercourseIcon = (ImageButton) findViewById(R.id.action_panel_no_intercourse);
         intercourseIcon = (ImageButton) findViewById(R.id.action_panel_intercourse);
 //        adView = (AdView) findViewById(R.id.action_panel_ads_view);
@@ -73,6 +85,7 @@ public class NewActionActivity extends Activity {
     public ImageButton emotionHappyIcon;
     public ImageButton emotionSadIcon;
     public ImageButton emotionAngryIcon;
+    public ImageButton emotionStressfulIcon;
     public ImageButton noIntercourseIcon;
     public ImageButton intercourseIcon;
     public LinearLayout adViewContainer;

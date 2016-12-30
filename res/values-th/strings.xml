@@ -120,4 +120,6 @@
     <string name="IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional">รูปแบบไม่สวย</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional">ภาษาดูไม่เป็นทางการ</string>
     <string name="IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand">ไม่เข้าใจภาษา</string>
+    <string name="action_activity_emotion_stressful">เครียด</string>
+    <string name="main_help_stressful_emotion">ตั้งว่า เครียด</string>
 </resources>

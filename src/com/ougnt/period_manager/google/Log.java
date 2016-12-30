@@ -95,6 +95,7 @@ public class Log {
         public static final String ClickAds = "ClickAds";
         public static final String ClickAddDetailToDateMeter = "ClickAddDetailToDateMeter";
         public static final String ClickAddDetailFromCalendar = "ClickAddDetailFromCalendar";
+        public static final String ClickAddDetail = "ClickAddDetail";
         public static final String LandToMenu = "LandToMenu";
         public static final String ClickLockScreen = "ClickLockScreen";
         public static final String ClickSubmitReview = "ClickSubmitReview";

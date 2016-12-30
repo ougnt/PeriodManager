@@ -41,6 +41,11 @@ public class DateDetailPage {
         emotionButton.perform(ViewActions.click());
     }
 
+    public void clickEmotionStressful() {
+        ViewInteraction emotionButton = onView(withId(R.id.emotion_icon_stressful));
+        emotionButton.perform(ViewActions.scrollTo()).perform(ViewActions.click());
+    }
+
     public void clickHaventIntercourse() {
         ViewInteraction emotionButton = onView(withId(R.id.action_panel_no_intercourse));
         emotionButton.perform(ViewActions.scrollTo());
