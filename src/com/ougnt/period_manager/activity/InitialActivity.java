@@ -1273,7 +1273,8 @@ public class InitialActivity extends Activity {
         try {
             SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
             SharedPreferences.Editor edit = pref.edit();
-            edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 10));
+            int numberOfUsageBeforeAskingForReview = getResources().getInteger(R.integer.number_of_usage_before_ask_for_review);
+            edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, numberOfUsageBeforeAskingForReview));
             edit.apply();
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
