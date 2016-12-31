@@ -35,6 +35,9 @@ public class EndToEndTest {
         initialPage = new InitialPage();
         dateDetailPage = new DateDetailPage();
         menuPage = new MenuPage();
+
+        initialPage.clickHamburgerMenu();
+        menuPage.changeLanguageToEnglish();
     }
 
     @Test
