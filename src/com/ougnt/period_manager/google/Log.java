@@ -68,6 +68,7 @@ public class Log {
         public static final String MainScreenName = "Screen.Main";
         public static final String ActionPanel = "Screen.ActionPanel";
         public static final String MenuScreen = "Screen.Menu";
+        public static final String ReviewPanel = "Screen.ReviewPanel";
     }
 
     public class Action {
@@ -113,5 +114,18 @@ public class Log {
         public static final String ClickDisplayToggleButtonFromConclusionToMonthView = "ClickDisplayToggleButtonFromConclusionToMonthView";
         public static final String ClickDisplayToggleButtonFromConclusionToTemperature = "ClickDisplayToggleButtonFromConclusionToTemperature";
         public static final String ChangeTemperature = "ChangeTemperature";
+        public static final String ReviewIDontLikeThisApplication = "ReviewIDontLikeThisApplication";
+        public static final String ReviewILikeThisApplication = "ReviewILikeThisApplication";
+
+        public static final String ReviewILikeThisApplicationAndReviewNow = "ReviewILikeThisApplicationAndReviewNow";
+        public static final String ReviewILikeThisApplicationButReviewLater = "ReviewILikeThisApplicationButReviewLater";
+        public static final String ReviewILikeThisApplicationButIDontWantToReview = "ReviewILikeThisApplicationButIDontWantToReview";
+        public static final String ReviewIDontLikeThisApplicationBecauseItIsHardToUse = "ReviewIDontLikeThisApplicationBecauseItIsHardToUse";
+        public static final String ReviewIDontLikeThisApplicationBecauseItIsSlow = "ReviewIDontLikeThisApplicationBecauseItIsSlow";
+        public static final String ReviewIDontLikeThisApplicationBecauseOtherApplicationIsBetter = "ReviewIDontLikeThisApplicationBecauseOtherApplicationIsBetter";
+        public static final String ReviewIDontLikeThisApplicationBecauseTheDesignIsNotLookProfessional = "ReviewIDontLikeThisApplicationBecauseTheDesignIsNotLookProfessional";
+        public static final String ReviewIDontLikeThisApplicationBecauseTheLanguageDoesNotLookProfessional = "ReviewIDontLikeThisApplicationBecauseTheLanguageDoesNotLookProfessional";
+        public static final String ReviewIDontLikeThisApplicationBecauseTheLanguageIsHardToUnderstand = "ReviewIDontLikeThisApplicationBecauseTheLanguageIsHardToUnderstand";
+        public static final String ReviewIDontLikeThisApplicationBecauseOfOtherReason = "ReviewIDontLikeThisApplicationBecauseOfOtherReason";
     }
 }

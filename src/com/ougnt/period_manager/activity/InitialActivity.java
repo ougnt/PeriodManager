@@ -804,6 +804,12 @@ public class InitialActivity extends Activity {
                 iLikeThisAppButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        log.setAction(Log.Action.ReviewILikeThisApplication);
+                        log.setScreenType(Log.Screen.ReviewPanel);
+                        log.setCategory(Log.Category.Button);
+                        sendTrafficMessage(log);
+
                         setContentView(R.layout.review);
                         survayFlags[0] |= ILikeTheApplication;
 
@@ -814,6 +820,11 @@ public class InitialActivity extends Activity {
                         reviewNowButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+
+                                log.setAction(Log.Action.ReviewILikeThisApplicationAndReviewNow);
+                                log.setScreenType(Log.Screen.ReviewPanel);
+                                log.setCategory(Log.Category.Button);
+                                sendTrafficMessage(log);
 
                                 addUsageCounter(PReviewNow);
                                 survayFlags[0] |= ILikeTheApplicationAndIWantToReview;
@@ -826,6 +837,12 @@ public class InitialActivity extends Activity {
                         laterButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+
+                                log.setAction(Log.Action.ReviewILikeThisApplicationButReviewLater);
+                                log.setScreenType(Log.Screen.ReviewPanel);
+                                log.setCategory(Log.Category.Button);
+                                sendTrafficMessage(log);
+
                                 addUsageCounter(PReviewLater);
                                 survayFlags[0] |= ILikeTheApplicationButIDontLikeToReviewNow;
                                 edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
@@ -838,6 +855,11 @@ public class InitialActivity extends Activity {
                         noShowButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
+
+                                log.setAction(Log.Action.ReviewILikeThisApplicationButIDontWantToReview);
+                                log.setScreenType(Log.Screen.ReviewPanel);
+                                log.setCategory(Log.Category.Button);
+                                sendTrafficMessage(log);
 
                                 addUsageCounter(PNoReview);
                                 survayFlags[0] |= ILikeTheApplicationButIDontLikeToReview;
@@ -853,6 +875,12 @@ public class InitialActivity extends Activity {
                 iDontLikeThisAppButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        log.setAction(Log.Action.ReviewIDontLikeThisApplication);
+                        log.setScreenType(Log.Screen.ReviewPanel);
+                        log.setCategory(Log.Category.Button);
+                        sendTrafficMessage(log);
+
                         setContentView(R.layout.we_also_love_a_negative_feedback);
                         survayFlags[0] |= IDontLikeTheApplication;
                         Button sendReviewButton = (Button) findViewById(R.id.review_send_review_button);
@@ -860,7 +888,6 @@ public class InitialActivity extends Activity {
                             @Override
                             public void onClick(View v) {
 
-                                // TODO : Send the stat to the server
                                 CheckBox hardToUseCheckBox = (CheckBox) findViewById(R.id.review_it_is_hard_to_use);
                                 CheckBox slowCheckBox = (CheckBox) findViewById(R.id.review_it_is_slow);
                                 CheckBox otherApplicationIsBetterCheckBox = (CheckBox) findViewById(R.id.review_other_app_is_better);
@@ -877,6 +904,56 @@ public class InitialActivity extends Activity {
                                 survayFlags[0] |= languageIsHardToUnderstandCheckBox.isChecked() ? IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand : 0;
                                 survayFlags[0] |= otherReasonCheckBox.isChecked() ? IDontLikeTheApplicationBecauseOfOtherReason : 0;
 
+                                if( (survayFlags[0] & IDontLikeTheApplicationBecauseItIsHardToUse) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseItIsHardToUse);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseItIsSlow) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseItIsSlow);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseOtherApplicationIsBetter) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseOtherApplicationIsBetter);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseTheDesignIsNotLookProfessional);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseTheLanguageDoesNotLookProfessional);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseTheLanguageIsHardToUnderstand);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseOfOtherReason) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseOfOtherReason);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                }
+
                                 sendReview(survayFlags[0]);
                                 submitStat();
                                 finish();
@@ -885,7 +962,7 @@ public class InitialActivity extends Activity {
                     }
                 });
 
-            } else {
+                } else {
                 submitStat();
                 finish();
             }
