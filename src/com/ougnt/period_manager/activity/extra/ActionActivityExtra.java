@@ -1,7 +1,5 @@
 package com.ougnt.period_manager.activity.extra;
 
-import com.google.android.gms.phenotype.Flag;
-
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
