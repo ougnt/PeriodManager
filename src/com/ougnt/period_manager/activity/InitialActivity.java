@@ -9,6 +9,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -45,6 +46,7 @@ import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
 import com.ougnt.period_manager.activity.extra.SetupWizardActivityExtra;
 import com.ougnt.period_manager.activity.extra.SummaryActivityExtra;
+import com.ougnt.period_manager.activity.helper.UtilHelper;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
@@ -369,13 +371,14 @@ public class InitialActivity extends Activity {
         }
     }
 
+    @SuppressWarnings("unused")
     private int getExperimentVariance() {
 
         if (getDeviceId() == null) {
             setDeviceId();
         }
 
-        return (int) (getDeviceId().getMostSignificantBits() % 2);
+        return getDeviceId () == null ? 0 : (int) (getDeviceId().getMostSignificantBits() % 2);
     }
 
     private void setSelectedDateToAlignWithFingerIndex() {
@@ -492,10 +495,10 @@ public class InitialActivity extends Activity {
                                             "";
 
             String estNextOvu = nextOvulationIn > 0 ?
-                    String.format(getResources().getString(R.string.date_detail_est_next_ovulation), nextOvulationIn) :
+                    String.format(getResources().getString(R.string.date_detail_est_next_ovulation), nextOvulationIn + "") :
                     "";
             String estNextMens = nextPeriodIn > 0 ?
-                    String.format(getResources().getString(R.string.date_detail_est_next_period), nextPeriodIn) :
+                    String.format(getResources().getString(R.string.date_detail_est_next_period), nextPeriodIn + "") :
                     "";
 
             String displayText = explainationText + estNextOvu + estNextMens;
@@ -507,18 +510,18 @@ public class InitialActivity extends Activity {
                 public void run() {
                     if (todayText.getLineCount() > 4) {
                         todayText.setTag(1);
-                        todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
+                        todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
                         todayText.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 if ((int) v.getTag() == 1) {
-                                    todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
                                     v.setTag(2);
                                 } else if ((int) v.getTag() == 2) {
-                                    todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[1], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[1], getResources().getString(R.string.date_detail_click_to_see_more))));
                                     v.setTag(3);
                                 } else {
-                                    todayText.setText(Html.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[2], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[2], getResources().getString(R.string.date_detail_click_to_see_more))));
                                     v.setTag(1);
                                 }
                             }
@@ -1219,7 +1222,7 @@ public class InitialActivity extends Activity {
             String daysToNextMenstrualText;
             String dateFormat = getResources().getString(R.string.short_date_format);
 
-            conclusionSuggestDate.setText(Html.fromHtml(String.format(getResources().getText(R.string.conclusion_suggestion_date_string).toString(),
+            conclusionSuggestDate.setText(UtilHelper.fromHtml(String.format(getResources().getText(R.string.conclusion_suggestion_date_string).toString(),
                     "<b>" + summary.expectedOvulationDate.minusDays(1).toString(dateFormat) + "</b>",
                     "<b>" + summary.expectedOvulationDate.plusDays(1).toString(dateFormat) + "</b>")));
 
@@ -1234,14 +1237,14 @@ public class InitialActivity extends Activity {
             } else {
                 daysToNextOvulationText = String.format(
                         getResources().getString(R.string.conclusion_days_to_the_date_option_next_xxx_days_string),
-                        daysToNextOvulation);
+                        daysToNextOvulation + "");
                 daysToNextOvulationText = String.format(getResources().getText(R.string.conclusion_days_to_the_date_string).toString(),
                         daysToNextOvulationText);
             }
 
             conclusionSuggestionDaysToDate.setText(daysToNextOvulationText);
 
-            conclusionEstimatedNextMenstrualDate.setText(Html.fromHtml(String.format(
+            conclusionEstimatedNextMenstrualDate.setText(UtilHelper.fromHtml(String.format(
                     getResources().getString(R.string.conclusion_estimated_next_menstrual_date_string),
                     "<b>" + summary.expectedMenstrualDateFrom.toString(dateFormat) + "</b>",
                     "<b>" + summary.expectedMenstrualDateTo.toString(dateFormat) + "</b>")));
@@ -1254,7 +1257,7 @@ public class InitialActivity extends Activity {
             } else {
                 daysToNextMenstrualText = String.format(
                         getResources().getString(R.string.conclusion_days_to_the_date_option_next_xxx_days_string),
-                        daysToNextMenstrual);
+                        daysToNextMenstrual + "");
             }
             conclusionEstimatedNextMenstrualDaysToDate.setText(daysToNextMenstrualText);
             // TODO: Complete this
@@ -1868,6 +1871,9 @@ public class InitialActivity extends Activity {
                     if (firstChildLocal[0] == scrollViewLocal[0]) {
                         int[] todayLocal = new int[2];
                         int[] fingerIndexLocal = new int[2];
+
+                        DateMeter selectDateMeter = (DateMeter) dateMeterContainer.getChildAt(getDateMeterIndexFromDate(DateTime.now()));
+
                         dateMeterContainer.getChildAt(16).getLocationOnScreen(todayLocal);
                         fingerIndex.getLocationOnScreen(fingerIndexLocal);
                         int centerOfFinger = fingerIndexLocal[0] + fingerIndex.getWidth() / 2;
@@ -1902,6 +1908,12 @@ public class InitialActivity extends Activity {
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
+    }
+
+    private int getDateMeterIndexFromDate(DateTime date) {
+        DateMeter firstDateMeter = (DateMeter) dateMeterContainer.getChildAt(1);
+        int dateDiff = (int) ((date.getMillis() - firstDateMeter.getDate().getMillis()) / 1000 / 60 / 60 / 24);
+        return dateDiff + 1;
     }
 
     synchronized private void moveDateMeter(int targetPixel) {
