@@ -81,7 +81,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 71;
+    public static final int ApplicationVersion = 72;
 
     // TODO : Change this to the real one
     // Live Env
@@ -1515,9 +1515,7 @@ public class InitialActivity extends Activity {
                     break;
                 }
                 case MenuActivity.SelectLockScreen: {
-                    addUsageCounter(PMenuLockScreenUsageCounter);
-                    Intent intent = new Intent(this, LoginActivity.class);
-                    startActivity(intent);
+                    // TODO: Finish this
                 }
             }
         } catch (Exception e) {
