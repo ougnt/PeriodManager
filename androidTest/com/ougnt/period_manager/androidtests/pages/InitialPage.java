@@ -27,10 +27,12 @@ import org.joda.time.format.DateTimeFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static android.support.test.espresso.matcher.ViewMatchers.withChild;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagKey;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
@@ -52,8 +54,14 @@ public class InitialPage {
 
     public void checkSelectedDate(DateTime expectedDate) {
         assertThat("Selected Date doesn't equal to " + expectedDate.toString("yyyy-MM-dd"),
-                getSelectedDate().toString("yyyy-MM-dd"),
+                getPointedDateMeter().getDate().toString("yyyy-MM-dd"),
                 Matchers.equalTo(expectedDate.toString("yyyy-MM-dd")));
+    }
+
+    public void clickTomorrowDateMeter() {
+        onView(Matchers.allOf(
+                withChild(withText(DateTime.now().plusDays(1).toString("dd")))
+                )).perform(ViewActions.click());
     }
 
     public List<Integer> getFingerLocation() {

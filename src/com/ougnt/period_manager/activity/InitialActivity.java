@@ -411,7 +411,7 @@ public class InitialActivity extends Activity {
                     }
                 }
             }
-            TextView headerText = (TextView) findViewById(R.id.main_header_text);
+
             if (selectedDate == null) {
                 selectedDate = (DateMeter) dateMeterContainer.getChildAt(16);
             }
@@ -427,6 +427,12 @@ public class InitialActivity extends Activity {
             setOnDateMeterTouchEventListener(new OnDateMeterFocusListener() {
                 @Override
                 public void onFocusMoveIn(DateMeter touchDate) {
+
+                    int[] dateLocations = new int[2];
+                    int[] fingerLocations = new int[2];
+                    fingerIndex.getLocationInWindow(fingerLocations);
+                    touchDate.getLocationInWindow(dateLocations);
+                    dateMeterScroller.scrollBy(dateLocations[0] - fingerLocations[0] , 0);
 
                     ImageView fireImage = (ImageView) findViewById(R.id.fire_image);
                     ImageView grassImage = (ImageView) findViewById(R.id.grass_image);
@@ -458,6 +464,8 @@ public class InitialActivity extends Activity {
                     }
 
                     setDateDetailText(touchDate);
+                    headerText.setText(selectedDate.getDate().toString(getResources().getText(R.string.short_date_format).toString()));
+                    selectedDate = touchDate;
                 }
             });
 
@@ -2017,6 +2025,7 @@ public class InitialActivity extends Activity {
             conclusionSuggestionDaysToDate = (TextView) findViewById(R.id.conclusion_suggestion_days_to_the_date);
             conclusionEstimatedNextMenstrualDate = (TextView) findViewById(R.id.conclusion_estimated_next_menstrual_date_string);
             conclusionEstimatedNextMenstrualDaysToDate = (TextView) findViewById(R.id.conclusion_estimated_next_menstrual_days_string);
+            headerText = (TextView) findViewById(R.id.main_header_text);
 
             registerOnclickAndOnSwipeEvent();
         } catch (Exception e) {
@@ -2063,6 +2072,7 @@ public class InitialActivity extends Activity {
     private TextView conclusionSuggestionDaysToDate;
     private TextView conclusionEstimatedNextMenstrualDate;
     private TextView conclusionEstimatedNextMenstrualDaysToDate;
+    private TextView headerText;
 
     private GestureDetector gestureDetector = new GestureDetector(getBaseContext(), new GestureDetector.SimpleOnGestureListener() {
         @Override
