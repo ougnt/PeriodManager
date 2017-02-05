@@ -1,5 +1,6 @@
 package com.ougnt.period_manager.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +10,9 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
-import android.text.Html;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -132,12 +131,7 @@ public class InitialActivity extends Activity {
     public static final String PSettingDisplayedLanguageUsageCounter = "period_manager_preference_setting_displayed_language_usage_counter";
 
     // Available in version 36
-    // TODO: Submit this usage counter
     public static final String PMainDisplayMode = "period_manager_preference_display_mode";
-
-    // Available in version 47
-    // TODO: Submit this usage counter
-    public static final String PMenuLockScreenUsageCounter = "period_manager_preference_lock_screen_usage_counter";
 
     public static final int DisplayModeDateScroller = 0;
     public static final int DisplayModeMonthView = 1;
@@ -197,7 +191,7 @@ public class InitialActivity extends Activity {
             Locale locale = new Locale(language);
             Locale.setDefault(locale);
             Configuration config = new Configuration();
-            config.locale = locale;
+            UtilHelper.setConfigurationLocale(config, locale);
             getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
 
             setSharedPreference(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
@@ -733,7 +727,7 @@ public class InitialActivity extends Activity {
                     Locale locale = new Locale(language);
                     Locale.setDefault(locale);
                     Configuration config = new Configuration();
-                    config.locale = locale;
+                    UtilHelper.setConfigurationLocale(config, locale);
                     getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
                     initialApplication();
                     setSharedPreference(PSettingDisplayedLanguage, language);
@@ -1300,8 +1294,15 @@ public class InitialActivity extends Activity {
     }
 
     private void sendReview(int review) {
-        String rewJson = String.format("{\"deviceId\":\"%s\",\"review\":\"%s\"}", getDeviceId().toString(), review);
-        HttpHelper.post(ReviewUrl, rewJson);
+        try {
+            if(getDeviceId() == null) {
+                return;
+            }
+            String rewJson = String.format("{\"deviceId\":\"%s\",\"review\":\"%s\"}", getDeviceId().toString(), review);
+            HttpHelper.post(ReviewUrl, rewJson);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void submitStat() {
@@ -1391,7 +1392,7 @@ public class InitialActivity extends Activity {
             return id;
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
-            return null;
+            return new UUID(0,0);
         }
     }
 
@@ -1878,11 +1879,8 @@ public class InitialActivity extends Activity {
                         int[] todayLocal = new int[2];
                         int[] fingerIndexLocal = new int[2];
 
-                        DateMeter selectDateMeter = (DateMeter) dateMeterContainer.getChildAt(getDateMeterIndexFromDate(DateTime.now()));
-
                         dateMeterContainer.getChildAt(16).getLocationOnScreen(todayLocal);
                         fingerIndex.getLocationOnScreen(fingerIndexLocal);
-                        int centerOfFinger = fingerIndexLocal[0] + fingerIndex.getWidth() / 2;
                         dateMeterScroller.scrollTo(todayLocal[0] -
                                 dateMeterScroller.getWidth() / 2, 0);
                     }
@@ -1916,6 +1914,7 @@ public class InitialActivity extends Activity {
         }
     }
 
+    @SuppressWarnings("unused")
     private int getDateMeterIndexFromDate(DateTime date) {
         DateMeter firstDateMeter = (DateMeter) dateMeterContainer.getChildAt(1);
         int dateDiff = (int) ((date.getMillis() - firstDateMeter.getDate().getMillis()) / 1000 / 60 / 60 / 24);
@@ -2091,6 +2090,8 @@ public class InitialActivity extends Activity {
     private OnDateMeterFocusListener dateTouchListener;
     private PeriodCalendar calendar;
     private DateMeter selectedDate = null;
+
+    @SuppressLint("StaticFieldLeak")
     public static AppForStatic analyticsApplication;
     public static String DeviceId;
     public static Tracker tracker;
