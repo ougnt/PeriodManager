@@ -153,10 +153,18 @@ public class InitialActivity extends Activity {
     public static final int ILikeTheApplicationButIDontLikeToReviewNow = 0x400;
     public static final int ILikeTheApplicationButIDontLikeToReview = 0x800;
 
+    // Available in version 73
+    public static final String PIsFirstTimeUsage = "period_manager_preference_is_first_time_usage";
+
     SettingRepository setting;
 
     public InitialActivity() {
         dateTouchListener = null;
+    }
+
+    // This function should be always empty before deploy to production
+    private void hackInitial(){
+
     }
 
     /**
@@ -208,9 +216,26 @@ public class InitialActivity extends Activity {
             log.setCategory(Log.Category.LoadTime);
             log.setAction("InitialActivity.OnCreate");
             sendLoadTimeMessage(log, loadTime);
+
+            showUsageIfFirstTimeUser();
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
+    }
+
+    private void showUsageIfFirstTimeUser() {
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+
+        if(pref.getBoolean(PIsFirstTimeUsage, true)) {
+            Intent instructionIntent = new Intent(getBaseContext(), InstructionActivity.class);
+            startActivity(instructionIntent);
+        } else {
+            return;
+        }
+
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putBoolean(PIsFirstTimeUsage, false);
+        edit.apply();
     }
 
     @Override

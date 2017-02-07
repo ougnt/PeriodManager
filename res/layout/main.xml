@@ -66,7 +66,7 @@
             android:layout_weight="0.5"
             android:background="@color/main_bg"
             android:orientation="vertical"
-            android:visibility="visible"
+            android:visibility="gone"
             android:weightSum="3">
 
             <ScrollView
@@ -228,7 +228,7 @@
             android:layout_weight="0.5"
             android:background="#ff00b3"
             android:orientation="vertical"
-            android:visibility="gone"
+            android:visibility="visible"
             android:weightSum="1">
 
             <LinearLayout

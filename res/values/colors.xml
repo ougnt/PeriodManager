@@ -51,4 +51,6 @@
     <color name="date_detail_text_color">#0080FF</color>
     <color name="conclusion_title_text_color">#0080FF</color>
     <color name="conclusion_title_estimation_text_color">#FF6666</color>
+    <color name="instruction_grey">#EE666666</color>
+    <color name="instruction_hollow">#00000000</color>
 </resources>
