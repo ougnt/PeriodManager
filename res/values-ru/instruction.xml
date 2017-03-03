@@ -2,4 +2,7 @@
 <resources>
     <string name="instruction_select_date">1. Выберите последнюю дату начала менструального цикла.</string>
     <string name="instruction_date_detail">2. Нажмите кнопку "добавить деталь".</string>
+    <string name="instruction_add_detail_button">3. Нажмите эту кнопку, чтобы отметить, что в этот день в первый день менструации</string>
+    <string name="instruction_save_button">4. Нажмите кнопку Сохранить, когда вы заполните всю информацию</string>
+    <string name="instruction_next_button">Продолжать</string>
 </resources>

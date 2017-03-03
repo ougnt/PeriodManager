@@ -1,7 +1,10 @@
 package com.ougnt.period_manager.activity;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -12,14 +15,19 @@ import android.widget.TextView;
 
 import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.R;
+import com.ougnt.period_manager.activity.extra.InstructionComponent;
+import com.ougnt.period_manager.activity.extra.NewInstructionActivityExtra;
 import com.ougnt.period_manager.activity.helper.NewActionActivityHelper;
 import com.ougnt.period_manager.google.Log;
 
 import org.joda.time.DateTime;
 
+import java.util.LinkedList;
+
 public class NewActionActivity extends Activity {
 
     public static final String ExtraKey = "ExtraKey";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +47,56 @@ public class NewActionActivity extends Activity {
         log.setAction(Log.Action.ClickAddDetail);
         log.setScreenType(Log.Screen.ActionPanel);
         InitialActivity.sendLoadTimeMessage(log, DateTime.now().getMillis() - entering.getMillis());
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showUsageIfFirstTime();
+            }
+        }, 500);
+    }
+
+    private void showUsageIfFirstTime() {
+        SharedPreferences pref = getSharedPreferences(InitialActivity.PName, MODE_PRIVATE);
+
+        if(pref.getBoolean(InitialActivity.PIsFirstTimeActionUsage, true)) {
+
+            int[] actionButtonLocation = new int[2];
+            actionButton.getLocationOnScreen(actionButtonLocation);
+            InstructionComponent component1 = new InstructionComponent(
+                    actionButtonLocation[0],
+                    actionButtonLocation[1],
+                    actionButton.getWidth(),
+                    actionButton.getHeight(),
+                    getResources().getString(R.string.instruction_add_detail_button)
+            );
+
+            int[] saveButtonLocation = new int[2];
+            saveButton.getLocationOnScreen(saveButtonLocation);
+            InstructionComponent component2 = new InstructionComponent(
+                    saveButtonLocation[0],
+                    saveButtonLocation[1],
+                    saveButton.getWidth(),
+                    saveButton.getHeight(),
+                    getResources().getString(R.string.instruction_save_button)
+            );
+
+            LinkedList<InstructionComponent> components = new LinkedList<>();
+            components.add(component2);
+            components.add(component1);
+
+            NewInstructionActivityExtra extra = NewInstructionActivityExtra.fromComponents(components);
+
+            Intent intent = new Intent(this, NewInstructionActivity.class);
+            intent.putExtra(NewInstructionActivity.InstructionExtra, extra.toJson());
+            startActivity(intent);
+        } else {
+            return;
+        }
+
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putBoolean(InitialActivity.PIsFirstTimeActionUsage, false);
+        edit.apply();
     }
 
     private void registerOnClick() {

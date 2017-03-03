@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="instruction_select_date">1. あなたの前回の月経を選択てください。</string>
+    <string name="instruction_select_date">1. あなたの前回の月経を選択て下さい。</string>
     <string name="instruction_date_detail">2. 「インフォーが入る」ボタンを押して下さい。</string>
+    <string name="instruction_add_detail_button">3.　この日はあなたの一日の月経周期たら、このボタンを押して下さい。</string>
+    <string name="instruction_save_button">4. 全部のインフォーを入ったら、この「保存」ボタンを押して下さい。</string>
+    <string name="instruction_next_button">次</string>
 </resources>

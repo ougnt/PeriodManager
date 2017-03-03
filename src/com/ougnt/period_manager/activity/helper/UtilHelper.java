@@ -7,6 +7,8 @@ import android.text.Spanned;
 
 import java.util.Locale;
 
+import static android.view.View.generateViewId;
+
 /**
  * Created by wacharint on 1/27/2017 AD.
  * For collect a util methods
@@ -29,6 +31,14 @@ public class UtilHelper {
             config.setLocale(locale);
         } else {
             config.locale = locale;
+        }
+    }
+
+    public static int GenerateId() {
+        if(Build.VERSION.SDK_INT < 17) {
+            return (int) (Math.random() * 1000000);
+        } else {
+            return generateViewId();
         }
     }
 

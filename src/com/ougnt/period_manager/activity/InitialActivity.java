@@ -156,6 +156,9 @@ public class InitialActivity extends Activity {
     // Available in version 73
     public static final String PIsFirstTimeUsage = "period_manager_preference_is_first_time_usage";
 
+    // Available in version 74
+    public static final String PIsFirstTimeActionUsage = "period_manager_preference_is_first_time_action_usage";
+
     SettingRepository setting;
 
     public InitialActivity() {

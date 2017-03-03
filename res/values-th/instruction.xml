@@ -2,4 +2,7 @@
 <resources>
     <string name="instruction_select_date">1. เลือกวันที่เป็นประจำเดือนครั้งล่าสุด</string>
     <string name="instruction_date_detail">2. คลิ๊กปุ่มเพิ่มข้อมูล</string>
+    <string name="instruction_add_detail_button">3. คลิ๊กปุ่มนี้ ถ้าวันที่แสดงอยู่เป็นวันแรกของการเป็นประจำเดือน</string>
+    <string name="instruction_save_button">4. หลังจากกรอกข้อมูลครบ แล้วกดปุ่ม บันทึกเพื่อให้โปรแกรม เริ่มการคำนวน</string>
+    <string name="instruction_next_button">ไปต่อ</string>
 </resources>

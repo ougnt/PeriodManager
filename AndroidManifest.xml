@@ -28,6 +28,9 @@
             android:name=".activity.SummaryActivity"
             android:theme="@style/Theme.Transparent" />
         <activity android:name=".activity.SettingActivity" />
+        <activity
+            android:name=".activity.NewInstructionActivity"
+            android:theme="@style/Theme.Transparent" />
         <activity android:name=".activity.LanguageSelectorActivity" />
         <activity android:name=".activity.TemperatureHelpActivity" />
         <activity android:name=".activity.SetupWizardActivity" />
