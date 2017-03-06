@@ -80,7 +80,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 73;
+    public static final int ApplicationVersion = 74;
 
     // TODO : Change this to the real one
     // Live Env
@@ -1775,6 +1775,7 @@ public class InitialActivity extends Activity {
             DateTime startOfOvulationPeriod = dateToBePainted.plusDays(7);
             DateTime endOfOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 8);
             DateTime ovulationDate = startOfOvulationPeriod.plusDays(((int) (endOfOvulationPeriod.getMillis() - startOfOvulationPeriod.getMillis()) / 2) / 1000 / 60 / 60 / 24);
+            ovulationDate = ovulationDate.minusMillis(ovulationDate.getMillisOfDay());
             DateTime startNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 7);
             DateTime endNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle);
             DateTime estimatedNextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
