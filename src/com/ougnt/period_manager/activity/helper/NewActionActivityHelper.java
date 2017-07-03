@@ -191,7 +191,7 @@ public class NewActionActivityHelper implements View.OnClickListener {
 
         AdRequest.Builder builder = new AdRequest.Builder();
         builder.setGender(AdRequest.GENDER_FEMALE);
-        builder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
+//        builder.addTestDevice("A759BF739C3F877B045FC80B4362590C");
 //        builder.addTestDevice("18EE9322E82A5EC6AFD6A29FDB693971");
         AdRequest request = builder.build();
         final AdView adView = new AdView(activity);

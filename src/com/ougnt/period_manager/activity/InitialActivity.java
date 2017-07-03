@@ -37,6 +37,8 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.ougnt.period_manager.DateMeter;
@@ -80,18 +82,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 74;
-
-    // TODO : Change this to the real one
-    // Live Env
-    public static final String StatServer = "27.254.81.190:5555";
-    // Dev env
-//    public static final String StatServer = "192.168.56.1:9000";
-    public static final String StatUri = String.format("http://%s/usageStat", StatServer);
-    public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
-    public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
-    public static final String ErrorLogUri = String.format("http://%s/errorLog", StatServer);
-    public static final String ReviewUrl = String.format("http://%s/sendReview", StatServer);
+    public static final int ApplicationVersion = 75;
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
@@ -346,21 +337,27 @@ public class InitialActivity extends Activity {
                 public void run() {
 
                     try {
+//                        MobileAds.initialize(getBaseContext(), "ca-app-pub-2522554213803646~9035703817");
+                        MobileAds.initialize(getBaseContext());
 
                         AdRequest.Builder adBuilder = new AdRequest.Builder();
                         adBuilder.setGender(AdRequest.GENDER_FEMALE);
+//                        adBuilder.addTestDevice("9529BA77ADC263CD041FD905F8B42C8D");
                         final AdRequest adRequest = adBuilder.build();
                         adMobLayout.setVisibility(View.GONE);
+
 
                         Handler adHandler = new Handler();
                         adHandler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                adView = new AdView(getBaseContext());
+                                adView = new NativeExpressAdView(getBaseContext());
 
                                 int width = getResources().getConfiguration().screenWidthDp;
-                                adView.setAdSize(new AdSize(width, 80));
+                                int height = Math.max((int)(getResources().getConfiguration().screenHeightDp * 0.1), 80);
+
                                 adView.setAdUnitId("ca-app-pub-2522554213803646/4225526617");
+                                adView.setAdSize(new AdSize(width, height));
 
                                 adView.setAdListener(new AdListener() {
                                     @Override
@@ -377,6 +374,12 @@ public class InitialActivity extends Activity {
                                         log.setAction(Log.Action.ClickAds);
                                         log.setCategory(Log.Category.Ads);
                                         sendTrafficMessage(log);
+                                    }
+
+                                    @Override
+                                    public void onAdFailedToLoad(int a) {
+
+                                        super.onAdFailedToLoad(a);
                                     }
                                 });
                                 adView.loadAd(adRequest);
@@ -862,7 +865,6 @@ public class InitialActivity extends Activity {
                                 addUsageCounter(PReviewNow);
                                 survayFlags[0] |= ILikeTheApplicationAndIWantToReview;
                                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
-                                submitStat();
                                 finish();
                             }
                         });
@@ -880,7 +882,6 @@ public class InitialActivity extends Activity {
                                 survayFlags[0] |= ILikeTheApplicationButIDontLikeToReviewNow;
                                 edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
                                 edit.apply();
-                                submitStat();
                                 finish();
                             }
                         });
@@ -898,7 +899,6 @@ public class InitialActivity extends Activity {
                                 survayFlags[0] |= ILikeTheApplicationButIDontLikeToReview;
                                 edit.putInt(PTimeOfUsageBeforeReview, -1);
                                 edit.apply();
-                                submitStat();
                                 finish();
                             }
                         });
@@ -987,8 +987,6 @@ public class InitialActivity extends Activity {
 
                                 }
 
-                                sendReview(survayFlags[0]);
-                                submitStat();
                                 finish();
                             }
                         });
@@ -996,7 +994,6 @@ public class InitialActivity extends Activity {
                 });
 
                 } else {
-                submitStat();
                 finish();
             }
         } catch (Exception e) {
@@ -1319,70 +1316,6 @@ public class InitialActivity extends Activity {
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
         }
-    }
-
-    private void sendReview(int review) {
-        try {
-            if(getDeviceId() == null) {
-                return;
-            }
-            String rewJson = String.format("{\"deviceId\":\"%s\",\"review\":\"%s\"}", getDeviceId().toString(), review);
-            HttpHelper.post(ReviewUrl, rewJson);
-        } catch (Exception e) {
-            HttpHelper.sendErrorLog(e);
-        }
-    }
-
-    private void submitStat() {
-
-        try {
-            final JSONObject json = new JSONObject();
-
-            try {
-                json.put("deviceId", getDeviceId());
-                json.put("applicationVersion", getUsageCounter(PCurrentVersion));
-                json.put("usageCounter", getUsageCounter(PUsageCounter));
-                json.put("periodButtonUsageCounter", getUsageCounter(PPeriodButtonUsageCounter));
-                json.put("nonPeriodButtonUsageCounter", getUsageCounter(PNonPeriodButtonUsageCounter));
-                json.put("comment_button_usage_counter", getUsageCounter(PCommentButtonUsageCounter));
-                json.put("comment_text_usage_counter", getUsageCounter(PCommentTextUsageCounter));
-                json.put("menu_button_usage_counter", getUsageCounter(PMenuButtonUsageCounter));
-                json.put("review_now", getUsageCounter(PReviewNow));
-                json.put("review_later", getUsageCounter(PReviewLater));
-                json.put("review_non", getUsageCounter(PNoReview));
-                json.put("fetch_next_usage_counter", getUsageCounter(PFetchNextMonthUsageCounter));
-                json.put("fetch_previous_usage_counter", getUsageCounter(PFetchPreviousMonthUsageCounter));
-                json.put("menu_setting_click_counter", getUsageCounter(PMenuSettingClickCounter));
-                json.put("menu_summary_click_counter", getUsageCounter(PMenuSummaryClickCounter));
-                json.put("menu_month_view_click_counter", getUsageCounter(PMenuMonthViewClickCounter));
-                json.put("menu_help_click_counter", getUsageCounter(PMenuHelpClickCounter));
-                json.put("menu_review_click_counter", getUsageCounter(PMenuReviewClickCounter));
-
-                // Available in version 26 or above
-                json.put("setting_notify_period_usage_counter", getUsageCounter(PSettingNotifyPeriodCounter));
-                json.put("setting_notify_ovulation_usage_counter", getUsageCounter(PSettingNotifyOvulationCounter));
-                json.put("setting_notify_period_days", getUsageCounter(PSettingNotifyPeriodDay));
-                json.put("setting_notify_ovulation_days", getUsageCounter(PSettingNotifyOvulationDay));
-                json.put("setting_notify_notification_click_counter", getUsageCounter(PSettingNotificationClickCounter));
-
-                // Available in version 29 or above
-                json.put("setting_language_change_usage_counter", getUsageCounter(PSettingDisplayedLanguageUsageCounter));
-                json.put("setting_displayed_language", getStringPreference(PSettingDisplayedLanguage));
-
-                // Available in version 36 or above
-                json.put("setting_display_mode", getUsageCounter(PMainDisplayMode));
-
-                // Available in version 38 or above
-                json.put("duration", now().getMillis() - startTime.getMillis());
-
-                HttpHelper.post(StatUri, json.toString());
-            } catch (JSONException e) {
-                HttpHelper.sendErrorLog(e);
-            }
-        } catch (Exception e) {
-            HttpHelper.sendErrorLog(e);
-        }
-
     }
 
     private void initUsageToReview() {
@@ -2089,7 +2022,7 @@ public class InitialActivity extends Activity {
     private LinearLayout dateMeterContainer;
     private HorizontalScrollView dateMeterScroller;
     private LinearLayout newActionPanel;
-    private AdView adView;
+    private NativeExpressAdView adView;
     private LinearLayout adMobLayout;
     private ImageButton helpButton;
     private LinearLayout dateDetailMainLayout;
