@@ -36,7 +36,6 @@ import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.google.android.gms.analytics.HitBuilders;
@@ -62,8 +61,6 @@ import com.ougnt.period_manager.repository.SettingRepository;
 import com.ougnt.period_manager.repository.SummaryRepository;
 
 import org.joda.time.DateTime;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Locale;
@@ -82,7 +79,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 75;
+    public static final int ApplicationVersion = 76;
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
