@@ -507,10 +507,22 @@ public class InitialActivity extends Activity {
         }
     }
 
-    private void setDateDetailText(DateMeter touchDate) {
+    private void setDateDetailText(final DateMeter touchDate) {
 
         try {
             final TextView todayText = (TextView) findViewById(R.id.date_detail_text);
+
+            if(todayText == null) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setDateDetailText(touchDate);
+                    }
+                }, 500);
+
+                return;
+            }
+
             SummaryRepository summary = SummaryRepository.getSummary(getBaseContext());
             if (summary == null) {
                 todayText.setText(getResources().getString(R.string.date_detail_no_detail_yet));
@@ -651,9 +663,16 @@ public class InitialActivity extends Activity {
                         public void onClick(View v) {
                             DateRepository date = DateRepository.getDateRepositories(getBaseContext(), tempDate, tempDate).get(0);
 
+                            while(getFirstDateMeter().getDate().getMillis() > date.date.getMillis()) {
+                                endLayoutAction(dateMeterContainer, false);
+                            }
+
+                            while(getLastDateMeter().getDate().getMillis() < date.date.getMillis()) {
+                                endLayoutAction(dateMeterContainer, true);
+                            }
+
                             for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
 
-                                // TODO : Bug : Handle null selectedDate since the start time is before the first datemeter
                                 if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(date.date.toString("yyyy-MM-dd"))) {
                                     selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
                                     break;
@@ -1601,7 +1620,7 @@ public class InitialActivity extends Activity {
 
                 addUsageCounter(PFetchNextMonthUsageCounter);
 
-                DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(callbackLayout.getChildCount() - 2);
+                DateMeter lastDateMeter = getLastDateMeter();
                 callbackLayout.removeViewAt(callbackLayout.getChildCount() - 1);
                 addDateMeter(callbackLayout, lastDateMeter.getDate().plusDays(1), lastDateMeter.getDate().plusDays(15), true);
                 callbackLayout.addView(generateEndLayout(callbackLayout));
@@ -1609,7 +1628,7 @@ public class InitialActivity extends Activity {
 
                 addUsageCounter(PFetchPreviousMonthUsageCounter);
 
-                DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(1);
+                DateMeter lastDateMeter = getFirstDateMeter();
                 callbackLayout.removeViewAt(0);
                 addDateMeter(callbackLayout, lastDateMeter.getDate().minusDays(15), lastDateMeter.getDate().minusDays(1), false);
                 callbackLayout.addView(generateEndLayout(callbackLayout, false), 0);
@@ -1810,6 +1829,14 @@ public class InitialActivity extends Activity {
             return index;
         }
         return index;
+    }
+
+    private DateMeter getFirstDateMeter() {
+        return (DateMeter) dateMeterContainer.getChildAt(1);
+    }
+
+    private DateMeter getLastDateMeter() {
+        return (DateMeter) dateMeterContainer.getChildAt(dateMeterContainer.getChildCount() - 2);
     }
 
     static boolean isAdjusted = false;
