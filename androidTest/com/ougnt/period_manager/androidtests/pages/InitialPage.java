@@ -1,5 +1,6 @@
 package com.ougnt.period_manager.androidtests.pages;
 
+import android.support.test.espresso.NoMatchingViewException;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.ViewActions;
@@ -33,6 +34,7 @@ import static android.support.test.espresso.Espresso.pressBack;
 import static android.support.test.espresso.matcher.ViewMatchers.assertThat;
 import static android.support.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static android.support.test.espresso.matcher.ViewMatchers.withChild;
+import static android.support.test.espresso.matcher.ViewMatchers.withEffectiveVisibility;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagKey;
 import static android.support.test.espresso.matcher.ViewMatchers.withTagValue;
@@ -59,9 +61,7 @@ public class InitialPage {
     }
 
     public void clickTomorrowDateMeter() {
-        onView(Matchers.allOf(
-                withChild(withText(DateTime.now().plusDays(1).toString("dd")))
-                )).perform(ViewActions.click());
+        onView(withId(DateMeter.ids.get(DateTime.now().plusDays(1).toString("yyyyMMdd")))).perform(ViewActions.click());
     }
 
     public List<Integer> getFingerLocation() {
@@ -117,6 +117,13 @@ public class InitialPage {
 
     public void clickConclusionToggleButton() {
         onView(withId(R.id.conclusion_view_toggle)).perform(ViewActions.click());
+    }
+
+    public void clickConclusionToggleButtonIfViewIsNowConclusionView() {
+        try {
+            onView(withId(R.id.conclusion_view_toggle)).perform(ViewActions.click());
+        } catch (NoMatchingViewException ignored) {
+        }
     }
 
     public void checkConclusionViewShowing() {
@@ -191,5 +198,17 @@ public class InitialPage {
         Assert.assertEquals(DateMeter.Nothing, ((DateMeter) containers[0].getChildAt(15 + 27)).dateType);
         Assert.assertEquals(DateMeter.ExpectedMenstrual, ((DateMeter) containers[0].getChildAt(15 + 28)).dateType);
         Assert.assertEquals(DateMeter.ExpectedMenstrual, ((DateMeter) containers[0].getChildAt(15 + 31)).dateType);
+    }
+
+    private boolean isDateViewToggleButtonDisplay() {
+        LinearLayout[] containers = new LinearLayout[1];
+        onView(withId(R.id.day_view_layout_button)).perform(new LinearLayoutGetterViewAction(containers));
+        return containers[0].getVisibility() == View.VISIBLE;
+    }
+
+    public void clickDateDetailButtonIfDisplay() {
+        if(isDateViewToggleButtonDisplay()) {
+            clickDateViewToggleButton();
+        }
     }
 }

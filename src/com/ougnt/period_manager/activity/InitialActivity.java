@@ -286,6 +286,13 @@ public class InitialActivity extends Activity {
             adjustLayoutForDisplayModeAccordingToPDisplayMode();
 
             getAllViews();
+
+            showScreenSwitcherButtonAccordingToDisplayMode( getUsageCounter(PMainDisplayMode),
+                    calendarViewLayoutButton,
+                    dayViewLayoutButton,
+                    summaryViewLayoutButton,
+                    temperatureViewLayoutButton);
+
             dateDetailActionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -327,6 +334,12 @@ public class InitialActivity extends Activity {
                     return false;
                 }
             });
+
+            showScreenSwitcherButtonAccordingToDisplayMode(getUsageCounter(PMainDisplayMode),
+                    calendarViewLayoutButton,
+                    dayViewLayoutButton,
+                    summaryViewLayoutButton,
+                    temperatureViewLayoutButton);
 
             Handler handler = new Handler();
             handler.postDelayed(new Runnable() {
@@ -390,6 +403,37 @@ public class InitialActivity extends Activity {
             }, 1000);
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    public void showScreenSwitcherButtonAccordingToDisplayMode(int displayMode,
+                                                                LinearLayout calendarViewLayoutButton,
+                                                                LinearLayout dayViewLayoutButton,
+                                                                LinearLayout summaryViewLayoutButton,
+                                                                LinearLayout temperatureViewLayoutButton) {
+
+        calendarViewLayoutButton.setVisibility(View.VISIBLE);
+        dayViewLayoutButton.setVisibility(View.VISIBLE);
+        summaryViewLayoutButton.setVisibility(View.VISIBLE);
+        temperatureViewLayoutButton.setVisibility(View.VISIBLE);
+
+        switch(displayMode) {
+            case DisplayModeChartView : {
+                temperatureViewLayoutButton.setVisibility(View.GONE);
+                break;
+            }
+            case DisplayModeConclusionView : {
+                summaryViewLayoutButton.setVisibility(View.GONE);
+                break;
+            }
+            case DisplayModeDateScroller : {
+                dayViewLayoutButton.setVisibility(View.GONE);
+                break;
+            }
+            case DisplayModeMonthView : {
+                calendarViewLayoutButton.setVisibility(View.GONE);
+                break;
+            }
         }
     }
 
@@ -1192,6 +1236,12 @@ public class InitialActivity extends Activity {
             setSharedPreference(PMainDisplayMode, newDisplayMode);
 
             adjustLayoutForDisplayModeAccordingToPDisplayMode();
+
+            showScreenSwitcherButtonAccordingToDisplayMode(newDisplayMode,
+                    calendarViewLayoutButton,
+                    dayViewLayoutButton,
+                    summaryViewLayoutButton,
+                    temperatureViewLayoutButton);
 
             sendTrafficMessage(log);
         } catch (Exception e) {
@@ -2010,6 +2060,11 @@ public class InitialActivity extends Activity {
             conclusionEstimatedNextMenstrualDaysToDate = (TextView) findViewById(R.id.conclusion_estimated_next_menstrual_days_string);
             headerText = (TextView) findViewById(R.id.main_header_text);
 
+            summaryViewLayoutButton = (LinearLayout) findViewById(R.id.summary_view_layout_button);
+            dayViewLayoutButton = (LinearLayout) findViewById(R.id.day_view_layout_button);
+            calendarViewLayoutButton = (LinearLayout) findViewById(R.id.calendar_view_layout_button);
+            temperatureViewLayoutButton = (LinearLayout) findViewById(R.id.temperature_view_layout_button);
+
             registerOnclickAndOnSwipeEvent();
         } catch (Exception e) {
             HttpHelper.sendErrorLog(e);
@@ -2056,6 +2111,12 @@ public class InitialActivity extends Activity {
     private TextView conclusionEstimatedNextMenstrualDate;
     private TextView conclusionEstimatedNextMenstrualDaysToDate;
     private TextView headerText;
+
+    private LinearLayout summaryViewLayoutButton;
+    private LinearLayout dayViewLayoutButton;
+    private LinearLayout calendarViewLayoutButton;
+    private LinearLayout temperatureViewLayoutButton;
+
 
     private GestureDetector gestureDetector = new GestureDetector(getBaseContext(), new GestureDetector.SimpleOnGestureListener() {
         @Override

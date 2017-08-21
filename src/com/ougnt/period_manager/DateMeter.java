@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.ougnt.period_manager.activity.AppForStatic;
 import com.ougnt.period_manager.activity.helper.FlagHelper;
+import com.ougnt.period_manager.activity.helper.UtilHelper;
 import com.ougnt.period_manager.event.OnDateMeterFocusListener;
 import com.ougnt.period_manager.exception.NotImplementException;
 import com.ougnt.period_manager.handler.HttpHelper;
@@ -26,6 +27,7 @@ import com.ougnt.period_manager.tests.MockDateRepository;
 
 import org.joda.time.DateTime;
 
+import java.util.Dictionary;
 import java.util.HashMap;
 
 /**
@@ -46,6 +48,7 @@ public class DateMeter extends LinearLayout {
     public static final int OnSelectColor;
     public static final int TextColor;
     public static final int TodayTextColor;
+    public static HashMap<String, Integer> ids = new HashMap<>();
 
     public static final HashMap<Integer, Integer> ColorForDateType = new HashMap<>();
 
@@ -88,6 +91,10 @@ public class DateMeter extends LinearLayout {
 
     public DateMeter(Context context, IDateRepository initialDate, OnDateMeterFocusListener listener) {
         super(context);
+
+        int id = UtilHelper.GenerateId();
+        this.setId(id);
+        ids.put(initialDate.date.toString("yyyyMMdd"), id);
 
         try {
             comment = initialDate.comment;

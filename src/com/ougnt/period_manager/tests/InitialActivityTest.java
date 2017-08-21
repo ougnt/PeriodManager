@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.SmallTest;
+import android.view.View;
 import android.widget.LinearLayout;
 
 import com.ougnt.period_manager.DateMeter;
@@ -388,5 +389,25 @@ public class InitialActivityTest extends ActivityInstrumentationTestCase2<Initia
 
         // Verify
         Assert.assertEquals(false, actualResult);
+    }
+
+    @SmallTest
+    public void EnsureHideOnlySummaryButtonWhenCurrentlyViewIsSummaryView() {
+        // setup
+        InitialActivity activity = getActivity();
+        LinearLayout summaryViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout dayViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout calendarViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout temperatureViewLayoutButton = new LinearLayout(activity.getBaseContext());
+
+        summaryViewLayoutButton.setVisibility(View.INVISIBLE);
+        dayViewLayoutButton.setVisibility(View.INVISIBLE);
+        calendarViewLayoutButton.setVisibility(View.INVISIBLE);
+        temperatureViewLayoutButton.setVisibility(View.INVISIBLE);
+
+        // execution
+//        activity.showScreenSwitcherButtonAccordingToDisplayMode()
+
+        // Verify
     }
 }

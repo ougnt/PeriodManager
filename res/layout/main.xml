@@ -1361,7 +1361,7 @@
             android:layout_weight="0.1"
             android:background="#E2F2FE"
             android:orientation="horizontal"
-            android:weightSum="12">
+            android:weightSum="9">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -1369,7 +1369,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="3"
                 android:orientation="vertical"
-                android:weightSum="1.5">
+                android:weightSum="1.5"
+                android:id="@+id/summary_view_layout_button">
 
                 <LinearLayout
                     android:id="@+id/linearLayout47"
@@ -1439,7 +1440,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="3"
                 android:orientation="vertical"
-                android:weightSum="1.5">
+                android:weightSum="1.5"
+                android:id="@+id/day_view_layout_button">
 
                 <LinearLayout
                     android:id="@+id/linearLayout"
@@ -1510,7 +1512,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="3"
                 android:orientation="vertical"
-                android:weightSum="1.5">
+                android:weightSum="1.5"
+                android:id="@+id/calendar_view_layout_button">
 
                 <LinearLayout
                     android:id="@+id/linearLayout51"
@@ -1580,7 +1583,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_weight="3"
                 android:orientation="vertical"
-                android:weightSum="1.5">
+                android:weightSum="1.5"
+                android:id="@+id/temperature_view_layout_button">
 
                 <LinearLayout
                     android:id="@+id/linearLayout48"

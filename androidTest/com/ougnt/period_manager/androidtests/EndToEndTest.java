@@ -52,7 +52,8 @@ public class EndToEndTest {
     public void ensureTheDateDetailsIsWorking() {
 
         // Check the initial page first
-        initialPage.clickDateViewToggleButton();
+        initialPage.clickDateDetailButtonIfDisplay();
+
         initialPage.checkSelectedDateEqualToToday();
         DateMeter pointingDateMeter = initialPage.getPointedDateMeter();
 
@@ -110,7 +111,7 @@ public class EndToEndTest {
 
     @Test
     public void ensureTheViewToggleIsWorking() {
-        initialPage.clickConclusionToggleButton();
+        initialPage.clickConclusionToggleButtonIfViewIsNowConclusionView();
         initialPage.checkConclusionViewShowing();
         initialPage.clickDateViewToggleButton();
         initialPage.checkDateViewShowing();
