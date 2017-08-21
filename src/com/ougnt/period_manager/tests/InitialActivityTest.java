@@ -406,8 +406,100 @@ public class InitialActivityTest extends ActivityInstrumentationTestCase2<Initia
         temperatureViewLayoutButton.setVisibility(View.INVISIBLE);
 
         // execution
-//        activity.showScreenSwitcherButtonAccordingToDisplayMode()
+        activity.showScreenSwitcherButtonAccordingToDisplayMode(InitialActivity.DisplayModeConclusionView,
+                summaryViewLayoutButton,
+        dayViewLayoutButton,
+        calendarViewLayoutButton,
+        temperatureViewLayoutButton);
 
         // Verify
+        assertEquals(View.GONE, summaryViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, dayViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, calendarViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, temperatureViewLayoutButton.getVisibility());
+    }
+
+    @SmallTest
+    public void EnsureHideOnlySummaryButtonWhenCurrentlyViewIsDateView() {
+        // setup
+        InitialActivity activity = getActivity();
+        LinearLayout summaryViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout dayViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout calendarViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout temperatureViewLayoutButton = new LinearLayout(activity.getBaseContext());
+
+        summaryViewLayoutButton.setVisibility(View.INVISIBLE);
+        dayViewLayoutButton.setVisibility(View.INVISIBLE);
+        calendarViewLayoutButton.setVisibility(View.INVISIBLE);
+        temperatureViewLayoutButton.setVisibility(View.INVISIBLE);
+
+        // execution
+        activity.showScreenSwitcherButtonAccordingToDisplayMode(InitialActivity.DisplayModeDateScroller,
+                summaryViewLayoutButton,
+                dayViewLayoutButton,
+                calendarViewLayoutButton,
+                temperatureViewLayoutButton);
+
+        // Verify
+        assertEquals(View.VISIBLE, summaryViewLayoutButton.getVisibility());
+        assertEquals(View.GONE, dayViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, calendarViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, temperatureViewLayoutButton.getVisibility());
+    }
+
+    @SmallTest
+    public void EnsureHideOnlySummaryButtonWhenCurrentlyViewIsMonthView() {
+        // setup
+        InitialActivity activity = getActivity();
+        LinearLayout summaryViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout dayViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout calendarViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout temperatureViewLayoutButton = new LinearLayout(activity.getBaseContext());
+
+        summaryViewLayoutButton.setVisibility(View.INVISIBLE);
+        dayViewLayoutButton.setVisibility(View.INVISIBLE);
+        calendarViewLayoutButton.setVisibility(View.INVISIBLE);
+        temperatureViewLayoutButton.setVisibility(View.INVISIBLE);
+
+        // execution
+        activity.showScreenSwitcherButtonAccordingToDisplayMode(InitialActivity.DisplayModeMonthView,
+                summaryViewLayoutButton,
+                dayViewLayoutButton,
+                calendarViewLayoutButton,
+                temperatureViewLayoutButton);
+
+        // Verify
+        assertEquals(View.VISIBLE, summaryViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, dayViewLayoutButton.getVisibility());
+        assertEquals(View.GONE, calendarViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, temperatureViewLayoutButton.getVisibility());
+    }
+
+    @SmallTest
+    public void EnsureHideOnlySummaryButtonWhenCurrentlyViewIsTemperatureView() {
+        // setup
+        InitialActivity activity = getActivity();
+        LinearLayout summaryViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout dayViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout calendarViewLayoutButton = new LinearLayout(activity.getBaseContext());
+        LinearLayout temperatureViewLayoutButton = new LinearLayout(activity.getBaseContext());
+
+        summaryViewLayoutButton.setVisibility(View.INVISIBLE);
+        dayViewLayoutButton.setVisibility(View.INVISIBLE);
+        calendarViewLayoutButton.setVisibility(View.INVISIBLE);
+        temperatureViewLayoutButton.setVisibility(View.INVISIBLE);
+
+        // execution
+        activity.showScreenSwitcherButtonAccordingToDisplayMode(InitialActivity.DisplayModeChartView,
+                summaryViewLayoutButton,
+                dayViewLayoutButton,
+                calendarViewLayoutButton,
+                temperatureViewLayoutButton);
+
+        // Verify
+        assertEquals(View.VISIBLE, summaryViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, dayViewLayoutButton.getVisibility());
+        assertEquals(View.VISIBLE, calendarViewLayoutButton.getVisibility());
+        assertEquals(View.GONE, temperatureViewLayoutButton.getVisibility());
     }
 }
