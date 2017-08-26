@@ -400,13 +400,6 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp">
 
-                <!--<com.google.android.gms.ads.AdView-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:id="@+id/action_panel_ads_view"-->
-                    <!--ads:adSize="FULL_WIDTHx80"-->
-                    <!--ads:adUnitId="ca-app-pub-2522554213803646/1447188214"-->
-                    <!--android:layout_marginTop="10dp" />-->
             </LinearLayout>
 
             <LinearLayout

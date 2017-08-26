@@ -79,7 +79,7 @@ public class InitialActivity extends Activity {
     final int DisplayNewActionPanel = 0x80;
     final int DisplaySettingWizard = 0x100;
 
-    public static final int ApplicationVersion = 77;
+    public static final int ApplicationVersion = 78;
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
@@ -347,12 +347,11 @@ public class InitialActivity extends Activity {
                 public void run() {
 
                     try {
-//                        MobileAds.initialize(getBaseContext(), "ca-app-pub-2522554213803646~9035703817");
                         MobileAds.initialize(getBaseContext());
 
                         AdRequest.Builder adBuilder = new AdRequest.Builder();
                         adBuilder.setGender(AdRequest.GENDER_FEMALE);
-//                        adBuilder.addTestDevice("9529BA77ADC263CD041FD905F8B42C8D");
+                        adBuilder.addTestDevice("9529BA77ADC263CD041FD905F8B42C8D");
                         final AdRequest adRequest = adBuilder.build();
                         adMobLayout.setVisibility(View.GONE);
 

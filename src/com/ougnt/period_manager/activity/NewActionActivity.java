@@ -13,7 +13,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.gms.ads.AdView;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.activity.extra.InstructionComponent;
 import com.ougnt.period_manager.activity.extra.NewInstructionActivityExtra;
@@ -128,7 +127,6 @@ public class NewActionActivity extends Activity {
         emotionStressfulIcon = (ImageButton) findViewById(R.id.emotion_icon_stressful);
         noIntercourseIcon = (ImageButton) findViewById(R.id.action_panel_no_intercourse);
         intercourseIcon = (ImageButton) findViewById(R.id.action_panel_intercourse);
-//        adView = (AdView) findViewById(R.id.action_panel_ads_view);
         adViewContainer = (LinearLayout) findViewById(R.id.action_panel_ad_view_container);
     }
 
@@ -147,7 +145,6 @@ public class NewActionActivity extends Activity {
     public ImageButton noIntercourseIcon;
     public ImageButton intercourseIcon;
     public LinearLayout adViewContainer;
-    public AdView adView;
 
     public NewActionActivityHelper helper;
 }
