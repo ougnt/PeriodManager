@@ -2,13 +2,9 @@ package com.ougnt.period_manager.event;
 
 import android.view.View;
 
-import com.github.mikephil.charting.charts.LineChart;
 import com.ougnt.period_manager.R;
 import com.ougnt.period_manager.handler.ChartHandler;
 
-/**
- * Created by wacharint on 6/17/16.
- */
 public class ChartFetchingOnclickHandler implements View.OnClickListener {
 
     private ChartHandler _handler;

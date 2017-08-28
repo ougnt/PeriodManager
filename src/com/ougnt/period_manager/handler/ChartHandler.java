@@ -1,6 +1,7 @@
 package com.ougnt.period_manager.handler;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
@@ -20,9 +21,6 @@ import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * Created by wacharint on 6/17/16.
- */
 public class ChartHandler {
 
     private Context _context;
@@ -97,7 +95,7 @@ public class ChartHandler {
         LineData temperatureData = new LineData(dataX);
         LineDataSet dataSet = new LineDataSet(dataY, "temperature");
 
-        dataSet.setColor(_context.getResources().getColor(R.color.chart_line_color));
+        dataSet.setColor(ContextCompat.getColor(_context, R.color.chart_line_color));
         dataSet.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -113,12 +111,12 @@ public class ChartHandler {
         temperatureData.addDataSet(dataSet);
 
         // Color of the text explained the point info
-        temperatureData.setValueTextColor(_context.getResources().getColor(R.color.chart_value_text));
+        temperatureData.setValueTextColor(ContextCompat.getColor(_context, R.color.chart_value_text));
         temperatureData.setValueTextSize(14f);
 
         _lineChart.setData(temperatureData);
 
-        _lineChart.setBackgroundColor(_context.getResources().getColor(R.color.chart_background_color));
+        _lineChart.setBackgroundColor(ContextCompat.getColor(_context, R.color.chart_background_color));
         _lineChart.setDescription("");
         _lineChart.animateX(100);
         _lineChart.animateY(100);

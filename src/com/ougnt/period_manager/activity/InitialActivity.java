@@ -1,66 +1,85 @@
 package com.ougnt.period_manager.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.*;
-import android.widget.*;
+import android.support.v4.content.ContextCompat;
+import android.view.GestureDetector;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.FrameLayout;
+import android.widget.HorizontalScrollView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.NativeExpressAdView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.ougnt.period_manager.DateMeter;
-import com.ougnt.period_manager.*;
+import com.ougnt.period_manager.PeriodCalendar;
+import com.ougnt.period_manager.R;
+import com.ougnt.period_manager.activity.extra.ActionActivityExtra;
+import com.ougnt.period_manager.activity.extra.SetupWizardActivityExtra;
+import com.ougnt.period_manager.activity.extra.SummaryActivityExtra;
+import com.ougnt.period_manager.activity.helper.UtilHelper;
 import com.ougnt.period_manager.event.BroadcastNotificationPublisher;
 import com.ougnt.period_manager.event.ChartFetchingOnclickHandler;
-import com.ougnt.period_manager.event.OnAdsRequestReturnEventListener;
-import com.ougnt.period_manager.event.OnDateMeterTouchEventListener;
+import com.ougnt.period_manager.event.OnDateMeterFocusListener;
+import com.ougnt.period_manager.google.Log;
 import com.ougnt.period_manager.handler.ChartHandler;
-import com.ougnt.period_manager.repository.*;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.joda.time.DateTime;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.ougnt.period_manager.handler.HttpHelper;
+import com.ougnt.period_manager.repository.DatabaseRepositoryHelper;
+import com.ougnt.period_manager.repository.DateRepository;
+import com.ougnt.period_manager.repository.FetchingButton;
+import com.ougnt.period_manager.repository.HelpIndicatorRepository;
+import com.ougnt.period_manager.repository.SettingRepository;
+import com.ougnt.period_manager.repository.SummaryRepository;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import org.joda.time.DateTime;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
+import static org.joda.time.DateTime.now;
+
 public class InitialActivity extends Activity {
 
-    final int EditComment = 0x01;
+    //    final int EditComment = 0x01;
     final int DisplayHelp = 0x02;
     final int DisplayMenu = 0x04;
     final int DisplaySetting = 0x08;
     final int DisplaySummary = 0x10;
     final int DisplayLanguageSelector = 0x20;
-    final int DisplayActionPanel = 0x40;
+    final int DisplayNewActionPanel = 0x80;
+    final int DisplaySettingWizard = 0x100;
 
-    final int ApplicationVersion=  1046;
-
-    // TODO : Change this to the real one
-    // Live Env
-    public static final String StatServer = "27.254.81.190:5555";
-    // Dev env
-//    public static final String StatServer = "192.168.56.1:9000";
-    public static final String StatUri = String.format("http://%s/usageStat", StatServer);
-    public static final String AdsRequestUri = String.format("http://%s/adsAsk", StatServer);
-    public static final String AdsClickUri = String.format("http://%s/adsClick", StatServer);
+    public static final int ApplicationVersion = 1078;
 
     public static final String PName = "period_manager_preference";
     public static final String PUuid = "period_manager_preference_uuid";
@@ -73,9 +92,9 @@ public class InitialActivity extends Activity {
     public static final String PMenuButtonUsageCounter = "period_manager_preference_menu_button_usage_counter";
     public static final String PCurrentVersion = "period_manager_preference_current_version";
 
-    public static final String PReviewNow =  "period_manager_preference_review_now";
-    public static final String PReviewLater =  "period_manager_preference_review_later";
-    public static final String PNoReview =  "period_manager_preference_review_non";
+    public static final String PReviewNow = "period_manager_preference_review_now";
+    public static final String PReviewLater = "period_manager_preference_review_later";
+    public static final String PNoReview = "period_manager_preference_review_non";
 
     public static final String PFetchNextMonthUsageCounter = "period_manager_preference_fetch_next_usage_counter";
     public static final String PFetchPreviousMonthUsageCounter = "period_manager_preference_fetch_previous_usage_counter";
@@ -100,18 +119,43 @@ public class InitialActivity extends Activity {
     public static final String PSettingDisplayedLanguageUsageCounter = "period_manager_preference_setting_displayed_language_usage_counter";
 
     // Available in version 36
-    // TODO: Submit this usage counter
     public static final String PMainDisplayMode = "period_manager_preference_display_mode";
 
     public static final int DisplayModeDateScroller = 0;
     public static final int DisplayModeMonthView = 1;
     public static final int DisplayModeChartView = 2;
-    public static DateTime startTime = DateTime.now();
+    public static final int DisplayModeConclusionView = 4;
+    public static DateTime startTime = now();
+
+    // Available in version 69
+    public static final int ILikeTheApplication = 0x01;
+    public static final int IDontLikeTheApplication = 0x02;
+    public static final int IDontLikeTheApplicationBecauseItIsSlow = 0x04;
+    public static final int IDontLikeTheApplicationBecauseItIsHardToUse = 0x08;
+    public static final int IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional = 0x10;
+    public static final int IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand = 0x20;
+    public static final int IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional = 0x40;
+    public static final int IDontLikeTheApplicationBecauseOtherApplicationIsBetter = 0x80;
+    public static final int IDontLikeTheApplicationBecauseOfOtherReason = 0x100;
+    public static final int ILikeTheApplicationAndIWantToReview = 0x200;
+    public static final int ILikeTheApplicationButIDontLikeToReviewNow = 0x400;
+    public static final int ILikeTheApplicationButIDontLikeToReview = 0x800;
+
+    // Available in version 73
+    public static final String PIsFirstTimeUsage = "period_manager_preference_is_first_time_usage";
+
+    // Available in version 74
+    public static final String PIsFirstTimeActionUsage = "period_manager_preference_is_first_time_action_usage";
 
     SettingRepository setting;
 
-    public InitialActivity(){
+    public InitialActivity() {
         dateTouchListener = null;
+    }
+
+    // This function should be always empty before deploy to production
+    private void hackInitial(){
+
     }
 
     /**
@@ -119,822 +163,1494 @@ public class InitialActivity extends Activity {
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        try {
+            super.onCreate(savedInstanceState);
 
-        super.onCreate(savedInstanceState);
+            startTime = now();
+            analyticsApplication = (AppForStatic) getApplication();
+            tracker = tracker == null ? analyticsApplication.getTracker() : tracker;
 
-        startTime = DateTime.now();
+            if (getIntent().getExtras() == null ||
+                    getIntent().getExtras().size() > 0 ||
+                    getIntent().getExtras().get(BroadcastNotificationPublisher.ExtraOpenFromNotification) != null) {
 
-        if(getIntent() != null ||
-                getIntent().getExtras().size() > 0 ||
-                getIntent().getExtras().get(BroadcastNotificationPublisher.ExtraOpenFromNotification) != null) {
+                addUsageCounter(PSettingNotificationClickCounter);
+            }
 
-            addUsageCounter(PSettingNotificationClickCounter);
+            initUsageToReview();
+            setApplicationVersion();
+            setDeviceId();
+            addUsageCounter(PUsageCounter);
+
+            this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+            SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+            String language = pref.getString(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
+            Locale locale = new Locale(language);
+            Locale.setDefault(locale);
+            Configuration config = new Configuration();
+            UtilHelper.setConfigurationLocale(config, locale);
+            getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+
+            setSharedPreference(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
+
+            log = new Log(this);
+            log.setAction(Log.Action.Land);
+            log.setCategory(Log.Category.Screen);
+            log.setScreenType(Log.Screen.MainScreenName);
+            sendTrafficMessage(log);
+
+            initialApplication();
+            long loadTime = DateTime.now().getMillis() - startTime.getMillis();
+
+            log.setCategory(Log.Category.LoadTime);
+            log.setAction("InitialActivity.OnCreate");
+            sendLoadTimeMessage(log, loadTime);
+
+            showUsageIfFirstTimeUser();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private void showUsageIfFirstTimeUser() {
+        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+
+        if(pref.getBoolean(PIsFirstTimeUsage, true)) {
+            Intent instructionIntent = new Intent(getBaseContext(), InstructionActivity.class);
+            startActivity(instructionIntent);
+        } else {
+            return;
         }
 
-        initUsageToReview();
-        setApplicationVersion();
-        setDeviceId();
-        addUsageCounter(PUsageCounter);
-
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
-        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
-        String language = pref.getString(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-        Configuration config = new Configuration();
-        config.locale = locale;
-        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-
-        setSharedPreference(PSettingDisplayedLanguage, Locale.getDefault().getLanguage());
-
-        initialApplication();
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putBoolean(PIsFirstTimeUsage, false);
+        edit.apply();
     }
 
     @Override
-    protected void onResume(){
-        super.onResume();
-        startTime = DateTime.now();
+    protected void onResume() {
+        try {
+            super.onResume();
+            isAdjusted = false;
+            startTime = now();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    @Override
+    protected void onRestart() {
+        try {
+            super.onRestart();
+            isAdjusted = false;
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void initialApplication() {
 
-        setContentView(R.layout.main);
+        try {
+            setContentView(R.layout.main);
 
-        AdRequest.Builder adBuilder = new AdRequest.Builder();
-        adBuilder.setGender(AdRequest.GENDER_FEMALE);
-        AdRequest adRequest = adBuilder.build();
-        final AdView adView = (AdView)findViewById(R.id.ad_view);
-        adView.loadAd(adRequest);
-        final LinearLayout adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
-        adMobLayout.setVisibility(View.GONE);
+            DateTime latest = DateTime.now();
 
-        adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdLoaded() {
-                adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(adView.getAdSize().getWidth(), adView.getAdSize().getHeight()));
-                adMobLayout.setVisibility(View.VISIBLE);
-                super.onAdLoaded();
+            getAllViews();
+
+            log.setCategory(Log.Category.LoadTime);
+            log.setAction("InitialActivity.getAllView");
+            sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
+
+            latest = DateTime.now();
+
+            LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+            inflater.inflate(R.layout.date_detail, newActionPanel);
+
+            log.setAction("InitialActivity.inflater");
+            sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
+            latest = DateTime.now();
+
+            addDateMeterView();
+
+            log.setAction("InitialActivity.addDateMeterView");
+            sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
+            latest = DateTime.now();
+
+            addMonthView();
+
+            log.setAction("InitialActivity.addMonthView");
+            sendLoadTimeMessage(log, DateTime.now().getMillis() - latest.getMillis());
+
+            adjustLayoutForDisplayModeAccordingToPDisplayMode();
+
+            getAllViews();
+
+            showScreenSwitcherButtonAccordingToDisplayMode( getUsageCounter(PMainDisplayMode),
+                    calendarViewLayoutButton,
+                    dayViewLayoutButton,
+                    summaryViewLayoutButton,
+                    temperatureViewLayoutButton);
+
+            dateDetailActionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    log.setCategory(Log.Category.Button);
+                    log.setAction(Log.Action.ClickAddDetailToDateMeter);
+                    log.setScreenType(Log.Screen.MainScreenName);
+                    sendTrafficMessage(log);
+
+                    ActionActivityExtra extra = new ActionActivityExtra();
+                    extra.date = selectedDate.getDate();
+                    extra.dateType = selectedDate.dateType;
+                    extra.temperature = selectedDate.temperature;
+                    extra.comment = selectedDate.comment;
+                    extra.flags = selectedDate.getFlags();
+                    Intent intent = new Intent(getBaseContext(), NewActionActivity.class);
+                    intent.putExtra(NewActionActivity.ExtraKey, extra.toJson());
+                    startActivityForResult(intent, DisplayNewActionPanel);
+                }
+            });
+
+            dateMeterScroller.setOnTouchListener(new View.OnTouchListener() {
+
+                private ViewTreeObserver observer;
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    observer = observer == null ? dateMeterScroller.getViewTreeObserver() : observer;
+
+                    observer.addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+
+                        @Override
+                        public void onScrollChanged() {
+
+                            setSelectedDateToAlignWithFingerIndex();
+                        }
+                    });
+                    return false;
+                }
+            });
+
+            showScreenSwitcherButtonAccordingToDisplayMode(getUsageCounter(PMainDisplayMode),
+                    calendarViewLayoutButton,
+                    dayViewLayoutButton,
+                    summaryViewLayoutButton,
+                    temperatureViewLayoutButton);
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    try {
+                        MobileAds.initialize(getBaseContext());
+
+                        AdRequest.Builder adBuilder = new AdRequest.Builder();
+                        adBuilder.setGender(AdRequest.GENDER_FEMALE);
+                        adBuilder.addTestDevice("9529BA77ADC263CD041FD905F8B42C8D");
+                        final AdRequest adRequest = adBuilder.build();
+                        adMobLayout.setVisibility(View.GONE);
+
+
+                        Handler adHandler = new Handler();
+                        adHandler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                adView = new NativeExpressAdView(getBaseContext());
+
+                                int width = getResources().getConfiguration().screenWidthDp;
+                                int height = Math.max((int)(getResources().getConfiguration().screenHeightDp * 0.1), 80);
+
+                                adView.setAdUnitId("ca-app-pub-2522554213803646/4225526617");
+                                adView.setAdSize(new AdSize(width, height));
+
+                                adView.setAdListener(new AdListener() {
+                                    @Override
+                                    public void onAdLoaded() {
+                                        adMobLayout.removeAllViews();
+                                        adMobLayout.addView(adView);
+                                        adMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                        adMobLayout.setVisibility(View.VISIBLE);
+                                        super.onAdLoaded();
+                                    }
+
+                                    @Override
+                                    public void onAdOpened() {
+                                        log.setAction(Log.Action.ClickAds);
+                                        log.setCategory(Log.Category.Ads);
+                                        sendTrafficMessage(log);
+                                    }
+
+                                    @Override
+                                    public void onAdFailedToLoad(int a) {
+
+                                        super.onAdFailedToLoad(a);
+                                    }
+                                });
+                                adView.loadAd(adRequest);
+                            }
+                        }, 500);
+
+                    } catch (Exception e) {
+                        HttpHelper.sendErrorLog(e);
+                    }
+                }
+            }, 1000);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    public void showScreenSwitcherButtonAccordingToDisplayMode(int displayMode,
+                                                                LinearLayout calendarViewLayoutButton,
+                                                                LinearLayout dayViewLayoutButton,
+                                                                LinearLayout summaryViewLayoutButton,
+                                                                LinearLayout temperatureViewLayoutButton) {
+
+        calendarViewLayoutButton.setVisibility(View.VISIBLE);
+        dayViewLayoutButton.setVisibility(View.VISIBLE);
+        summaryViewLayoutButton.setVisibility(View.VISIBLE);
+        temperatureViewLayoutButton.setVisibility(View.VISIBLE);
+
+        switch(displayMode) {
+            case DisplayModeChartView : {
+                temperatureViewLayoutButton.setVisibility(View.GONE);
+                break;
             }
-        });
+            case DisplayModeConclusionView : {
+                summaryViewLayoutButton.setVisibility(View.GONE);
+                break;
+            }
+            case DisplayModeDateScroller : {
+                dayViewLayoutButton.setVisibility(View.GONE);
+                break;
+            }
+            case DisplayModeMonthView : {
+                calendarViewLayoutButton.setVisibility(View.GONE);
+                break;
+            }
+        }
+    }
 
-//        manageAds(getDeviceId());
+    @SuppressWarnings("unused")
+    private int getExperimentVariance() {
 
-        addDateMeterView();
-        addMonthView();
+        if (getDeviceId() == null) {
+            setDeviceId();
+        }
 
-        adjustLayoutForDisplayModeAccordingToPDisplayMode();
+        return getDeviceId () == null ? 0 : (int) (getDeviceId().getMostSignificantBits() % 2);
+    }
+
+    private void setSelectedDateToAlignWithFingerIndex() {
+        try {
+            int[] fingerIndexLocator = new int[2];
+            int[] dateMeterLocator = new int[2];
+
+            fingerIndex.getLocationOnScreen(fingerIndexLocator);
+
+            for (int i = 1; i < dateMeterContainer.getChildCount() - 2; i++) {
+                DateMeter targetDateMeter = (DateMeter) dateMeterContainer.getChildAt(i);
+                targetDateMeter.getLocationOnScreen(dateMeterLocator);
+                int fingerIndexPointerX = fingerIndexLocator[0] + fingerIndex.getWidth() / 3;
+
+                if (fingerIndexPointerX > dateMeterLocator[0] &&
+                        fingerIndexPointerX < dateMeterLocator[0] + targetDateMeter.getWidth()) {
+
+                    if (selectedDate == null) {
+                        selectedDate = targetDateMeter;
+                    }
+                    if (selectedDate.getDate() == targetDateMeter.getDate()) return;
+
+                    selectedDate = targetDateMeter;
+                    targetDateMeter.makeSelectedFormat();
+                    targetDateMeter.setSelected(true);
+                } else {
+                    if (targetDateMeter.isSelected()) {
+                        targetDateMeter.resetFormat();
+                        targetDateMeter.setSelected(false);
+                    }
+                }
+            }
+
+            if (selectedDate == null) {
+                selectedDate = (DateMeter) dateMeterContainer.getChildAt(16);
+            }
+            headerText.setText(selectedDate.getDate().toString(getResources().getText(R.string.short_date_format).toString()));
+        } catch (Resources.NotFoundException e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void addDateMeterView() {
 
-        final LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        try {
+            setOnDateMeterTouchEventListener(new OnDateMeterFocusListener() {
+                @Override
+                public void onFocusMoveIn(DateMeter touchDate) {
 
-        setOnDateMeterTouchEventListener(new OnDateMeterTouchEventListener() {
-            @Override
-            public void onNewTouch(DateTime touchDate) {
+                    int[] dateLocations = new int[2];
+                    int[] fingerLocations = new int[2];
+                    fingerIndex.getLocationInWindow(fingerLocations);
+                    touchDate.getLocationInWindow(dateLocations);
+                    dateMeterScroller.scrollBy(dateLocations[0] - fingerLocations[0] , 0);
 
-                DateMeter currentDate = (DateMeter) dateMeterLayout.getChildAt(1);
+                    ImageView fireImage = (ImageView) findViewById(R.id.fire_image);
+                    ImageView grassImage = (ImageView) findViewById(R.id.grass_image);
+                    ImageView sunImage = (ImageView) findViewById(R.id.sun_image);
+                    ImageView beachImage = (ImageView) findViewById(R.id.beach_image);
 
-                for (int i = 1; i < dateMeterLayout.getChildCount() - 1; i++) {
-                    DateMeter dateMeter = (DateMeter) dateMeterLayout.getChildAt(i);
-                    if (dateMeter.getDate() != touchDate) {
-
-                        dateMeter.resetFormat();
-
-                    } else {
-
-                        EditText comment = (EditText) findViewById(R.id.notation_text);
-
-                        comment.setText(dateMeter.comment);
-                        if (i > 1) {
-                            currentDate = (DateMeter) dateMeterLayout.getChildAt(i);
+                    switch (touchDate.dateType) {
+                        case DateMeter.Menstrual: {
+                            fireImage.setVisibility(View.VISIBLE);
+                            grassImage.setVisibility(View.GONE);
+                            sunImage.setVisibility(View.GONE);
+                            beachImage.setVisibility(View.GONE);
+                            break;
                         }
-
+                        case DateMeter.PossiblyOvulation: {
+                            fireImage.setVisibility(View.GONE);
+                            grassImage.setVisibility(View.GONE);
+                            sunImage.setVisibility(View.VISIBLE);
+                            beachImage.setVisibility(View.VISIBLE);
+                            break;
+                        }
+                        case DateMeter.Nothing: {
+                            fireImage.setVisibility(View.GONE);
+                            grassImage.setVisibility(View.VISIBLE);
+                            sunImage.setVisibility(View.VISIBLE);
+                            beachImage.setVisibility(View.GONE);
+                            break;
+                        }
                     }
 
+                    setDateDetailText(touchDate);
+                    headerText.setText(selectedDate.getDate().toString(getResources().getText(R.string.short_date_format).toString()));
+                    selectedDate = touchDate;
                 }
+            });
 
-                selectedDate = touchDate;
-                DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
+            addDateMeter(dateMeterContainer, now().minusDays(15), now().plusDays(15), true);
 
-                Intent intent = new Intent(getBaseContext(), ActionActivity.class);
-                intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
-                startActivityForResult(intent, DisplayActionPanel);
+            dateMeterContainer.addView(generateEndLayout(dateMeterContainer, true));
+            dateMeterContainer.addView(generateEndLayout(dateMeterContainer, false), 0);
+
+            setting = SettingRepository.getSettingRepository(this);
+
+            moveDateMeterToCurrentDate();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private void setDateDetailText(final DateMeter touchDate) {
+
+        try {
+            final TextView todayText = (TextView) findViewById(R.id.date_detail_text);
+
+            if(todayText == null) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setDateDetailText(touchDate);
+                    }
+                }, 500);
+
+                return;
             }
-        });
 
-        addDateMeter(dateMeterLayout, DateTime.now().minusDays(15), DateTime.now().plusDays(15), true);
+            SummaryRepository summary = SummaryRepository.getSummary(getBaseContext());
+            if (summary == null) {
+                todayText.setText(getResources().getString(R.string.date_detail_no_detail_yet));
+                return;
+            }
+            int nextOvulationIn = (int) ((summary.expectedOvulationDate.getMillis() - touchDate.getDate().getMillis()) / 1000 / 60 / 60 / 24);
+            int nextPeriodIn = (int) ((summary.expectedMenstrualDateFrom.getMillis() - touchDate.getDate().getMillis()) / 1000 / 60 / 60 / 24);
+            String explainationText =
+                    touchDate.dateType == DateMeter.Menstrual ?
+                            getResources().getString(R.string.date_detail_small_chance) :
+                            touchDate.dateType == DateMeter.PossiblyOvulation ?
+                                    getResources().getString(R.string.date_detail_have_some_change) :
+                                    touchDate.dateType == DateMeter.OvulationDate ?
+                                            getResources().getString(R.string.date_detail_ovulation_date) :
+                                            "";
 
-        dateMeterLayout.addView(generateEndLayout(dateMeterLayout, true));
-        dateMeterLayout.addView(generateEndLayout(dateMeterLayout, false), 0);
+            String estNextOvu = nextOvulationIn > 0 ?
+                    String.format(getResources().getString(R.string.date_detail_est_next_ovulation), nextOvulationIn + "") :
+                    "";
+            String estNextMens = nextPeriodIn > 0 ?
+                    String.format(getResources().getString(R.string.date_detail_est_next_period), nextPeriodIn + "") :
+                    "";
 
-        setting = SettingRepository.getSettingRepository(this);
+            String displayText = explainationText + estNextOvu + estNextMens;
+            todayText.setText(displayText);
+            final String[] lines = todayText.getText().toString().split("\n");
 
-        moveDateMeterToCurrentDate();
+            todayText.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (todayText.getLineCount() > 4) {
+                        todayText.setTag(1);
+                        todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
+                        todayText.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                if ((int) v.getTag() == 1) {
+                                    todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[0], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    v.setTag(2);
+                                } else if ((int) v.getTag() == 2) {
+                                    todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[1], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    v.setTag(3);
+                                } else {
+                                    todayText.setText(UtilHelper.fromHtml(String.format("%s<p><font color='#0000EE'>%s</font></p>", lines[2], getResources().getString(R.string.date_detail_click_to_see_more))));
+                                    v.setTag(1);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        } catch (Resources.NotFoundException e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void addMonthView() {
 
-        DateTime calendarDate = selectedDate == null? DateTime.now(): selectedDate;
+        try {
+            DateTime calendarDate = selectedDate == null ? now() : selectedDate.getDate();
 
-        setupCalendar(calendarDate.getMonthOfYear(), calendarDate.getYear());
-        loadDatesToView();
+            setupCalendar(calendarDate.getMonthOfYear(), calendarDate.getYear());
+            loadDatesToMonthView();
 
-        TextView nextMonth = (TextView) findViewById(R.id.next_month);
-        TextView previousMonth = (TextView) findViewById(R.id.previous_month);
+            TextView nextMonth = (TextView) findViewById(R.id.next_month);
+            TextView previousMonth = (TextView) findViewById(R.id.previous_month);
 
-        nextMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveCalendarToNextMonth();
-            }
-        });
+            nextMonth.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    moveCalendarToNextMonth();
+                }
+            });
 
-        previousMonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                moveCalendarToPreviousMonth();
-            }
-        });
+            previousMonth.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    moveCalendarToPreviousMonth();
+                }
+            });
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void setupCalendar(int month, int year) {
 
-        calendarCurrentMonth = month;
-        calendarCurrentYear = year;
-        calendar = new PeriodCalendar(this,
-                calendarCurrentMonth,
-                calendarCurrentYear);
+        try {
+            calendarCurrentMonth = month;
+            calendarCurrentYear = year;
+            calendar = new PeriodCalendar(this,
+                    calendarCurrentMonth,
+                    calendarCurrentYear);
 
-        TextView monthText = (TextView)findViewById(R.id.calendar_view_month_text);
-        monthText.setText(DateTime.parse(String.format("%s-%s-01", year, month)).toString("MMMM"));
+            TextView monthText = (TextView) findViewById(R.id.calendar_view_month_text);
+            monthText.setText(DateTime.parse(String.format("%s-%s-01", year, month)).toString("MMMM"));
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
-    private void loadDatesToView(){
+    private void loadDatesToMonthView() {
 
-        for(int row = 0; row < calendar.dateRepositories.length; row++) {
+        try {
+            for (int row = 0; row < calendar.dateRepositories.length; row++) {
 
-            for(int col = 0; col < calendar.dateRepositories[row].length; col++) {
+                for (int col = 0; col < calendar.dateRepositories[row].length; col++) {
 
-                final TextView targetLayout = (TextView)findViewById(getResources().getIdentifier(
-                        String.format("calendar_monthdate_%s%s", row + 1, col + 1),
-                        "id",
-                        getPackageName()));
+                    final TextView targetLayout = (TextView) findViewById(getResources().getIdentifier(
+                            String.format("calendar_monthdate_%s%s", row + 1, col + 1),
+                            "id",
+                            getPackageName()));
 
-                if(calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(DateTime.now().toString("yyyy-MM-dd"))) {
+                    if (calendar.dateRepositories[row][col].date.toString("yyyy-MM-dd").equals(now().toString("yyyy-MM-dd"))) {
 
-                    Drawable bg = getResources().getDrawable(R.drawable.circle_ink);
-                    int width = getResources().getDisplayMetrics().widthPixels / 8;
-                    targetLayout.setBackground(bg);
+                        Drawable bg = ContextCompat.getDrawable(this, R.drawable.circle_ink);
+                        targetLayout.setBackground(bg);
 
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, width);
-                    targetLayout.setLayoutParams(params);
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, getResources().getDisplayMetrics().widthPixels / 8);
+                        targetLayout.setLayoutParams(params);
 
-                } else {
+                    } else {
 
-                    targetLayout.setBackgroundColor(0);
-                }
-
-                loadDateToView(
-                        calendar.dateRepositories[row][col],
-                        (TextView) findViewById(getResources().getIdentifier(
-                                String.format("calendar_monthdate_%s%s", row + 1, col + 1),
-                                "id",
-                                getPackageName()
-                        )));
-
-                final int finalRow = row;
-                final int finalCol = col;
-                final Context context = this.getBaseContext();
-                targetLayout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        selectedDate = DateTime.parse(String.format("%s-%s-%s", calendarCurrentYear,calendarCurrentMonth, ((TextView)v).getText()));
-
-                        EditText comment = (EditText) findViewById(R.id.notation_text);
-                        DateRepository currentDate = DateRepository.getDateRepositories(context, calendar.dateRepositories[finalRow][finalCol].date, calendar.dateRepositories[finalRow][finalCol].date).get(0);
-                        comment.setText(currentDate.comment);
-
-                        DateRepository date = DateRepository.getDateRepositories(getBaseContext(), selectedDate, selectedDate).get(0);
-
-                        Intent intent = new Intent(getBaseContext(), ActionActivity.class);
-                        intent.putExtra(ActionActivity.ActionTemperatureExtra, date.temperature);
-                        startActivityForResult(intent, DisplayActionPanel);
+                        targetLayout.setBackgroundColor(0);
                     }
-                });
+
+                    loadDateToView(
+                            calendar.dateRepositories[row][col],
+                            (TextView) findViewById(getResources().getIdentifier(
+                                    String.format("calendar_monthdate_%s%s", row + 1, col + 1),
+                                    "id",
+                                    getPackageName()
+                            )));
+
+                    final DateTime tempDate = calendar.dateRepositories[row][col].date;
+                    targetLayout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DateRepository date = DateRepository.getDateRepositories(getBaseContext(), tempDate, tempDate).get(0);
+
+                            while(getFirstDateMeter().getDate().getMillis() > date.date.getMillis()) {
+                                endLayoutAction(dateMeterContainer, false);
+                            }
+
+                            while(getLastDateMeter().getDate().getMillis() < date.date.getMillis()) {
+                                endLayoutAction(dateMeterContainer, true);
+                            }
+
+                            for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
+
+                                if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(date.date.toString("yyyy-MM-dd"))) {
+                                    selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
+                                    break;
+                                }
+                            }
+
+                            log.setCategory(Log.Category.Button);
+                            log.setScreenType(Log.Screen.MainScreenName);
+                            log.setAction(Log.Action.ClickAddDetailFromCalendar);
+                            sendTrafficMessage(log);
+
+                            ActionActivityExtra extra = new ActionActivityExtra();
+                            extra.date = selectedDate.getDate();
+                            extra.dateType = selectedDate.dateType;
+                            extra.temperature = selectedDate.temperature;
+                            extra.comment = selectedDate.comment;
+                            Intent intent = new Intent(getBaseContext(), NewActionActivity.class);
+                            intent.putExtra(NewActionActivity.ExtraKey, extra.toJson());
+                            startActivityForResult(intent, DisplayNewActionPanel);
+                        }
+                    });
+                }
             }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
     private void loadDateToView(DateRepository date, TextView view) {
 
-        int color = 0;
+        try {
+            int color;
 
-        if(date.date.getMonthOfYear() != calendarCurrentMonth) {
+            if (date.date.getMonthOfYear() != calendarCurrentMonth) {
 
-            color = getResources().getColor(R.color.calendar_other_month_text);
-        } else {
+                color = ContextCompat.getColor(this, R.color.calendar_other_month_text);
+            } else {
 
-            switch(date.dateType) {
+                switch (date.dateType) {
 
-                case DateMeter.Menstrual : color = getResources().getColor(R.color.calendar_period_text); break;
-                case DateMeter.Ovulation : color = getResources().getColor(R.color.calendar_ovulation_text); break;
-                default : color = getResources().getColor(R.color.calendar_text_color);
+                    case DateMeter.Menstrual:
+                        color = ContextCompat.getColor(this, R.color.calendar_period_text);
+                        break;
+                    case DateMeter.PossiblyOvulation:
+                        color = ContextCompat.getColor(this, R.color.calendar_possibly_ovulation_text);
+                        break;
+                    case DateMeter.OvulationDate:
+                        color = ContextCompat.getColor(this, R.color.calendar_ovulation_text);
+                        break;
+                    default:
+                        color = ContextCompat.getColor(this, R.color.calendar_text_color);
+                }
             }
-        }
 
-        view.setTextColor(color);
-        view.setText(date.date.getDayOfMonth() + "");
+            view.setTextColor(color);
+            String displayText = date.date.getDayOfMonth() + "";
+            view.setText(displayText);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        switch(requestCode) {
-            case EditComment : { saveComment(data); break; }
-            case DisplayHelp : {
-                HelpIndicatorRepository.setIndicator(this, data.getIntExtra("INDICATOR",1));
-                break;
-            }
-            case DisplayMenu : {
-                onDisplayMenuResult(data);
-                break;
-            }
-            case DisplaySetting: {
-
-                onDisplaySettingResult(data);
-                break;
-            }
-            case DisplaySummary : {
-
-                SummaryRepository summary = new SummaryRepository();
-
-                summary.expectedMenstrualDateFrom = (DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualFromExtra).toString()));
-                summary.expectedMenstrualDateTo = (DateTime.parse(data.getExtras().get(SummaryActivity.NextMenstrualToExtra).toString()));
-                summary.expectedOvulationDateFrom = (DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationFromExtra).toString()));
-                summary.expectedOvulationDateTo = (DateTime.parse(data.getExtras().get(SummaryActivity.NextOvulationToExtra).toString()));
-
-                summary.save(this);
-                break;
-            }
-            case DisplayLanguageSelector : {
-
-                if(resultCode == RESULT_CANCELED) {break;}
-
-                String language = data.getExtras().getString(LanguageSelectorActivity.LanguageExtra);
-                Locale locale = new Locale(language);
-                Locale.setDefault(locale);
-                Configuration config = new Configuration();
-                config.locale = locale;
-                getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
-                initialApplication();
-                setSharedPreference(PSettingDisplayedLanguage, language);
-                break;
-            }
-            case DisplayActionPanel: {
-
-                int action = data.getExtras().getInt(ActionActivity.ActionExtra);
-                switch(action){
-
-                    case ActionActivity.ActionPeriodButton : {
-
-                        addPeriodAndOvulationFlagToDateMeters();
-                        break;
-                    }
-                    case ActionActivity.ActionNonPeriodButton: {
-
-                        removePeriodAndOvulationFlagToDateMeter();
-                        break;
-                    }
-                    case ActionActivity.ActionAddTemperature: {
-
-                        float temperature = data.getExtras().getFloat(ActionActivity.ActionTemperatureExtra);
-                        setTemperatureToDateMeter(selectedDate, temperature);
-                        break;
-                    }
-                    case ActionActivity.ActionNothing: {
-                        // Nothing
-                    }
+        try {
+            switch (requestCode) {
+                case DisplayHelp: {
+                    HelpIndicatorRepository.setIndicator(this, data.getIntExtra("INDICATOR", 1));
+                    break;
                 }
+                case DisplayMenu: {
+                    onDisplayMenuResult(data);
+                    break;
+                }
+                case DisplaySetting: {
 
-                addMonthView();
-                break;
+                    onDisplaySettingResult(data);
+                    break;
+                }
+                case DisplaySettingWizard: {
+                    onDisplaySettingWizardResult(data);
+                    break;
+                }
+                case DisplaySummary: {
+
+                    String jsonSummary = data.getExtras().getString(SummaryActivityExtra.SummaryActivityExtraExtra);
+                    SummaryActivityExtra extra = SummaryActivityExtra.fromJson(jsonSummary);
+                    assert extra != null;
+                    SummaryRepository summary = extra.toSummaryRepository();
+
+                    summary.save(this);
+                    break;
+                }
+                case DisplayLanguageSelector: {
+
+                    if (resultCode == RESULT_CANCELED) {
+                        break;
+                    }
+
+                    String language = data.getExtras().getString(LanguageSelectorActivity.LanguageExtra);
+                    Locale locale = new Locale(language);
+                    Locale.setDefault(locale);
+                    Configuration config = new Configuration();
+                    UtilHelper.setConfigurationLocale(config, locale);
+                    getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+                    initialApplication();
+                    setSharedPreference(PSettingDisplayedLanguage, language);
+                    break;
+                }
+                case DisplayNewActionPanel: {
+
+                    DateTime startProcessDisplayNewActionPanel = DateTime.now();
+                    if (data == null) return;
+                    ActionActivityExtra extra = ActionActivityExtra.fromJsonString(data.getExtras().getString(NewActionActivity.ExtraKey));
+
+                    if (extra.isButtonPush) {
+                        if (extra.dateType == DateMeter.Menstrual) {
+                            removePeriodAndOvulationFlagToDateMeter();
+                        } else {
+                            addPeriodAndOvulationFlagToDateMeters();
+                        }
+                    }
+
+                    if(extra.isTemperatureChange) {
+                        log.setAction(Log.Action.ChangeTemperature);
+                        log.setCategory(Log.Category.Button);
+                        log.setScreenType(Log.Screen.ActionPanel);
+                        sendTrafficMessage(log);
+                    }
+
+                    for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
+
+                        if (((DateMeter) dateMeterContainer.getChildAt(i)).getDate().toString("yyyy-MM-dd").equals(extra.date.toString("yyyy-MM-dd"))) {
+                            selectedDate = (DateMeter) dateMeterContainer.getChildAt(i);
+                            selectedDate.comment = extra.comment;
+                            selectedDate.temperature = (float) extra.temperature;
+                            selectedDate.setFlags(extra.flags);
+
+                            DateRepository.updateDateRepositorySetComment(this, selectedDate.getDate(), selectedDate.comment);
+                            DateRepository.updateDateRepositorySetTemperature(this, selectedDate.getDate(), selectedDate.temperature);
+                            DateRepository.updateDateRepositorySetFlags(this, selectedDate.getDate(), selectedDate.getFlags());
+
+                            selectedDate = new DateMeter(this,
+                                    DateRepository.getDateRepositories(this, selectedDate.getDate(), selectedDate.getDate()).get(0),
+                                    dateTouchListener);
+                            dateMeterContainer.removeViewAt(i);
+                            dateMeterContainer.addView(selectedDate, i);
+                            break;
+                        }
+                    }
+
+                    addMonthView();
+
+                    log.setAction(Log.Action.ActionClickSaveButton);
+                    log.setScreenType(Log.Screen.ActionPanel);
+                    log.setCategory(Log.Category.LoadTime);
+                    sendLoadTimeMessage(log, DateTime.now().getMillis() - startProcessDisplayNewActionPanel.getMillis());
+                }
             }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
+
+
+    static Boolean isReviewing = false;
 
     @Override
     public void onBackPressed() {
 
-        final SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
-        final SharedPreferences.Editor edit = pref.edit();
+        try {
+            final SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+            final SharedPreferences.Editor edit = pref.edit();
+            final int[] survayFlags = new int[1];
 
-        if(getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview)) {
+            if (getUsageCounter(PUsageCounter) == getUsageCounter(PTimeOfUsageBeforeReview) && !isReviewing && ApplicationVersion < 1000) {
 
-            setContentView(R.layout.review);
+                isReviewing = true;
+                setContentView(R.layout.do_you_like_app);
+                Button iLikeThisAppButton = (Button) findViewById(R.id.i_like_this_app_button);
+                Button iDontLikeThisAppButton = (Button) findViewById(R.id.i_dont_like_this_app_button);
 
-            Button reviewNowButton = (Button)findViewById(R.id.review_open);
-            Button laterButton = (Button)findViewById(R.id.review_later);
-            Button noShowButton = (Button)findViewById(R.id.review_no_show);
+                iLikeThisAppButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-            reviewNowButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                        log.setAction(Log.Action.ReviewILikeThisApplication);
+                        log.setScreenType(Log.Screen.ReviewPanel);
+                        log.setCategory(Log.Category.Button);
+                        sendTrafficMessage(log);
 
-                    addUsageCounter(PReviewNow);
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
-                    submitStat();
-                    finish();
-                }
-            });
+                        setContentView(R.layout.review);
+                        survayFlags[0] |= ILikeTheApplication;
 
-            laterButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    addUsageCounter(PReviewLater);
-                    edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview,0) + 2);
-                    edit.commit();
-                    submitStat();
-                    finish();
-                }
-            });
+                        Button reviewNowButton = (Button) findViewById(R.id.review_open);
+                        Button laterButton = (Button) findViewById(R.id.review_later);
+                        Button noShowButton = (Button) findViewById(R.id.review_no_show);
 
-            noShowButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                        reviewNowButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
 
-                    addUsageCounter(PNoReview);
-                    edit.putInt(PTimeOfUsageBeforeReview, -1);
-                    edit.commit();
-                    submitStat();
-                    finish();
-                }
-            });
+                                log.setAction(Log.Action.ReviewILikeThisApplicationAndReviewNow);
+                                log.setScreenType(Log.Screen.ReviewPanel);
+                                log.setCategory(Log.Category.Button);
+                                sendTrafficMessage(log);
 
-        } else {
-            submitStat();
-            finish();
+                                addUsageCounter(PReviewNow);
+                                survayFlags[0] |= ILikeTheApplicationAndIWantToReview;
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
+                                finish();
+                            }
+                        });
+
+                        laterButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                log.setAction(Log.Action.ReviewILikeThisApplicationButReviewLater);
+                                log.setScreenType(Log.Screen.ReviewPanel);
+                                log.setCategory(Log.Category.Button);
+                                sendTrafficMessage(log);
+
+                                addUsageCounter(PReviewLater);
+                                survayFlags[0] |= ILikeTheApplicationButIDontLikeToReviewNow;
+                                edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 0) + 10);
+                                edit.apply();
+                                finish();
+                            }
+                        });
+
+                        noShowButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                log.setAction(Log.Action.ReviewILikeThisApplicationButIDontWantToReview);
+                                log.setScreenType(Log.Screen.ReviewPanel);
+                                log.setCategory(Log.Category.Button);
+                                sendTrafficMessage(log);
+
+                                addUsageCounter(PNoReview);
+                                survayFlags[0] |= ILikeTheApplicationButIDontLikeToReview;
+                                edit.putInt(PTimeOfUsageBeforeReview, -1);
+                                edit.apply();
+                                finish();
+                            }
+                        });
+                    }
+                });
+
+                iDontLikeThisAppButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        log.setAction(Log.Action.ReviewIDontLikeThisApplication);
+                        log.setScreenType(Log.Screen.ReviewPanel);
+                        log.setCategory(Log.Category.Button);
+                        sendTrafficMessage(log);
+
+                        setContentView(R.layout.we_also_love_a_negative_feedback);
+                        survayFlags[0] |= IDontLikeTheApplication;
+                        Button sendReviewButton = (Button) findViewById(R.id.review_send_review_button);
+                        sendReviewButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                CheckBox hardToUseCheckBox = (CheckBox) findViewById(R.id.review_it_is_hard_to_use);
+                                CheckBox slowCheckBox = (CheckBox) findViewById(R.id.review_it_is_slow);
+                                CheckBox otherApplicationIsBetterCheckBox = (CheckBox) findViewById(R.id.review_other_app_is_better);
+                                CheckBox designDoesNotLookProfCheckBox = (CheckBox) findViewById(R.id.review_the_design_does_not_look_prof);
+                                CheckBox languageDoesNotLookProfCheckBox = (CheckBox) findViewById(R.id.review_the_language_does_not_look_prof);
+                                CheckBox languageIsHardToUnderstandCheckBox = (CheckBox) findViewById(R.id.review_the_language_is_hard_to_understand);
+                                CheckBox otherReasonCheckBox = (CheckBox) findViewById(R.id.review_other_reason);
+
+                                survayFlags[0] |= hardToUseCheckBox.isChecked() ? IDontLikeTheApplicationBecauseItIsHardToUse : 0;
+                                survayFlags[0] |= slowCheckBox.isChecked() ? IDontLikeTheApplicationBecauseItIsSlow : 0;
+                                survayFlags[0] |= otherApplicationIsBetterCheckBox.isChecked() ? IDontLikeTheApplicationBecauseOtherApplicationIsBetter : 0;
+                                survayFlags[0] |= designDoesNotLookProfCheckBox.isChecked() ? IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional : 0;
+                                survayFlags[0] |= languageDoesNotLookProfCheckBox.isChecked() ? IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional : 0;
+                                survayFlags[0] |= languageIsHardToUnderstandCheckBox.isChecked() ? IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand : 0;
+                                survayFlags[0] |= otherReasonCheckBox.isChecked() ? IDontLikeTheApplicationBecauseOfOtherReason : 0;
+
+                                if( (survayFlags[0] & IDontLikeTheApplicationBecauseItIsHardToUse) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseItIsHardToUse);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseItIsSlow) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseItIsSlow);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseOtherApplicationIsBetter) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseOtherApplicationIsBetter);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseTheDesignIsNotLookProfessional) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseTheDesignIsNotLookProfessional);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseTheLanguageDoesNotLookProfessional) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseTheLanguageDoesNotLookProfessional);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseTheLanguageIsHardToUnderstand) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseTheLanguageIsHardToUnderstand);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                } else if( (survayFlags[0] & IDontLikeTheApplicationBecauseOfOtherReason) > 0) {
+
+                                    log.setAction(Log.Action.ReviewIDontLikeThisApplicationBecauseOfOtherReason);
+                                    log.setCategory(Log.Category.Button);
+                                    log.setScreenType(Log.Screen.ReviewPanel);
+                                    sendTrafficMessage(log);
+
+                                }
+
+                                finish();
+                            }
+                        });
+                    }
+                });
+
+                } else {
+                finish();
+            }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
     public void moveCalendarToPreviousMonth() {
 
-        if(calendarCurrentMonth == 1) {
+        try {
+            if (calendarCurrentMonth == 1) {
 
-            calendarCurrentMonth = 12;
-            setupCalendar(calendarCurrentMonth, --calendarCurrentYear);
-        } else {
+                calendarCurrentMonth = 12;
+                setupCalendar(calendarCurrentMonth, --calendarCurrentYear);
+            } else {
 
-            setupCalendar(--calendarCurrentMonth, calendarCurrentYear);
+                setupCalendar(--calendarCurrentMonth, calendarCurrentYear);
+            }
+
+            loadDatesToMonthView();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
-
-        loadDatesToView();
     }
 
     public void moveCalendarToNextMonth() {
 
-        if(calendarCurrentMonth == 12) {
+        try {
+            if (calendarCurrentMonth == 12) {
 
-            calendarCurrentMonth = 1;
-            setupCalendar(calendarCurrentMonth, ++calendarCurrentYear);
-        } else {
+                calendarCurrentMonth = 1;
+                setupCalendar(calendarCurrentMonth, ++calendarCurrentYear);
+            } else {
 
-            setupCalendar(++calendarCurrentMonth, calendarCurrentYear);
+                setupCalendar(++calendarCurrentMonth, calendarCurrentYear);
+            }
+
+            loadDatesToMonthView();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
-
-        loadDatesToView();
 
     }
 
     public void initialHelpActivity(View view) {
-        Intent intent = new Intent(this, HelpActivity.class);
-        intent.putExtra("INDICATOR", HelpIndicatorRepository.getIndicator(getBaseContext()));
-        startActivityForResult(intent, DisplayHelp);
+
     }
 
     public void hamburgerMenuClick(View view) {
 
-        addUsageCounter(PMenuButtonUsageCounter);
-        Intent intent = new Intent(this, MenuActivity.class);
-        startActivityForResult(intent, DisplayMenu);
-    }
-
-    public void commentSave(View view) {
-        // save
-        if(selectedDate == null) {return;}
-
-        if(view.getId() == R.id.comment_button) {
-            addUsageCounter(PCommentButtonUsageCounter);
-        } else if(view.getId() == R.id.notation_text) {
-            addUsageCounter(PCommentTextUsageCounter);
+        try {
+            addUsageCounter(PMenuButtonUsageCounter);
+            Intent intent = new Intent(this, MenuActivity.class);
+            startActivityForResult(intent, DisplayMenu);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
-
-        EditText commentText = (EditText)findViewById(R.id.notation_text);
-        Intent commentIntent = new Intent(this, CommentActivity.class);
-        commentIntent.putExtra("Date", selectedDate.toString("yyyy-MM-dd"));
-        commentIntent.putExtra("Comment", commentText.getText().toString());
-        startActivityForResult(commentIntent, EditComment);
     }
 
-    public void setOnDateMeterTouchEventListener(OnDateMeterTouchEventListener listener) {
-        dateTouchListener = listener;
+    public void setOnDateMeterTouchEventListener(OnDateMeterFocusListener listener) {
+        try {
+            dateTouchListener = listener;
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     public void toggleView(View clickedButton) {
 
-        int newDisplayMode = 0;
+        try {
+            int newDisplayMode;
+            Log log = new Log(this);
+            log.setScreenType(Log.Screen.MainScreenName);
+            log.setCategory(Log.Category.Button);
 
-        switch(clickedButton.getId()) {
+            switch (clickedButton.getId()) {
 
-            case R.id.date_view_toggle: {
+                case R.id.conclusion_view_toggle: {
+                    switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToConclusion);
+                        }
+                        case DisplayModeDateScroller: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToConclusion);
+                            break;
+                        }
+                        case DisplayModeMonthView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToConclusion);
+                            break;
+                        }
+                        case DisplayModeChartView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToConclusion);
+                            break;
+                        }
+                        default: {
+                            log.setAction(Log.Action.ClickDisplayToggleFromUnknownToMonthView);
+                        }
+                    }
+                    newDisplayMode = DisplayModeConclusionView;
+                    break;
+                }
+                case R.id.date_view_toggle: {
 
-                newDisplayMode = DisplayModeDateScroller;
-                break;
+                    switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToDateScroller);
+                        }
+                        case DisplayModeDateScroller: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToDateScroller);
+                            break;
+                        }
+                        case DisplayModeMonthView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToDateScroller);
+                            break;
+                        }
+                        case DisplayModeChartView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToDateScroller);
+                            break;
+                        }
+                        default: {
+                            log.setAction(Log.Action.ClickDisplayToggleFromUnknownToDateScroller);
+                        }
+                    }
+                    newDisplayMode = DisplayModeDateScroller;
+                    isAdjusted = false;
+                    break;
+                }
+                case R.id.month_view_toggle: {
+                    switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToMonthView);
+                        }
+                        case DisplayModeDateScroller: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToMonthView);
+                            break;
+                        }
+                        case DisplayModeMonthView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToMonthView);
+                            break;
+                        }
+                        case DisplayModeChartView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToMonthView);
+                            break;
+                        }
+                        default: {
+                            log.setAction(Log.Action.ClickDisplayToggleFromUnknownToMonthView);
+                        }
+                    }
+                    newDisplayMode = DisplayModeMonthView;
+                    break;
+                }
+                case R.id.chart_view_toggle: {
+                    switch (getUsageCounter(PMainDisplayMode)) {
+                        case DisplayModeConclusionView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromConclusionToTemperature);
+                        }
+                        case DisplayModeDateScroller: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromDateScrollerToTemperature);
+                            break;
+                        }
+                        case DisplayModeMonthView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromMonthViewToTemperature);
+                            break;
+                        }
+                        case DisplayModeChartView: {
+                            log.setAction(Log.Action.ClickDisplayToggleButtonFromTemperatureViewToTemperature);
+                            break;
+                        }
+                        default: {
+                            log.setAction(Log.Action.ClickDisplayToggleFromUnknownToTemperature);
+                        }
+                    }
+                    newDisplayMode = DisplayModeChartView;
+                    break;
+                }
+                default:
+                    newDisplayMode = DisplayModeDateScroller;
             }
-            case R.id.month_view_toggle: {
 
-                newDisplayMode = DisplayModeMonthView;
-                break;
-            }
-            case R.id.chart_view_toggle: {
+            setSharedPreference(PMainDisplayMode, newDisplayMode);
 
-                newDisplayMode = DisplayModeChartView;
-                break;
-            }
-            default: newDisplayMode = DisplayModeDateScroller;
+            adjustLayoutForDisplayModeAccordingToPDisplayMode();
+
+            showScreenSwitcherButtonAccordingToDisplayMode(newDisplayMode,
+                    calendarViewLayoutButton,
+                    dayViewLayoutButton,
+                    summaryViewLayoutButton,
+                    temperatureViewLayoutButton);
+
+            sendTrafficMessage(log);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
-
-        setSharedPreference(PMainDisplayMode, newDisplayMode);
-
-        adjustLayoutForDisplayModeAccordingToPDisplayMode();
     }
 
     private void adjustLayoutForDisplayModeAccordingToPDisplayMode() {
 
-        LinearLayout dateScrollerView = (LinearLayout) findViewById(R.id.date_scroller);
-        LinearLayout monthView = (LinearLayout) findViewById(R.id.month_view_panel);
-        LinearLayout chartView = (LinearLayout) findViewById(R.id.chart_view_panel);
+        try {
+            LinearLayout conclusionView = (LinearLayout) findViewById(R.id.conclusion_panel);
+            LinearLayout dateScrollerView = (LinearLayout) findViewById(R.id.date_scroller);
+            LinearLayout monthView = (LinearLayout) findViewById(R.id.month_view_panel);
+            LinearLayout chartView = (LinearLayout) findViewById(R.id.chart_view_panel);
 
-        switch(getUsageCounter(PMainDisplayMode)) {
+            switch (getUsageCounter(PMainDisplayMode)) {
 
-            case DisplayModeMonthView: {
+                case DisplayModeConclusionView: {
 
-                // Show only month view hide other
-                monthView.setVisibility(View.VISIBLE);
-                dateScrollerView.setVisibility(View.GONE);
-                chartView.setVisibility(View.GONE);
-                break;
+                    // Show only month view hide other
+                    conclusionView.setVisibility(View.VISIBLE);
+                    monthView.setVisibility(View.GONE);
+                    dateScrollerView.setVisibility(View.GONE);
+                    chartView.setVisibility(View.GONE);
+                    loadConclusionData();
+                    break;
+                }
+                case DisplayModeMonthView: {
+
+                    // Show only month view hide other
+                    conclusionView.setVisibility(View.GONE);
+                    monthView.setVisibility(View.VISIBLE);
+                    dateScrollerView.setVisibility(View.GONE);
+                    chartView.setVisibility(View.GONE);
+                    break;
+                }
+                case DisplayModeChartView: {
+
+                    // Show only chart view, hide other
+                    conclusionView.setVisibility(View.GONE);
+                    chartView.setVisibility(View.VISIBLE);
+                    dateScrollerView.setVisibility(View.GONE);
+                    monthView.setVisibility(View.GONE);
+                    loadChartData();
+                    break;
+                }
+                case DisplayModeDateScroller:
+                default: {
+
+                    // The default is show only date scroller view, hide other
+                    conclusionView.setVisibility(View.GONE);
+                    dateScrollerView.setVisibility(View.VISIBLE);
+                    monthView.setVisibility(View.GONE);
+                    chartView.setVisibility(View.GONE);
+                    setSelectedDateToAlignWithFingerIndex();
+                    break;
+                }
             }
-            case DisplayModeChartView: {
-
-                // Show only chart view, hide other
-                chartView.setVisibility(View.VISIBLE);
-                dateScrollerView.setVisibility(View.GONE);
-                monthView.setVisibility(View.GONE);
-                loadChartData();
-                break;
-            }
-            case DisplayModeDateScroller:
-            default: {
-
-                // The default is show only date scroller view, hide other
-                dateScrollerView.setVisibility(View.VISIBLE);
-                monthView.setVisibility(View.GONE);
-                chartView.setVisibility(View.GONE);
-            }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
+    }
+
+    private void loadConclusionData() {
+        try {
+            SummaryRepository summary = SummaryRepository.getSummary(this);
+            int daysToNextMenstrual = dateDiff(summary.expectedMenstrualDateFrom, DateTime.now()) + 1;
+            int daysToNextMenstrualTo = dateDiff(summary.expectedMenstrualDateTo, DateTime.now());
+            int daysToNextOvulation = dateDiff(summary.expectedOvulationDate, DateTime.now());
+            String daysToNextOvulationText;
+            String daysToNextMenstrualText;
+            String dateFormat = getResources().getString(R.string.short_date_format);
+
+            conclusionSuggestDate.setText(UtilHelper.fromHtml(String.format(getResources().getText(R.string.conclusion_suggestion_date_string).toString(),
+                    "<b>" + summary.expectedOvulationDate.minusDays(1).toString(dateFormat) + "</b>",
+                    "<b>" + summary.expectedOvulationDate.plusDays(1).toString(dateFormat) + "</b>")));
+
+            if (daysToNextOvulation == 0 || daysToNextOvulation == -1 || daysToNextOvulation == 1) {
+                daysToNextOvulationText = getResources().getString(R.string.conclusion_days_to_the_date_option_today_string);
+
+                daysToNextOvulationText = String.format(getResources().getText(R.string.conclusion_days_to_the_date_string).toString(),
+                        daysToNextOvulationText);
+
+            } else if (daysToNextOvulation < -1) {
+                daysToNextOvulationText = "";
+            } else {
+                daysToNextOvulationText = String.format(
+                        getResources().getString(R.string.conclusion_days_to_the_date_option_next_xxx_days_string),
+                        daysToNextOvulation + "");
+                daysToNextOvulationText = String.format(getResources().getText(R.string.conclusion_days_to_the_date_string).toString(),
+                        daysToNextOvulationText);
+            }
+
+            conclusionSuggestionDaysToDate.setText(daysToNextOvulationText);
+
+            conclusionEstimatedNextMenstrualDate.setText(UtilHelper.fromHtml(String.format(
+                    getResources().getString(R.string.conclusion_estimated_next_menstrual_date_string),
+                    "<b>" + summary.expectedMenstrualDateFrom.toString(dateFormat) + "</b>",
+                    "<b>" + summary.expectedMenstrualDateTo.toString(dateFormat) + "</b>")));
+
+            if (daysToNextMenstrual < 0 && daysToNextMenstrualTo < 0) {
+
+                daysToNextMenstrualText = "";
+            } else if (daysToNextMenstrual <= 0 && daysToNextMenstrualTo <= 0) {
+                daysToNextMenstrualText = getResources().getString(R.string.conclusion_days_to_the_date_option_today_string);
+            } else {
+                daysToNextMenstrualText = String.format(
+                        getResources().getString(R.string.conclusion_days_to_the_date_option_next_xxx_days_string),
+                        daysToNextMenstrual + "");
+            }
+            conclusionEstimatedNextMenstrualDaysToDate.setText(daysToNextMenstrualText);
+            // TODO: Complete this
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private int dateDiff(DateTime dateTo, DateTime dateFrom) {
+        return (int) ((dateTo.getMillis() - dateFrom.getMillis()) / 1000 / 60 / 60 / 24);
     }
 
     private void loadChartData() {
 
-        LineChart temperatureChart = (LineChart) findViewById(R.id.temperature_chart);
-        final int initialDaysOffset = 20;
-        _chartHandler = new ChartHandler(this, temperatureChart);
+        try {
+            LineChart temperatureChart = (LineChart) findViewById(R.id.temperature_chart);
+            final int initialDaysOffset = 20;
+            ChartHandler _chartHandler = new ChartHandler(this, temperatureChart);
 
-        _chartHandler.initialChart(initialDaysOffset);
+            _chartHandler.initialChart(initialDaysOffset);
 
-        Button fetchPreviousButton = (Button) findViewById(R.id.chart_fetch_previous_data_button);
-        Button fetchNextButton = (Button) findViewById(R.id.chart_fetch_next_data_button);
+            Button fetchPreviousButton = (Button) findViewById(R.id.chart_fetch_previous_data_button);
+            Button fetchNextButton = (Button) findViewById(R.id.chart_fetch_next_data_button);
 
-        _chartButtonHandler = new ChartFetchingOnclickHandler(_chartHandler);
+            ChartFetchingOnclickHandler _chartButtonHandler = new ChartFetchingOnclickHandler(_chartHandler);
 
-        fetchNextButton.setOnClickListener(_chartButtonHandler);
-        fetchPreviousButton.setOnClickListener(_chartButtonHandler);
-    }
-
-    private void submitStat() {
-        final HttpClient client = new DefaultHttpClient();
-        final HttpPost httpPost = new HttpPost(StatUri);
-
-        final JSONObject json = new JSONObject();
-
-        AsyncTask<Void,Void,Void> task = new AsyncTask<Void, Void, Void>() {
-
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-
-                    json.put("deviceId", getDeviceId());
-                    json.put("applicationVersion", getUsageCounter(PCurrentVersion));
-                    json.put("usageCounter", getUsageCounter(PUsageCounter));
-                    json.put("periodButtonUsageCounter", getUsageCounter(PPeriodButtonUsageCounter));
-                    json.put("nonPeriodButtonUsageCounter", getUsageCounter(PNonPeriodButtonUsageCounter));
-                    json.put("comment_button_usage_counter", getUsageCounter(PCommentButtonUsageCounter));
-                    json.put("comment_text_usage_counter", getUsageCounter(PCommentTextUsageCounter));
-                    json.put("menu_button_usage_counter", getUsageCounter(PMenuButtonUsageCounter));
-                    json.put("review_now", getUsageCounter(PReviewNow));
-                    json.put("review_later", getUsageCounter(PReviewLater));
-                    json.put("review_non", getUsageCounter(PNoReview));
-                    json.put("fetch_next_usage_counter", getUsageCounter(PFetchNextMonthUsageCounter));
-                    json.put("fetch_previous_usage_counter", getUsageCounter(PFetchPreviousMonthUsageCounter));
-                    json.put("menu_setting_click_counter", getUsageCounter(PMenuSettingClickCounter));
-                    json.put("menu_summary_click_counter", getUsageCounter(PMenuSummaryClickCounter));
-                    json.put("menu_month_view_click_counter", getUsageCounter(PMenuMonthViewClickCounter));
-                    json.put("menu_help_click_counter", getUsageCounter(PMenuHelpClickCounter));
-                    json.put("menu_review_click_counter", getUsageCounter(PMenuReviewClickCounter));
-
-                    // Available in version 26 or above
-                    json.put("setting_notify_period_usage_counter", getUsageCounter(PSettingNotifyPeriodCounter));
-                    json.put("setting_notify_ovulation_usage_counter", getUsageCounter(PSettingNotifyOvulationCounter));
-                    json.put("setting_notify_period_days", getUsageCounter(PSettingNotifyPeriodDay));
-                    json.put("setting_notify_ovulation_days", getUsageCounter(PSettingNotifyOvulationDay));
-                    json.put("setting_notify_notification_click_counter", getUsageCounter(PSettingNotificationClickCounter));
-
-                    // Available in version 29 or above
-                    json.put("setting_language_change_usage_counter", getUsageCounter(PSettingDisplayedLanguageUsageCounter));
-                    json.put("setting_displayed_language", getStringPreference(PSettingDisplayedLanguage));
-
-                    // Available in version 36 or above
-                    json.put("setting_display_mode", getUsageCounter(PMainDisplayMode));
-
-                    // Available in version 38 or above
-                    json.put("duration", DateTime.now().getMillis() - startTime.getMillis());
-
-                    StringEntity entry = new StringEntity(json.toString());
-
-                    httpPost.setEntity(entry);
-                    httpPost.setHeader("Content-Type","application/Json");
-
-                    client.execute(httpPost);
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-        };
-        task.execute();
+            fetchNextButton.setOnClickListener(_chartButtonHandler);
+            fetchPreviousButton.setOnClickListener(_chartButtonHandler);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void initUsageToReview() {
 
-        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, 2));
-        edit.commit();
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            int numberOfUsageBeforeAskingForReview = getResources().getInteger(R.integer.number_of_usage_before_ask_for_review);
+            edit.putInt(PTimeOfUsageBeforeReview, pref.getInt(PTimeOfUsageBeforeReview, numberOfUsageBeforeAskingForReview));
+            edit.apply();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void setDeviceId() {
 
-        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putString(PUuid, pref.getString(PUuid, UUID.randomUUID().toString()));
-        edit.commit();
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putString(PUuid, pref.getString(PUuid, UUID.randomUUID().toString()));
+            edit.apply();
+            DeviceId = pref.getString(PUuid, UUID.randomUUID().toString());
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private UUID getDeviceId() {
 
-        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
-        return UUID.fromString(pref.getString(PUuid, ""));
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+            UUID id = UUID.fromString(pref.getString(PUuid, ""));
+            DeviceId = id.toString();
+            return id;
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+            return new UUID(0,0);
+        }
     }
 
-    private void setApplicationVersion(){
+    private void setApplicationVersion() {
 
-        SharedPreferences pref = getSharedPreferences(PName,MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(PCurrentVersion,ApplicationVersion);
-        edit.commit();
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putInt(PCurrentVersion, ApplicationVersion);
+            edit.apply();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void addUsageCounter(String key) {
 
-        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(key, pref.getInt(key, 0) + 1);
-        edit.commit();
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putInt(key, pref.getInt(key, 0) + 1);
+            edit.apply();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private String getStringPreference(String key) {
 
-        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
-        return pref.getString(key, "");
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+            return pref.getString(key, "");
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+            return "";
+        }
     }
 
     private int getUsageCounter(String key) {
 
-        SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
-        return pref.getInt(key, 0);
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, Context.MODE_PRIVATE);
+            return pref.getInt(key, 0);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+            return 0;
+        }
     }
 
     private void setSharedPreference(String key, int value) {
 
-        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putInt(key, value);
-        edit.commit();
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putInt(key, value);
+            edit.apply();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void setSharedPreference(String key, String value) {
 
-        SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putString(key, value);
-        edit.commit();
+        try {
+            SharedPreferences pref = getSharedPreferences(PName, MODE_PRIVATE);
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putString(key, value);
+            edit.apply();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void onDisplayMenuResult(Intent data) {
-        int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
-        switch (selectedMenu) {
-            case MenuActivity.SelectDisplayHelp : {
-                addUsageCounter(PMenuHelpClickCounter);
-                initialHelpActivity(null);
-                break;
-            }
-            case MenuActivity.SelectSummary: {
-                addUsageCounter(PMenuSummaryClickCounter);
-                SummaryRepository summary = SummaryRepository.getSummary(this);
-                if(summary != null) {
-                    Intent summaryIntent = new Intent(this, SummaryActivity.class);
-                    summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, summary.expectedMenstrualDateFrom.toString("yyyy-MM-dd"));
-                    summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, summary.expectedMenstrualDateTo.toString("yyyy-MM-dd"));
-                    summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, summary.expectedOvulationDateFrom.toString("yyyy-MM-dd"));
-                    summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, summary.expectedOvulationDateTo.toString("yyyy-MM-dd"));
-
-                    startActivityForResult(summaryIntent, DisplaySummary);
+        try {
+            int selectedMenu = data.getIntExtra(MenuActivity.SelectedMenuExtra, 0);
+            switch (selectedMenu) {
+                case MenuActivity.SelectDisplayHelp: {
+                    addUsageCounter(PMenuHelpClickCounter);
+                    initialHelpActivity(null);
+                    break;
                 }
-                break;
-            }
-            case MenuActivity.SelectDisplaySetting : {
-                addUsageCounter(PMenuSettingClickCounter);
-                Intent settingIntent = new Intent(this, SettingActivity.class);
-                settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
-                settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
-                settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
-                settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
-                settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
-                settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
-                settingIntent.putExtra(SettingActivity.IsNotifyPeriodCheckExtra, getUsageCounter(PSettingIsNotifyPeriod));
-                settingIntent.putExtra(SettingActivity.IsNotifyOvulationCheckExtra, getUsageCounter(PSettingIsNotifyOvulation));
-                settingIntent.putExtra(SettingActivity.NotifyPeriodDaysExtra, getUsageCounter(PSettingNotifyPeriodDay));
-                settingIntent.putExtra(SettingActivity.NotifyOvulationDaysExtra, getUsageCounter(PSettingNotifyOvulationDay));
-                startActivityForResult(settingIntent, DisplaySetting);
-                break;
-            }
-            case MenuActivity.SelectMonthView : {
-                addUsageCounter(PMenuMonthViewClickCounter);
-                Intent monthViewIntent = new Intent(this, MonthViewActivity.class);
+                case MenuActivity.SelectSummary: {
+                    addUsageCounter(PMenuSummaryClickCounter);
+                    SummaryRepository summary = SummaryRepository.getSummary(this);
+                    if (summary != null) {
+                        Intent summaryIntent = new Intent(this, SummaryActivity.class);
+                        SummaryActivityExtra extra = SummaryActivityExtra.fromSummaryRepository(summary);
+                        summaryIntent.putExtra(SummaryActivityExtra.SummaryActivityExtraExtra, extra.toJson());
 
-                DateTime targetDate = selectedDate == null ? DateTime.now() : selectedDate;
+                        startActivityForResult(summaryIntent, DisplaySummary);
+                    }
+                    break;
+                }
+                case MenuActivity.SelectDisplaySetting: {
+                    addUsageCounter(PMenuSettingClickCounter);
+                    Intent settingIntent = new Intent(this, SettingActivity.class);
+                    settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
+                    settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
+                    settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
+                    settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
+                    settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
+                    settingIntent.putExtra(SettingActivity.IsNotifyPeriodCheckExtra, getUsageCounter(PSettingIsNotifyPeriod));
+                    settingIntent.putExtra(SettingActivity.IsNotifyOvulationCheckExtra, getUsageCounter(PSettingIsNotifyOvulation));
+                    settingIntent.putExtra(SettingActivity.NotifyPeriodDaysExtra, getUsageCounter(PSettingNotifyPeriodDay));
+                    settingIntent.putExtra(SettingActivity.NotifyOvulationDaysExtra, getUsageCounter(PSettingNotifyOvulationDay));
+                    startActivityForResult(settingIntent, DisplaySetting);
+                    break;
+                }
+                case MenuActivity.SelectReview: {
 
-                monthViewIntent.putExtra(MonthViewActivity.MonthExtra, targetDate.getMonthOfYear());
-                monthViewIntent.putExtra(MonthViewActivity.YearExtra, targetDate.getYear());
+                    addUsageCounter(PMenuReviewClickCounter);
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
+                    break;
+                }
+                case MenuActivity.SelectLanguageSelecter: {
 
-                startActivity(monthViewIntent);
-                break;
+                    addUsageCounter(PSettingDisplayedLanguageUsageCounter);
+                    Intent intent = new Intent(this, LanguageSelectorActivity.class);
+                    startActivityForResult(intent, DisplayLanguageSelector);
+                    break;
+                }
+                case MenuActivity.SelectLockScreen: {
+                    // TODO: Finish this
+                }
             }
-            case MenuActivity.SelectReview : {
-
-                addUsageCounter(PMenuReviewClickCounter);
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.ougnt.period_manager")));
-                break;
-            }
-            case MenuActivity.SelectLanguageSelecter : {
-
-                addUsageCounter(PSettingDisplayedLanguageUsageCounter);
-                Intent intent = new Intent(this, LanguageSelectorActivity.class);
-                startActivityForResult(intent, DisplayLanguageSelector);
-                break;
-            }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
     private void onDisplaySettingResult(Intent data) {
-        switch (data.getIntExtra(SettingActivity.ActionExtra, 0)) {
+        try {
+            switch (data.getIntExtra(SettingActivity.ActionExtra, 0)) {
 
-            case SettingActivity.SaveAction : {
+                case SettingActivity.SaveAction: {
 
-                setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra, 0f);
-                setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
-                setting.flag = data.getIntExtra(SettingActivity.FlagExtra, 0);
-                setting.saveSetting(this);
+                    setting.periodCycle = data.getFloatExtra(SettingActivity.PeriodCycleExtra, 0f);
+                    setting.periodLength = data.getFloatExtra(SettingActivity.PeriodLengthExtra, 0f);
+                    setting.saveSetting(this);
 
-                Bundle extras = data.getExtras();
-                boolean isNotifyPeriod = extras.getBoolean(SettingActivity.IsNotifyPeriodCheckExtra);
-                boolean isNotifyOvulation = extras.getBoolean(SettingActivity.IsNotifyOvulationCheckExtra);
-                int notifyPeriodDay = extras.getInt(SettingActivity.NotifyPeriodDaysExtra);
-                int notifyOvulationDay = extras.getInt(SettingActivity.NotifyOvulationDaysExtra);
+                    Bundle extras = data.getExtras();
+                    boolean isNotifyPeriod = extras.getBoolean(SettingActivity.IsNotifyPeriodCheckExtra);
+                    boolean isNotifyOvulation = extras.getBoolean(SettingActivity.IsNotifyOvulationCheckExtra);
+                    int notifyPeriodDay = extras.getInt(SettingActivity.NotifyPeriodDaysExtra);
+                    int notifyOvulationDay = extras.getInt(SettingActivity.NotifyOvulationDaysExtra);
 
-                setSharedPreference(PSettingIsNotifyPeriod, isNotifyPeriod?1:0);
-                setSharedPreference(PSettingIsNotifyOvulation, isNotifyOvulation?1:0);
-                setSharedPreference(PSettingNotifyPeriodDay, notifyPeriodDay);
-                setSharedPreference(PSettingNotifyOvulationDay, notifyOvulationDay);
+                    setSharedPreference(PSettingIsNotifyPeriod, isNotifyPeriod ? 1 : 0);
+                    setSharedPreference(PSettingIsNotifyOvulation, isNotifyOvulation ? 1 : 0);
+                    setSharedPreference(PSettingNotifyPeriodDay, notifyPeriodDay);
+                    setSharedPreference(PSettingNotifyOvulationDay, notifyOvulationDay);
 
-                if(isNotifyOvulation || isNotifyPeriod) {
+                    if (isNotifyOvulation || isNotifyPeriod) {
 
-                    SummaryRepository summary = SummaryRepository.getSummary(this);
-                    if(summary == null) {
+                        SummaryRepository summary = SummaryRepository.getSummary(this);
+                        if (summary == null) {
 
-                        Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG);
-                        break;
+                            Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG).show();
+
+                            break;
+                        }
+
+                        setBroadcastNotification(summary);
                     }
 
-                    BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
-
-                    if(isNotifyPeriod) {
-
-                        notifier.setNotification(
-                                this,
-                                summary.expectedMenstrualDateFrom.minusDays(notifyPeriodDay),
-                                getResources().getString(R.string.notify_period_title),
-                                getResources().getString(R.string.notify_period_message)
-                        );
-                        addUsageCounter(PSettingNotifyPeriodCounter);
-                    }
-
-                    if(isNotifyOvulation) {
-
-                        notifier.setNotification(
-                                this,
-                                summary.expectedOvulationDateFrom.minusDays(notifyOvulationDay),
-                                getResources().getString(R.string.notify_ovulation_title),
-                                getResources().getString(R.string.notify_ovulation_message)
-                        );
-                        addUsageCounter(PSettingNotifyOvulationCounter);
-                    }
+                    break;
                 }
+                case SettingActivity.CancelAction: {
 
-                break;
+
+                    break;
+                }
             }
-            case SettingActivity.CancelAction : {
-
-
-                break;
-            }
+        } catch (Resources.NotFoundException e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
-    private void saveComment(Intent intentResult) {
+    private void onDisplaySettingWizardResult(Intent data) {
 
-        if(intentResult == null) {return;}
+        try {
+            String json = data.getExtras().getString(SetupWizardActivity.ExtraKey);
+            SetupWizardActivityExtra extra = SetupWizardActivityExtra.fromJson(json);
 
-        String date = intentResult.getExtras().get("Date").toString();
-        DateTime targetDate = DateTime.parse(date);
-        String comment = intentResult.getExtras().get("Comment").toString();
-        DatabaseRepositoryHelper helper = new DatabaseRepositoryHelper(this);
+            setting.periodCycle = extra.cycleLength;
+            setting.periodLength = extra.periodLength;
+            setting.saveSetting(this);
 
-        final LinearLayout dateLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
-        final EditText commentText = (EditText)findViewById(R.id.notation_text);
+            boolean isNotifyPeriod = extra.notifyBeforeMenstrual != SetupWizardActivityExtra.NotNotifyMe;
+            boolean isNotifyOvulation = extra.notifyBeforeOvulation != SetupWizardActivityExtra.NotNotifyMe;
+            int notifyPeriodDay = extra.notifyBeforeMenstrual;
+            int notifyOvulationDay = extra.notifyBeforeOvulation;
 
-        DateRepository.updateDateRepositorySetComment(this, targetDate, comment);
+            setSharedPreference(PSettingIsNotifyPeriod, isNotifyPeriod ? 1 : 0);
+            setSharedPreference(PSettingIsNotifyOvulation, isNotifyOvulation ? 1 : 0);
+            setSharedPreference(PSettingNotifyPeriodDay, notifyPeriodDay);
+            setSharedPreference(PSettingNotifyOvulationDay, notifyOvulationDay);
 
-        DateTime firstDate = ((DateMeter) dateLayout.getChildAt(1)).getDate();
-        int dateDiff = (int)((targetDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
-        DateMeter targetDateToSave = (DateMeter)dateLayout.getChildAt(1 + dateDiff);
-        targetDateToSave.comment = comment;
-        commentText.setText(comment);
+            if (isNotifyOvulation || isNotifyPeriod) {
+
+                SummaryRepository summary = SummaryRepository.getSummary(this);
+                if (summary == null) {
+
+                    Toast.makeText(this, getResources().getText(R.string.notify_summary_not_set), Toast.LENGTH_LONG).show();
+
+                    return;
+                }
+
+                setBroadcastNotification(summary);
+            }
+        } catch (Resources.NotFoundException e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
     private void paintDateMeter(DateTime startDate, DateTime endDate, int type) {
 
-        LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        try {
+            for (int i = 1; i < dateMeterContainer.getChildCount() - 1; i++) {
 
-        for(int i = 1; i < dateMeterLayout.getChildCount() -1 ; i++) {
-
-            DateMeter targetDateMeter = ((DateMeter)dateMeterLayout.getChildAt(i));
-            if(targetDateMeter.getDate().compareTo(endDate) <= 0 && targetDateMeter.getDate().compareTo(startDate) >= 0) {
-                switch(type) {
-                    case DateMeter.Menstrual : ((DateMeter)dateMeterLayout.getChildAt(i)).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual); break;
-                    case DateMeter.Ovulation : ((DateMeter)dateMeterLayout.getChildAt(i)).changeColor(DateMeter.OvulationColor, DateMeter.Ovulation); break;
-                    case DateMeter.Nothing : ((DateMeter)dateMeterLayout.getChildAt(i)).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing); break;
+                DateMeter targetDateMeter = ((DateMeter) dateMeterContainer.getChildAt(i));
+                if (targetDateMeter.getDate().compareTo(endDate) <= 0 && targetDateMeter.getDate().compareTo(startDate) >= 0) {
+                    ((DateMeter) dateMeterContainer.getChildAt(i)).changeColor(type);
                 }
-
             }
-        }
 
-        for(int i = 0; i <= (endDate.getMillis() - startDate.getMillis()) / 86400000 ; i++) {
+            for (int i = 0; i <= (endDate.getMillis() - startDate.getMillis()) / 86400000; i++) {
 
-            DateRepository.updateDateRepositorySetDateType(this, startDate.plusDays(i), type);
+                DateRepository.updateDateRepositorySetDateType(this, startDate.plusDays(i), type);
+            }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
@@ -945,192 +1661,158 @@ public class InitialActivity extends Activity {
 
     private void endLayoutAction(final LinearLayout callbackLayout, boolean isRightEnd) {
 
-        if(isRightEnd) {
+        try {
+            if (isRightEnd) {
 
-            addUsageCounter(PFetchNextMonthUsageCounter);
+                addUsageCounter(PFetchNextMonthUsageCounter);
 
-            DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(callbackLayout.getChildCount() - 2);
-            callbackLayout.removeViewAt(callbackLayout.getChildCount() - 1);
-            addDateMeter(callbackLayout, lastDateMeter.getDate().plusDays(1), lastDateMeter.getDate().plusDays(15), true);
-            callbackLayout.addView(generateEndLayout(callbackLayout));
-        } else {
+                DateMeter lastDateMeter = getLastDateMeter();
+                callbackLayout.removeViewAt(callbackLayout.getChildCount() - 1);
+                addDateMeter(callbackLayout, lastDateMeter.getDate().plusDays(1), lastDateMeter.getDate().plusDays(15), true);
+                callbackLayout.addView(generateEndLayout(callbackLayout));
+            } else {
 
-            addUsageCounter(PFetchPreviousMonthUsageCounter);
+                addUsageCounter(PFetchPreviousMonthUsageCounter);
 
-            DateMeter lastDateMeter = (DateMeter) callbackLayout.getChildAt(1);
-            callbackLayout.removeViewAt(0);
-            addDateMeter(callbackLayout, lastDateMeter.getDate().minusDays(15), lastDateMeter.getDate().minusDays(1), false);
-            callbackLayout.addView(generateEndLayout(callbackLayout, false), 0);
+                DateMeter lastDateMeter = getFirstDateMeter();
+                callbackLayout.removeViewAt(0);
+                addDateMeter(callbackLayout, lastDateMeter.getDate().minusDays(15), lastDateMeter.getDate().minusDays(1), false);
+                callbackLayout.addView(generateEndLayout(callbackLayout, false), 0);
 
-            Handler h = new Handler();
-            h.postDelayed(new Runnable() {
+                Handler h = new Handler();
+                h.postDelayed(new Runnable() {
 
-                @Override
-                public void run() {
-                    HorizontalScrollView parant = (HorizontalScrollView)callbackLayout.getParent();
-                    parant.scrollTo(callbackLayout.getChildAt(1).getWidth() * 15, 0);
-                }
-            }, 50);
+                    @Override
+                    public void run() {
+                        HorizontalScrollView parant = (HorizontalScrollView) callbackLayout.getParent();
+                        parant.scrollTo(callbackLayout.getChildAt(1).getWidth() * 15, 0);
+                    }
+                }, 50);
+            }
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
     private LinearLayout generateEndLayout(final LinearLayout callbackLayout, final boolean isRightEnd) {
 
-        FetchingButton retLayout = new FetchingButton(this, isRightEnd);
-
-        retLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                endLayoutAction(callbackLayout, isRightEnd);
-            }
-        });
-
-        return retLayout;
-    }
-
-    private void manageAds(UUID deviceId) {
-
-        adsManager = adsManager == null ? new AdsManagerImpl(deviceId) : adsManager;
-
-        adsManager.requestAds(new OnAdsRequestReturnEventListener() {
-            @Override
-            public void onAdsInfoReturn(AdsInfo adsInfo) {
-
-                adsText = adsInfo.AdsText;
-                adsUrl = adsInfo.AdsUrl;
-
-                adjustLayoutForAds();
-            }
-        }, getStringPreference(PSettingDisplayedLanguage));
-    }
-
-    private void adjustLayoutForAds() {
-
-        LinearLayout appLayout = (LinearLayout) findViewById(R.id.day_view);
-        LinearLayout adsLayout = (LinearLayout) findViewById(R.id.ads_view);
-        LinearLayout adsMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
-
         try {
+            FetchingButton retLayout = new FetchingButton(this, isRightEnd);
 
-            if (adsManager.shouldDisplayAds()) {
+            retLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
 
-                appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
-                adsLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
+                    endLayoutAction(callbackLayout, isRightEnd);
+                }
+            });
 
-                TextView adsTextView = (TextView) findViewById(R.id.ads_text);
-                adsTextView.setText(adsText);
-                adsTextView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        adsManager.addCounter();
-                        adsManager.submitAndResetAdsClick();
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(adsUrl)));
-                    }
-                });
-            } else {
-
-                appLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 0.9f - adsManager.calculateAdsRatio()));
-                adsMobLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, adsManager.calculateAdsRatio()));
-                adsMobLayout.setVisibility(View.GONE);
-            }
-        } catch(Exception e) {
-            // Do nothing
+            return retLayout;
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+            return new FetchingButton(this, isRightEnd);
         }
     }
 
     private void addDateMeter(LinearLayout targetLayout, DateTime startDate, DateTime endDate, boolean isRight) {
 
-        List<DateRepository> dates = DateRepository.getDateRepositories(this, startDate, endDate);
+        try {
+            List<DateRepository> dates = DateRepository.getDateRepositories(this, startDate, endDate);
 
+            Cursor c = new DatabaseRepositoryHelper(this).getReadableDatabase().rawQuery("SELECT * FROM DATE_REPOSITORY WHERE date = '2015-11-15'", null);
+            c.moveToFirst();
 
-        Cursor c = new DatabaseRepositoryHelper(this).getReadableDatabase().rawQuery("SELECT * FROM DATE_REPOSITORY WHERE date = '2015-11-15'",  null);
-        c.moveToFirst();
-
-        // to setting up the DateMeter's color
-        new DateMeter(this, DateTime.now(), 0, null, null, 0, 0f);
-
-        if(isRight) {
-            for (int i = 0; i < dates.size(); i++) {
-
-                int color = 0;
-                switch (dates.get(i).dateType) {
-                    case DateMeter.Menstrual:
-                        color = DateMeter.MenstrualColor;
-                        break;
-                    case DateMeter.Ovulation:
-                        color = DateMeter.OvulationColor;
-                        break;
-                    case DateMeter.Nothing:
-                    default:
-                        color = DateMeter.SafeZoneColor;
-                        break;
+            if (isRight) {
+                for (int i = 0; i < dates.size(); i++) {
+                    targetLayout.addView(new DateMeter(this, dates.get(i), dateTouchListener));
                 }
-                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature));
-            }
-        } else {
-            for(int i = dates.size() - 1; i >= 0; i--) {
-
-                int color = 0;
-                switch (dates.get(i).dateType) {
-                    case DateMeter.Menstrual: color = DateMeter.MenstrualColor; break;
-                    case DateMeter.Ovulation: color = DateMeter.OvulationColor; break;
-                    case DateMeter.Nothing:
-                    default: color = DateMeter.SafeZoneColor; break;
+            } else {
+                for (int i = dates.size() - 1; i >= 0; i--) {
+                    targetLayout.addView(new DateMeter(this, dates.get(i), dateTouchListener), 0);
                 }
-                targetLayout.addView(new DateMeter(this, dates.get(i).date, color, dateTouchListener, dates.get(i).comment, dates.get(i).dateType, dates.get(i).temperature), 0);
             }
+            c.close();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
     }
 
     private boolean selectedDateIsBeforeTheFirstDateMeter(LinearLayout dateMeterHolder) {
 
-        return ((DateMeter)(dateMeterHolder.getChildAt(1))).getDate().isAfter(selectedDate.getMillis());
+        return ((DateMeter) (dateMeterHolder.getChildAt(1))).getDate().isAfter(selectedDate.getDate().getMillis());
     }
 
     private boolean selectedDateIsAfterTheLastDateMeter(LinearLayout dateMeterHolder) {
 
-        return ((DateMeter)(dateMeterHolder.getChildAt(dateMeterHolder.getChildCount()-2))).getDate().isBefore(selectedDate.getMillis());
+        return ((DateMeter) (dateMeterHolder.getChildAt(dateMeterHolder.getChildCount() - 2))).getDate().isBefore(selectedDate.getDate().getMillis());
     }
 
     private void addPeriodAndOvulationFlagToDateMeters() {
 
-        addUsageCounter(PPeriodButtonUsageCounter);
+        try {
+            addUsageCounter(PPeriodButtonUsageCounter);
 
-        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
-        int counter = 50;
+            int counter = 50;
 
-        while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0) {
+            while (selectedDateIsBeforeTheFirstDateMeter(dateMeterContainer) && counter-- > 0) {
 
-            endLayoutAction(v, false);
+                endLayoutAction(dateMeterContainer, false);
+            }
+            counter = 50;
+            while (selectedDateIsAfterTheLastDateMeter(dateMeterContainer) && counter-- > 0) {
+
+                endLayoutAction(dateMeterContainer, true);
+            }
+
+            int index = getSelectedDateMeterIndex();
+
+            ((DateMeter) (dateMeterContainer.getChildAt(index))).changeColor(DateMeter.Menstrual);
+            DateTime dateToBePainted = ((DateMeter) (dateMeterContainer.getChildAt(index))).getDate();
+
+            DateTime endOfMenstrualPeriod = dateToBePainted.plusDays((int) setting.periodLength - 1);
+            DateTime startOfOvulationPeriod = dateToBePainted.plusDays(7);
+            DateTime endOfOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 8);
+            DateTime ovulationDate = startOfOvulationPeriod.plusDays(((int) (endOfOvulationPeriod.getMillis() - startOfOvulationPeriod.getMillis()) / 2) / 1000 / 60 / 60 / 24);
+            ovulationDate = ovulationDate.minusMillis(ovulationDate.getMillisOfDay());
+            DateTime startNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle - 7);
+            DateTime endNonOvulationPeriod = dateToBePainted.plusDays((int) setting.periodCycle);
+            DateTime estimatedNextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
+            DateTime estimatedNextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 2);
+
+            paintDateMeter(dateToBePainted, endOfMenstrualPeriod, DateMeter.Menstrual);
+            paintDateMeter(startOfOvulationPeriod, endOfOvulationPeriod, DateMeter.PossiblyOvulation);
+            paintDateMeter(ovulationDate, ovulationDate, DateMeter.OvulationDate);
+            paintDateMeter(startNonOvulationPeriod, endNonOvulationPeriod, DateMeter.Nothing);
+            paintDateMeter(estimatedNextMenstrualFrom, estimatedNextMenstrualTo, DateMeter.ExpectedMenstrual);
+
+            DateTime nextMenstrualFrom = dateToBePainted.plusDays((int) setting.periodCycle - 1);
+            DateTime nextMenstrualTo = dateToBePainted.plusDays((int) setting.periodCycle + 1);
+            DateTime nextOvulationFrom = dateToBePainted.plusDays(6);
+            DateTime nextOvulationTo = dateToBePainted.plusDays((int) setting.periodCycle - 8);
+
+            SummaryRepository summary = new SummaryRepository();
+            summary.expectedMenstrualDateTo = nextMenstrualTo;
+            summary.expectedMenstrualDateFrom = nextMenstrualFrom;
+            summary.expectedOvulationDateTo = nextOvulationTo;
+            summary.expectedOvulationDateFrom = nextOvulationFrom;
+            summary.expectedOvulationDate = nextOvulationFrom.plusDays((int) (nextOvulationTo.getMillis() - nextOvulationFrom.getMillis()) / 2 / 1000 / 60 / 60 / 24);
+
+            setBroadcastNotification(summary);
+
+            Intent summaryIntent = new Intent(this, SummaryActivity.class);
+            SummaryActivityExtra extra = SummaryActivityExtra.fromSummaryRepository(summary);
+            summaryIntent.putExtra(SummaryActivityExtra.SummaryActivityExtraExtra, extra.toJson());
+            startActivityForResult(summaryIntent, DisplaySummary);
+        } catch (Resources.NotFoundException e) {
+            HttpHelper.sendErrorLog(e);
         }
-        counter = 50;
-        while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
+    }
 
-            endLayoutAction(v, true);
-        }
+    private void setBroadcastNotification(SummaryRepository summary) {
 
-        int index = getSelectedDateMeterIndex();
-        int newType = 0;
+        if (getUsageCounter(PSettingIsNotifyPeriod) == 1) {
 
-        ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.MenstrualColor, DateMeter.Menstrual);
-        DateTime dateToBePainted = ((DateMeter)(v.getChildAt(index))).getDate();
-        paintDateMeter(dateToBePainted, dateToBePainted.plusDays((int)setting.periodLength - 1), DateMeter.Menstrual);
-        paintDateMeter(dateToBePainted.plusDays(7), dateToBePainted.plusDays((int)setting.periodCycle - 7), DateMeter.Ovulation);
-        paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 7), dateToBePainted.plusDays((int)setting.periodCycle - 1), DateMeter.Nothing);
-        paintDateMeter(dateToBePainted.plusDays((int)setting.periodCycle - 1), dateToBePainted.plusDays((int)setting.periodCycle + 1), DateMeter.Menstrual);
-        newType = DateMeter.Menstrual;
-
-        Intent summaryIntent = new Intent(this, SummaryActivity.class);
-        summaryIntent.putExtra(SummaryActivity.NextMenstrualFromExtra, dateToBePainted.plusDays((int)setting.periodCycle - 1).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextMenstrualToExtra, dateToBePainted.plusDays((int)setting.periodCycle + 1).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextOvulationFromExtra, dateToBePainted.plusDays(6).toString("yyyy-MM-dd"));
-        summaryIntent.putExtra(SummaryActivity.NextOvulationToExtra, dateToBePainted.plusDays((int)setting.periodCycle - 8).toString("yyyy-MM-dd"));
-
-        if(getUsageCounter(PSettingIsNotifyPeriod) == 1) {
-
-            DateTime dateToBeNotified = DateTime.parse(summaryIntent.getExtras()
-                    .getString(SummaryActivity.NextMenstrualFromExtra))
+            DateTime dateToBeNotified = summary.expectedMenstrualDateFrom
                     .minusDays(getUsageCounter(PSettingNotifyPeriodDay));
 
             BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
@@ -1139,107 +1821,325 @@ public class InitialActivity extends Activity {
                     getResources().getString(R.string.notify_period_message));
         }
 
-        if(getUsageCounter(PSettingIsNotifyOvulation) == 1) {
+        if (getUsageCounter(PSettingIsNotifyOvulation) == 1) {
 
-            DateTime dateTimeToBeNotified = DateTime.parse(summaryIntent.getExtras()
-                    .getString(SummaryActivity.NextOvulationFromExtra))
+            DateTime dateTimeToBeNotified = summary.expectedOvulationDate
                     .minusDays(getUsageCounter(PSettingNotifyOvulationDay));
+
             BroadcastNotificationPublisher notifier = new BroadcastNotificationPublisher();
             notifier.setNotification(this, dateTimeToBeNotified,
                     getResources().getString(R.string.notify_ovulation_title),
                     getResources().getString(R.string.notify_ovulation_message));
         }
-
-        startActivityForResult(summaryIntent, DisplaySummary);
     }
 
     private void removePeriodAndOvulationFlagToDateMeter() {
 
-        LinearLayout v = (LinearLayout) findViewById(R.id.dateScrollerContent);
-        int counter = 50;
+        try {
+            int counter = 50;
 
-        while(selectedDateIsBeforeTheFirstDateMeter(v) && counter-- > 0 ) {
+            while (selectedDateIsBeforeTheFirstDateMeter(dateMeterContainer) && counter-- > 0) {
 
-            endLayoutAction(v, false);
+                endLayoutAction(dateMeterContainer, false);
+            }
+            counter = 50;
+            while (selectedDateIsAfterTheLastDateMeter(dateMeterContainer) && counter-- > 0) {
+
+                endLayoutAction(dateMeterContainer, true);
+            }
+
+            int index = getSelectedDateMeterIndex();
+
+            addUsageCounter(PNonPeriodButtonUsageCounter);
+            DateMeter dateMeterToBeChange = ((DateMeter) (dateMeterContainer.getChildAt(index)));
+            DateTime dateToBeChange = dateMeterToBeChange.getDate();
+
+            paintDateMeter(dateToBeChange, dateToBeChange, DateMeter.Nothing);
+            dateMeterToBeChange.changeColor(DateMeter.Nothing);
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
         }
-        counter = 50;
-        while(selectedDateIsAfterTheLastDateMeter(v) && counter-- > 0 ) {
-
-            endLayoutAction(v, true);
-        }
-
-        int index = getSelectedDateMeterIndex();
-
-        addUsageCounter(PNonPeriodButtonUsageCounter);
-        paintDateMeter(((DateMeter)(v.getChildAt(index))).getDate(), ((DateMeter)(v.getChildAt(index))).getDate(), DateMeter.SafeZoneColor);
-        ((DateMeter)(v.getChildAt(index))).changeColor(DateMeter.SafeZoneColor, DateMeter.Nothing);
     }
 
     private int getSelectedDateMeterIndex() {
 
         int index = 0;
 
-        LinearLayout v = (LinearLayout)findViewById(R.id.dateScrollerContent);
+        try {
+            DateTime firstDate = ((DateMeter) dateMeterContainer.getChildAt(1)).getDate();
+            int dateDiff = (int) ((selectedDate.getDate().getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
 
-        DateTime firstDate = ((DateMeter)v.getChildAt(1)).getDate();
-        int dateDiff = (int) ((selectedDate.getMillis() - firstDate.getMillis()) / 1000 / 60 / 60 / 24);
-
-        index = dateDiff + 1;
+            index = dateDiff + 1;
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+            return index;
+        }
         return index;
     }
 
-    private void setTemperatureToDateMeter(DateTime toDate, float temperature) {
-
-        DateRepository.updateDateRepositorySetTemperature(this, toDate, temperature);
+    private DateMeter getFirstDateMeter() {
+        return (DateMeter) dateMeterContainer.getChildAt(1);
     }
+
+    private DateMeter getLastDateMeter() {
+        return (DateMeter) dateMeterContainer.getChildAt(dateMeterContainer.getChildCount() - 2);
+    }
+
+    static boolean isAdjusted = false;
 
     private void moveDateMeterToCurrentDate() {
 
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
+        try {
+            ViewTreeObserver obs = dateMeterContainer.getViewTreeObserver();
 
-            @Override
-            public void run() {
+            obs.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
 
-                final LinearLayout dateMeterLayout = (LinearLayout)findViewById(R.id.dateScrollerContent);
-                final HorizontalScrollView scrollView = (HorizontalScrollView)findViewById(R.id.dateScroller);
+                    if (isAdjusted) {
+                        return;
+                    } else if (dateMeterContainer.getWidth() == 0) {
+                        return;
+                    }
 
-                scrollView.scrollTo(dateMeterLayout.getChildAt(1).getWidth() * 15, 0);
-                DateMeter today = (DateMeter) dateMeterLayout.getChildAt(16);
+                    isAdjusted = true;
 
-                if(setting.isFirstTime) {
-                    setting.isFirstTime = false;
-                    setting.saveSetting(getBaseContext());
-                    Intent settingIntent = new Intent(getBaseContext(), SettingActivity.class);
-                    settingIntent.putExtra(SettingActivity.PeriodLengthExtra, setting.periodLength);
-                    settingIntent.putExtra(SettingActivity.PeriodCycleExtra, setting.periodCycle);
-                    settingIntent.putExtra(SettingActivity.AverageCycleExtra, setting.averageCycle);
-                    settingIntent.putExtra(SettingActivity.AverageLengthExtra, setting.averageLength);
-                    settingIntent.putExtra(SettingActivity.CountExtra, setting.count);
-                    settingIntent.putExtra(SettingActivity.FlagExtra, setting.flag);
-                    startActivityForResult(settingIntent, DisplaySetting);
+                    int[] firstChildLocal = new int[2];
+                    int[] scrollViewLocal = new int[2];
+
+                    dateMeterScroller.getChildAt(0).getLocationOnScreen(firstChildLocal);
+                    dateMeterScroller.getLocationOnScreen(scrollViewLocal);
+
+                    if (firstChildLocal[0] == scrollViewLocal[0]) {
+                        int[] todayLocal = new int[2];
+                        int[] fingerIndexLocal = new int[2];
+
+                        dateMeterContainer.getChildAt(16).getLocationOnScreen(todayLocal);
+                        fingerIndex.getLocationOnScreen(fingerIndexLocal);
+                        dateMeterScroller.scrollTo(todayLocal[0] -
+                                dateMeterScroller.getWidth() / 2, 0);
+                    }
+
+                    if (setting.isFirstTime) {
+                        setting.isFirstTime = false;
+
+                        Intent wizardIntent = new Intent(getBaseContext(), SetupWizardActivity.class);
+                        startActivityForResult(wizardIntent, DisplaySettingWizard);
+
+                        setting.saveSetting(getBaseContext());
+                    }
+
+                    int targetLength = (int) (dateMeterScroller.getHeight() * 0.5);
+                    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(targetLength, targetLength);
+                    params.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+                    fingerIndex.setLayoutParams(params);
+
+                    selectedDate = (DateMeter) dateMeterContainer.getChildAt(17);
+                    setDateDetailText(selectedDate);
+                    dateMeterScroller.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            setSelectedDateToAlignWithFingerIndex();
+                        }
+                    }, 50);
                 }
-
-                int indicatorValue = HelpIndicatorRepository.getIndicator(getBaseContext());
-
-                if((indicatorValue & 1) == 1) {
-
-                    Intent helpIntent = new Intent(getBaseContext(), HelpActivity.class);
-                    helpIntent.putExtra("INDICATOR", indicatorValue);
-                    startActivityForResult(helpIntent, DisplayHelp);
-                }
-            }
-        }, 250);
+            });
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
     }
 
+    @SuppressWarnings("unused")
+    private int getDateMeterIndexFromDate(DateTime date) {
+        DateMeter firstDateMeter = (DateMeter) dateMeterContainer.getChildAt(1);
+        int dateDiff = (int) ((date.getMillis() - firstDateMeter.getDate().getMillis()) / 1000 / 60 / 60 / 24);
+        return dateDiff + 1;
+    }
+
+    synchronized private void moveDateMeter(int targetPixel) {
+        moveDateMeter(targetPixel, 0);
+    }
+
+    synchronized private void moveDateMeter(final int targetPixel, final int movedPixel) {
+
+        if (Math.abs(movedPixel) < Math.abs(targetPixel)) {
+            dateMeterScroller.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    dateMeterScroller.scrollBy(targetPixel / 10, 0);
+                    moveDateMeter(targetPixel, movedPixel + targetPixel / 10);
+                    setSelectedDateToAlignWithFingerIndex();
+                }
+            }, 10);
+        }
+    }
+
+    synchronized public static void sendTrafficMessage(Log log) {
+
+        try {
+            if (log == null) {
+                return;
+            }
+
+            if (DeviceId != null) {
+                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490") ||
+                        DeviceId.equals("481e9faa-1b89-4ec4-9439-4220bee1c6c2")) {
+                    return;
+                }
+            }
+
+            tracker.setScreenName(log.getScreenType());
+            tracker.setClientId(log.getDeviceId());
+            tracker.setAppVersion(log.getApplicationVersion());
+            tracker.setLanguage(log.getLanguage());
+            tracker.send(new HitBuilders.EventBuilder()
+                    .setCategory(log.getCategory())
+                    .setAction(log.getAction())
+                    .build());
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    synchronized public static void sendLoadTimeMessage(Log log, long loadTime) {
+
+        try {
+            if (log == null) {
+                return;
+            }
+
+            if (DeviceId != null) {
+                if (DeviceId.equals("2e0dc207-3f43-421a-a1ae-c47dcdd15490") ||
+                        DeviceId.equals("481e9faa-1b89-4ec4-9439-4220bee1c6c2")) {
+                    return;
+                }
+            }
+
+            tracker.setScreenName(log.getScreenType());
+            tracker.setClientId(log.getDeviceId());
+            tracker.setAppVersion(log.getApplicationVersion());
+            tracker.setLanguage(log.getLanguage());
+            tracker.send(new HitBuilders.TimingBuilder()
+                    .setCategory(log.getCategory())
+                    .setVariable(log.getAction())
+                    .setValue(loadTime)
+                    .setLabel("Load Time")
+                    .build());
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private void processDateDetailFlinging(float distant) {
+        int newDateMeterIndex = distant > 0 ? getSelectedDateMeterIndex() + 1 : getSelectedDateMeterIndex() - 1;
+        if (newDateMeterIndex == 0 || newDateMeterIndex == dateMeterContainer.getChildCount() - 1)
+            return;
+        DateMeter currentSelectedDate = selectedDate;
+        DateMeter newSelectedDate = (DateMeter) dateMeterContainer.getChildAt(newDateMeterIndex);
+        selectedDate = newSelectedDate;
+
+        int direction = distant > 0 ? -1 : 1;
+
+        moveDateMeter(direction * (currentSelectedDate.getWidth() / 2 + newSelectedDate.getWidth() / 2 - 30));
+    }
+
+    private void getAllViews() {
+        try {
+            dateMeterContainer = (LinearLayout) findViewById(R.id.dateScrollerContent);
+            newActionPanel = (LinearLayout) findViewById(R.id.new_action_panel);
+            adMobLayout = (LinearLayout) findViewById(R.id.ads_mob_view);
+            dateMeterScroller = (HorizontalScrollView) findViewById(R.id.dateScroller);
+            fingerIndex = (ImageView) findViewById(R.id.finger_pointer);
+            dateDetailActionButton = (Button) findViewById(R.id.date_detail_action_button);
+            helpButton = (ImageButton) findViewById(R.id.main_help_button);
+            dateDetailMainLayout = (LinearLayout) findViewById(R.id.date_detail_main_layout);
+            conclusionSuggestDate = (TextView) findViewById(R.id.conclusion_suggestion_date);
+            conclusionSuggestionDaysToDate = (TextView) findViewById(R.id.conclusion_suggestion_days_to_the_date);
+            conclusionEstimatedNextMenstrualDate = (TextView) findViewById(R.id.conclusion_estimated_next_menstrual_date_string);
+            conclusionEstimatedNextMenstrualDaysToDate = (TextView) findViewById(R.id.conclusion_estimated_next_menstrual_days_string);
+            headerText = (TextView) findViewById(R.id.main_header_text);
+
+            summaryViewLayoutButton = (LinearLayout) findViewById(R.id.summary_view_layout_button);
+            dayViewLayoutButton = (LinearLayout) findViewById(R.id.day_view_layout_button);
+            calendarViewLayoutButton = (LinearLayout) findViewById(R.id.calendar_view_layout_button);
+            temperatureViewLayoutButton = (LinearLayout) findViewById(R.id.temperature_view_layout_button);
+
+            registerOnclickAndOnSwipeEvent();
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private void registerOnclickAndOnSwipeEvent() {
+        try {
+            helpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    log.setAction(Log.Action.ClickMainHelp);
+                    log.setCategory(Log.Category.Button);
+                    log.setScreenType(Log.Screen.MainScreenName);
+                    sendTrafficMessage(log);
+
+                    Intent intent = new Intent(getBaseContext(), MainHelpActivity.class);
+                    startActivity(intent);
+                }
+            });
+            dateDetailMainLayout.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return gestureDetector.onTouchEvent(event);
+                }
+            });
+        } catch (Exception e) {
+            HttpHelper.sendErrorLog(e);
+        }
+    }
+
+    private Button dateDetailActionButton;
+    private ImageView fingerIndex;
+    private LinearLayout dateMeterContainer;
+    private HorizontalScrollView dateMeterScroller;
+    private LinearLayout newActionPanel;
+    private NativeExpressAdView adView;
+    private LinearLayout adMobLayout;
+    private ImageButton helpButton;
+    private LinearLayout dateDetailMainLayout;
+
+    private TextView conclusionSuggestDate;
+    private TextView conclusionSuggestionDaysToDate;
+    private TextView conclusionEstimatedNextMenstrualDate;
+    private TextView conclusionEstimatedNextMenstrualDaysToDate;
+    private TextView headerText;
+
+    private LinearLayout summaryViewLayoutButton;
+    private LinearLayout dayViewLayoutButton;
+    private LinearLayout calendarViewLayoutButton;
+    private LinearLayout temperatureViewLayoutButton;
+
+
+    private GestureDetector gestureDetector = new GestureDetector(getBaseContext(), new GestureDetector.SimpleOnGestureListener() {
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (Math.abs(velocityX) > 200) {
+                processDateDetailFlinging(velocityX);
+            }
+            return true;
+        }
+    });
+
     private int calendarCurrentMonth, calendarCurrentYear;
-    private OnDateMeterTouchEventListener dateTouchListener;
+    private OnDateMeterFocusListener dateTouchListener;
     private PeriodCalendar calendar;
-    private String adsUrl;
-    private String adsText;
-    private IAdsManager adsManager;
-    private DateTime selectedDate = null;
-    private ChartHandler _chartHandler = null;
-    private ChartFetchingOnclickHandler _chartButtonHandler = null;
-    private Context _thisContext = this;
+    private DateMeter selectedDate = null;
+
+    @SuppressLint("StaticFieldLeak")
+    public static AppForStatic analyticsApplication;
+    public static String DeviceId;
+    public static Tracker tracker;
+    public Log log;
 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="date_detail_small_chance">Small chance to get pregnant today\n</string>
+    <string name="date_detail_have_some_change">Have some chances to get pregnant today\n</string>
+    <string name="date_detail_ovulation_date">Ovulation Date\n</string>
+    <string name="date_detail_est_next_ovulation">Estimated next ovulation in %1$s days\n</string>
+    <string name="date_detail_est_next_period">Estimated Next Period date in %1$s days</string>
+    <string name="date_detail_add_detail">Add information to this day</string>
+    <string name="date_detail_no_detail_yet">Please add your previous period by scrolling to the day and click "Add information to this day" button below.</string>
+    <string name="date_detail_click_to_see_more">Click to see more</string>
+</resources>

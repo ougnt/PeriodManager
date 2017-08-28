@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="instruction_select_date">1. Select your last period start date.</string>
+    <string name="instruction_date_detail">2. Click add detail button.</string>
+    <string name="instruction_add_detail_button">3. Click this button to mark that this day is the first day of your period</string>
+    <string name="instruction_save_button">4. Click Save button when you fill in all the information</string>
+    <string name="instruction_next_button">Next</string>
+</resources>

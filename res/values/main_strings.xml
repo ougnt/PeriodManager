@@ -12,4 +12,7 @@
     <string name="friday">Fri</string>
     <string name="saturday">Sat</string>
     <string name="sunday">Sun</string>
+    <string name="main_date_view">Date View</string>
+    <string name="main_calendar_view">Calendar View</string>
+    <string name="main_temperature_view">Temperature View</string>
 </resources>

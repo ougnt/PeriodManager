@@ -23,13 +23,10 @@ public class SettingActivity extends Activity {
     public static final String AverageLengthExtra = "AversionLength";
     public static final String AverageCycleExtra = "AverageCycle";
     public static final String CountExtra = "Count";
-    public static final String FlagExtra = "Flag";
     public static final String IsNotifyPeriodCheckExtra = "IsNotifyPeriodCheckExtra";
     public static final String IsNotifyOvulationCheckExtra = "IsNotifyOvulationCheckExtra";
     public static final String NotifyPeriodDaysExtra = "NotifyPeriodDaysExtra";
     public static final String NotifyOvulationDaysExtra = "NotifyOvulationDaysExtra";
-
-    int flag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,13 +48,11 @@ public class SettingActivity extends Activity {
         notifyPeriodCheckbox.setChecked(intent.getExtras().getInt(IsNotifyPeriodCheckExtra, 0) == 1);
         notifyOvulationCheckbox.setChecked(intent.getExtras().getInt(IsNotifyOvulationCheckExtra, 0) == 1);
 
-        notifyPeriodDay.setText(intent.getExtras().getInt(NotifyPeriodDaysExtra, 1) + "");
-        notifyOvulationDay.setText(intent.getExtras().getInt(NotifyOvulationDaysExtra, 1) + "");
+        notifyPeriodDay.setText(String.valueOf(intent.getExtras().getInt(NotifyPeriodDaysExtra, 1)));
+        notifyOvulationDay.setText(String.valueOf(intent.getExtras().getInt(NotifyOvulationDaysExtra, 1)));
 
-        periodCycle.setText(intent.getExtras().getFloat(PeriodCycleExtra) + "");
-        periodLength.setText(intent.getExtras().getFloat(PeriodLengthExtra) + "");
-
-        flag = (getIntent().getExtras().getInt(FlagExtra));
+        periodCycle.setText(String.valueOf(intent.getExtras().getFloat(PeriodCycleExtra)));
+        periodLength.setText(String.valueOf(intent.getExtras().getFloat(PeriodLengthExtra)));
     }
 
     public void onCancelButtonClick(View view){
@@ -96,7 +91,6 @@ public class SettingActivity extends Activity {
         retIntent.putExtra(ActionExtra, SaveAction);
         retIntent.putExtra(PeriodCycleExtra, Float.parseFloat(cycle));
         retIntent.putExtra(PeriodLengthExtra, Float.parseFloat(length));
-        retIntent.putExtra(FlagExtra, flag);
         retIntent.putExtra(IsNotifyPeriodCheckExtra,isPeriodNotify);
         retIntent.putExtra(IsNotifyOvulationCheckExtra, isOvulationNotify);
         retIntent.putExtra(NotifyPeriodDaysExtra, periodNotifyDays);

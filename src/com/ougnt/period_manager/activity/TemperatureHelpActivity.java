@@ -9,11 +9,6 @@ import android.widget.Button;
 
 import com.ougnt.period_manager.R;
 
-import java.util.Objects;
-
-/**
- * Created by wacharint on 6/13/16.
- */
 public class TemperatureHelpActivity extends Activity {
 
     @Override
@@ -30,6 +25,7 @@ public class TemperatureHelpActivity extends Activity {
         if (displayedLanguage.equals("th") ||
                 displayedLanguage.equals("en") ||
                 displayedLanguage.equals("ja")) {
+
         } else {
 
             displayedLanguage = "en";

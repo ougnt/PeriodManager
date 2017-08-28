@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "1070910834241",
+    "project_id": "firebase-period-calendar"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1070910834241:android:2aff5161c0b92a46",
+        "android_client_info": {
+          "package_name": "com.ougnt.period_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCF1YtxqfllMudCyRol4v0ggvgOw1m6lU0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-84355293-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
