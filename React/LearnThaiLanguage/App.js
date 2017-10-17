@@ -1,11 +1,14 @@
 import React from 'react';
-import { StyleSheet, Text, View, Image, Dimensions, StatusBar, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, Image, Dimensions, StatusBar, TouchableNativeFeedback } from 'react-native';
+import ProgressScreen from './Progress.js';
 
-export default class App extends React.Component {
+let GlobalContent = require('./Content/global-content.js')
 
-  constructor(props) {
+export default class App extends React.Component { 
+
+  constructor(props) { 
     super(props);
-    this.state = {clickedButton: 'progress'};
+    this.state = {clickedButton: 'progress'}; 
   }
 
   onButtonClick = (clickedButton) => {  
@@ -29,16 +32,16 @@ export default class App extends React.Component {
     return (
       <View
         style={styles.container}> 
-      <StatusBar hidden={true} /> 
+      <StatusBar hidden={true} />  
         <Image  
           source={require('./img/main_bg.png')}
           style={styles.bgImage}>
           <Image 
             source={require('./img/title-bar.png')} 
             style={styles.titleBar}> 
-            <Text
-              style={styles.titleLabel}>
-              Thai 101
+            <Text 
+              style={styles.titleLabel}> 
+              {new GlobalContent().getTitleLabel()}
             </Text> 
             <Image 
               source={require('./img/gear.png')}
@@ -46,28 +49,34 @@ export default class App extends React.Component {
             />
           </Image>
           <View style={styles.buttonContainer}>  
-            <TouchableHighlight 
+
+            <TouchableNativeFeedback 
               onPress={() => {this.onButtonClick('progress');}}>  
               <Image
                 source={pregressImage} 
                 style={styles.button}>
               </Image> 
-            </TouchableHighlight>
-            <TouchableHighlight 
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback 
               onPress={() => {this.onButtonClick('lesson');}}>  
               <Image
                 source={lessonImage}
                 style={styles.button}>
               </Image>
-            </TouchableHighlight>
-            <TouchableHighlight 
+            </TouchableNativeFeedback>
+            <TouchableNativeFeedback 
               onPress={() => {this.onButtonClick('goal');}}>  
               <Image
                 source={goalImage}
                 style={styles.button}>
               </Image>
-            </TouchableHighlight>
-          </View>     
+            </TouchableNativeFeedback>
+          </View>
+          <ProgressScreen
+            learntWords={0.8}
+            learntGramma={0.2}
+            dailyGoal={0.29}
+            overallGoal={0.33} /> 
         </Image> 
       </View> 
     ); 
@@ -91,7 +100,7 @@ const styles = StyleSheet.create({
     height: screenHeight,
     alignItems: 'stretch',
     justifyContent: 'flex-start',
-  },
+  }, 
   titleBar: {
     width: screenWidth,
     height: screenHeight * 0.1,
