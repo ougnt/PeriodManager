@@ -5,6 +5,10 @@ import TitleBar from './components/information-screen/information-screen-titleba
 import DateScroller from './components/information-screen/date-scroller.js';
 import Menu from './components/menu-screen/menu.js';
 
+
+let screenWidth = Dimensions.get('window').width;   
+let screenHeight = Dimensions.get('window').height; 
+
 export default class PeriodManager extends React.Component {
   
   constructor(){
@@ -34,7 +38,10 @@ export default class PeriodManager extends React.Component {
                 dateScrollerLeftEdgeStyle= {styles.dateScrollerLeftEdgeStyle}
                 dateScrollerMidEdgeStyle = {styles.dateScrollerMidEdgeStyle}
                 dateScrollerRightEdgeStyle = {styles.dateScrollerRightEdgeStyle}
-                dateScrollerSideBarStyle= {styles.dateScrollerSideBarStyle} /> 
+                dateScrollerSideBarStyle= {styles.dateScrollerSideBarStyle}
+                dateMeterWidth= {screenWidth * 0.2}
+                fontColor='#999999'
+                fontColorToday='#FFA800' /> 
 
               <Menu 
                 givenStyle= { this.state.showMenu ? styles.menu : styles.hidden}
@@ -50,9 +57,6 @@ export default class PeriodManager extends React.Component {
     this.setState({showMenu: !this.state.showMenu});
   }
 }
-
-let screenWidth = Dimensions.get('window').width;   
-let screenHeight = Dimensions.get('window').height; 
 
 const styles = StyleSheet.create({ 
   container: {
