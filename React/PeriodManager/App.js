@@ -1,10 +1,10 @@
 import React from 'react';
-import { StyleSheet, Dimensions, View, StatusBar, Alert,TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Dimensions, View, StatusBar, Alert,TouchableWithoutFeedback, Image } from 'react-native';
 
 import TitleBar from './components/information-screen/information-screen-titlebar.js';
 import DateScroller from './components/information-screen/date-scroller.js';
 import Menu from './components/menu-screen/menu.js';
-
+import DateInfo from './components/information-screen/date-info.js';
 
 let screenWidth = Dimensions.get('window').width;   
 let screenHeight = Dimensions.get('window').height; 
@@ -42,6 +42,14 @@ export default class PeriodManager extends React.Component {
                 dateMeterWidth= {screenWidth * 0.2}
                 fontColor='#999999'
                 fontColorToday='#FFA800' /> 
+              <DateInfo 
+                givenStyle={styles.dateInfo}
+                themeStyle={styles.dateDetailTheme}
+                textStyle={styles.dateDetailText}
+                infoText='Hello world today is your day' />
+              <Image 
+                source={require('./images/finger_pointer.png')}
+                style={styles.fingerIndex} /> 
 
               <Menu 
                 givenStyle= { this.state.showMenu ? styles.menu : styles.hidden}
@@ -136,4 +144,26 @@ const styles = StyleSheet.create({
     height: screenHeight * 0.03,
     width: screenWidth * 0.8,
   },
+  fingerIndex: {
+    position: 'absolute',
+    left: screenWidth / 2 - screenHeight * 0.05,
+    top: screenHeight * 0.25, 
+    height: screenHeight * 0.1,
+    width: screenHeight * 0.1,
+  },
+  dateInfo: {
+    height: screenHeight * 0.40,
+    width: screenWidth,
+    backgroundColor: '#FFF1E9',
+  },
+  dateDetailTheme: {
+    height: screenHeight * 0.40,
+    width: screenWidth,
+    resizeMode: 'stretch',
+    alignItems: 'flex-start',
+  },
+  dateDetailText: {
+    marginTop: screenHeight * 0.05,
+    marginLeft: screenWidth * 0.1,
+  }
 });
