@@ -20,6 +20,7 @@ export default class DateScroller extends React.Component {
                         <FlatList
                             onScroll={() => {}} 
                             horizontal={true}  
+                            showsHorizontalScrollIndicator={false}
                             style={{flex: 2, backgroundColor: '#646464'}} 
                             data={[
                                 {key: '20170628', day: '27', month: 'Jun', isToday: 0, iconFlags: global.Icon.Emotion.NormalFlag | global.Icon.Condition.PeriodFlag, bgColor: global.BgColor.Nothing},
