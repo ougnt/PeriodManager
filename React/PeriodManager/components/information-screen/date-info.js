@@ -12,11 +12,22 @@ global.DateDetail = {
 export default class DateInfo extends React.Component {
 
   render() {
+
+    var fireTheme = require('../../images/theme_fire.png');
+    var grassTheme = require('../../images/theme_grass.png');
+    var beachTheme = require('../../images/theme_beach.png');
+    var theme;
+    switch(this.props.theme) {
+      case global.DateDetail.Background.Fire : theme = fireTheme; break;
+      case global.DateDetail.Background.Grass: theme = grassTheme; break;
+      case global.DateDetail.Background.Beach: theme = beachTheme; break;
+    }
+
     return (
         <View
-            style={this.props.givenStyle} > 
+            style={this.props.givenStyle} >
             <Image 
-              source={require('../../images/theme_fire.png')}
+              source={theme} 
               style={this.props.themeStyle} >
               <Image
                 source={require('../../images/date_detail.png')}

@@ -46,6 +46,7 @@ export default class PeriodManager extends React.Component {
                 givenStyle={styles.dateInfo}
                 themeStyle={styles.dateDetailTheme}
                 textStyle={styles.dateDetailText}
+                theme = {global.DateDetail.Background.Beach}
                 infoText='Hello world today is your day' />
               <Image 
                 source={require('./images/finger_pointer.png')}
